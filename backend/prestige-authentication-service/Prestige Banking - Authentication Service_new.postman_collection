@@ -1,0 +1,236 @@
+{
+  "info": {
+    "_postman_id": "bd2c9323-94cf-4f1d-819f-872c610f60c0",
+    "name": "Prestige Banking - Authentication Service",
+    "description": "Run Login first. It stores accessToken automatically. Postman Cookie Jar stores PBS_REFRESH for Refresh and Logout.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43943070"
+  },
+  "item": [
+    {
+      "name": "01 - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Login succeeds', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('accessToken', pm.response.json().accessToken);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": {{customerId}},\n  \"password\": \"{{loginPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{authBaseUrl}}/api/v1/auth/login",
+          "host": [
+            "{{authBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "02 - JWKS public keys",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{authBaseUrl}}/.well-known/jwks.json",
+          "host": [
+            "{{authBaseUrl}}"
+          ],
+          "path": [
+            ".well-known",
+            "jwks.json"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "03 - Refresh access token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Refresh succeeds', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('accessToken', pm.response.json().accessToken);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{authBaseUrl}}/api/v1/auth/refresh",
+          "host": [
+            "{{authBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "refresh"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "04 - Change login password",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currentPassword\": \"{{loginPassword}}\",\n  \"newPassword\": \"NewLogin@123\",\n  \"confirmPassword\": \"NewLogin@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{authBaseUrl}}/api/v1/auth/passwords/login",
+          "host": [
+            "{{authBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "passwords",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "05 - Change transaction password",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"accountNumber\": \"{{accountNumber}}\",\n  \"currentPassword\": \"{{transactionPassword}}\",\n  \"newPassword\": \"NewTransaction@123\",\n  \"confirmPassword\": \"NewTransaction@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{authBaseUrl}}/api/v1/auth/passwords/transaction",
+          "host": [
+            "{{authBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "passwords",
+            "transaction"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "06 - Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{authBaseUrl}}/api/v1/auth/logout",
+          "host": [
+            "{{authBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "authBaseUrl",
+      "value": "http://localhost:8083"
+    },
+    {
+      "key": "customerId",
+      "value": "101"
+    },
+    {
+      "key": "loginPassword",
+      "value": "Login@123"
+    },
+    {
+      "key": "accountNumber",
+      "value": "PBS1000001"
+    },
+    {
+      "key": "transactionPassword",
+      "value": "Transaction@123"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    }
+  ]
+}

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transaction_details", uniqueConstraints = @UniqueConstraint(name = "uq_transaction_transfer_type", columnNames = {"transfer_id", "transaction_type"}))
@@ -21,32 +21,32 @@ public class TransactionDetail {
     @Column(name = "transfer_id", nullable = false)
     private Long transferId;
 
-    @Column(name = "reference_number", nullable = false)
+    @Column(name = "reference_number", nullable = false, length = 40)
     private String referenceNumber;
 
-    @Column(name = "account_number", nullable = false)
+    @Column(name = "account_number", nullable = false, length = 25)
     private String accountNumber;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type", nullable = false)
+    @Column(name = "transaction_type", nullable = false, length = 10)
     private TransactionType transactionType;
 
     @Column(name = "transaction_amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal transactionAmount;
 
     @Column(name = "transaction_at", nullable = false)
-    private Instant transactionAt;
+    private LocalDateTime transactionAt;
 
     @Column(name = "bank_id", nullable = false)
     private Long bankId;
 
-    @Column(name = "ifsc_code", nullable = false)
+    @Column(name = "ifsc_code", nullable = false, length = 20)
     private String ifscCode;
 
-    @Column
+    @Column(length = 250)
     private String remarks;
 
-    public TransactionDetail(Long transferId, String reference, Account account, TransactionType type, BigDecimal amount, Instant at, String remarks) {
+    public TransactionDetail(Long transferId, String reference, Account account, TransactionType type, BigDecimal amount, LocalDateTime at, String remarks) {
         this.transferId = transferId;
         this.referenceNumber = reference;
         this.accountNumber = account.getAccountNumber();

@@ -1,0 +1,57 @@
+{
+  "info": {
+    "_postman_id": "c08d9e52-fdb2-4be2-8b32-0d7b89187f61",
+    "name": "Prestige Transfer Service - Local",
+    "description": "Local collection. JWT is disabled by application.properties; all requests run as app.security.local-customer-id.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "sourceAccountNumber", "value": "PBS1000001" },
+    { "key": "destinationAccountNumber", "value": "PBS1000002" },
+    { "key": "destinationAccountHolderName", "value": "Diya Patel" },
+    { "key": "destinationIfscCode", "value": "PBS0001002" },
+    { "key": "amount", "value": "100.00" },
+    { "key": "transactionPassword", "value": "password" },
+    { "key": "idempotencyKey", "value": "" },
+    { "key": "referenceNumber", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/actuator/health" },
+      "event": [{ "listen": "test", "script": { "exec": ["pm.test('healthy', () => pm.response.to.have.status(200));"], "type": "text/javascript" } }]
+    },
+    {
+      "name": "Create transfer",
+      "event": [
+        { "listen": "prerequest", "script": { "exec": ["if (!pm.collectionVariables.get('idempotencyKey')) pm.collectionVariables.set('idempotencyKey', 'postman-' + pm.variables.replaceIn('{{$guid}}'));"], "type": "text/javascript" } },
+        { "listen": "test", "script": { "exec": ["pm.test('created', () => pm.response.to.have.status(201));", "pm.collectionVariables.set('referenceNumber', pm.response.json().referenceNumber);"], "type": "text/javascript" } }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Idempotency-Key", "value": "{{idempotencyKey}}" }, { "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n  \"destinationAccountNumber\": \"{{destinationAccountNumber}}\",\n  \"destinationAccountHolderName\": \"{{destinationAccountHolderName}}\",\n  \"destinationIfscCode\": \"{{destinationIfscCode}}\",\n  \"amount\": {{amount}},\n  \"transactionPassword\": \"{{transactionPassword}}\"\n}" },
+        "url": "{{baseUrl}}/api/v1/transfers"
+      }
+    },
+    {
+      "name": "Replay transfer",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Idempotency-Key", "value": "{{idempotencyKey}}" }, { "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n  \"destinationAccountNumber\": \"{{destinationAccountNumber}}\",\n  \"destinationAccountHolderName\": \"{{destinationAccountHolderName}}\",\n  \"destinationIfscCode\": \"{{destinationIfscCode}}\",\n  \"amount\": {{amount}},\n  \"transactionPassword\": \"{{transactionPassword}}\"\n}" },
+        "url": "{{baseUrl}}/api/v1/transfers"
+      },
+      "event": [{ "listen": "test", "script": { "exec": ["pm.test('idempotent replay', () => pm.response.to.have.status(200));"], "type": "text/javascript" } }]
+    },
+    {
+      "name": "Get transfer",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/transfers/{{referenceNumber}}" }
+    },
+    {
+      "name": "Get account activity",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/accounts/{{sourceAccountNumber}}/transactions?page=0&size=20" }
+    }
+  ]
+}

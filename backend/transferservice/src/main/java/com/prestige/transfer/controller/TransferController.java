@@ -6,6 +6,7 @@ import com.prestige.transfer.service.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class TransferController {
     private final TransferApplicationService application;
     private final TransferQueryService queries;
+    @Value("${app.security.local-customer-id:}")
+    private String localCustomerId;
 
     public TransferController(TransferApplicationService application, TransferQueryService queries) {
         this.application = application;
@@ -26,7 +29,7 @@ public class TransferController {
     @PostMapping("/transfers")
     public ResponseEntity<TransferResponse> transfer(@AuthenticationPrincipal Jwt jwt,
             @RequestHeader("Idempotency-Key") String key, @Valid @RequestBody TransferRequest request) {
-        TransferApplicationService.TransferExecution result = application.execute(CustomerIdentity.from(jwt), key,
+        TransferApplicationService.TransferExecution result = application.execute(customerId(jwt), key,
                 request);
         if (!result.created())
             return ResponseEntity.ok(result.response());
@@ -36,13 +39,19 @@ public class TransferController {
 
     @GetMapping("/transfers/{referenceNumber}")
     public TransferResponse transfer(@AuthenticationPrincipal Jwt jwt, @PathVariable String referenceNumber) {
-        return queries.findTransfer(CustomerIdentity.from(jwt), referenceNumber);
+        return queries.findTransfer(customerId(jwt), referenceNumber);
     }
 
     @GetMapping("/accounts/{accountNumber}/transactions")
     public TransactionPageResponse activity(@AuthenticationPrincipal Jwt jwt, @PathVariable String accountNumber,
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
-        return queries.activity(CustomerIdentity.from(jwt), accountNumber, page, size);
+        return queries.activity(customerId(jwt), accountNumber, page, size);
+    }
+
+    private Long customerId(Jwt jwt) {
+        if (jwt != null) return CustomerIdentity.from(jwt);
+        if (localCustomerId != null && !localCustomerId.isBlank()) return Long.valueOf(localCustomerId);
+        return CustomerIdentity.from(null);
     }
 }

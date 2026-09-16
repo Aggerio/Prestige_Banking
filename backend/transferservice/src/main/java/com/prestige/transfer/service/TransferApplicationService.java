@@ -14,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Service
@@ -40,7 +41,7 @@ public class TransferApplicationService {
         Optional<FundTransfer> afterLock = transfers.findBySourceAccountNumberAndIdempotencyKey(request.sourceAccountNumber(), idempotencyKey);
         if (afterLock.isPresent()) { metrics.counter("transfer.idempotent_replays").increment(); return new TransferExecution(replay(afterLock.get(), hash), false); }
         validate(source, destination, request);
-        Instant now = Instant.now(); source.debit(request.amount()); destination.credit(request.amount());
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC); source.debit(request.amount()); destination.credit(request.amount());
         FundTransfer transfer = transfers.saveAndFlush(new FundTransfer(idempotencyKey, source.getAccountNumber(), destination.getAccountNumber(), request.destinationAccountHolderName(), request.destinationIfscCode(), request.amount(), reference(), hash, now));
         transactions.save(new TransactionDetail(transfer.getTransferId(), transfer.getReferenceNumber(), source, TransactionType.DEBIT, request.amount(), now, "Transfer to " + request.destinationAccountHolderName()));
         transactions.save(new TransactionDetail(transfer.getTransferId(), transfer.getReferenceNumber(), destination, TransactionType.CREDIT, request.amount(), now, "Transfer received"));
@@ -58,6 +59,6 @@ public class TransferApplicationService {
     }
     private String hash(TransferRequest r) { try { String canonical=String.join("|", r.sourceAccountNumber().trim(), r.destinationAccountNumber().trim(), r.destinationAccountHolderName().trim(), r.destinationIfscCode().trim(), r.amount().stripTrailingZeros().toPlainString()); byte[] bytes=MessageDigest.getInstance("SHA-256").digest(canonical.getBytes(StandardCharsets.UTF_8)); return HexFormat.of().formatHex(bytes); } catch (Exception e) { throw new IllegalStateException(e); } }
     private String reference() { return "TRF-" + UUID.randomUUID().toString().replace("-", "").toUpperCase(Locale.ROOT); }
-    private TransferResponse response(FundTransfer t) { return new TransferResponse(t.getTransferId(), t.getReferenceNumber(), t.getStatus(), t.getAmount(), t.getCompletedAt()); }
+    private TransferResponse response(FundTransfer t) { return new TransferResponse(t.getTransferId(), t.getReferenceNumber(), t.getStatus(), t.getAmount(), t.getCompletedAt().toInstant(ZoneOffset.UTC)); }
     public record TransferExecution(TransferResponse response, boolean created) { }
 }

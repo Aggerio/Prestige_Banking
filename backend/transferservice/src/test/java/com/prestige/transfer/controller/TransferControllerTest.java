@@ -6,6 +6,7 @@ import com.prestige.transfer.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.math.BigDecimal;
 import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class TransferControllerTest {
+    @Test void documentedLocalPasswordMatchesItsBcryptHash() {
+        assertTrue(BCrypt.checkpw("password", "$2a$10$XAfMtne7bQd1HatGVxoxTeZeTM48.lYz5e.2CJetiiC.V9FzS9Q/e"));
+    }
+
     @Test void identicalReplayReturnsOk() {
         TransferApplicationService application=mock(TransferApplicationService.class);
         TransferController controller=new TransferController(application, mock(TransferQueryService.class));

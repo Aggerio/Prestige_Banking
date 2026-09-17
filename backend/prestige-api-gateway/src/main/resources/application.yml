@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: API-GATEWAY
+
+  main:
+    web-application-type: reactive
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: authentication-service
+              uri: lb://AUTHENTICATION-SERVICE
+              predicates:
+                - Path=/api/v1/auth/**,/.well-known/jwks.json
+
+            - id: customer-service
+              uri: lb://customerService
+              predicates:
+                - Path=/api/v1/customers/**,/api/v1/accounts/me
+
+            - id: transfer-service
+              uri: lb://TRANSFER-SERVICE
+              predicates:
+                - Path=/api/v1/transfers/**,/api/v1/accounts/*/transactions
+
+            - id: public-information-service
+              uri: lb://PUBLIC-INFORMATION-SERVICE
+              predicates:
+                - Path=/api/v1/public/**
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH_ISSUER:http://localhost:8083}
+          jwk-set-uri: ${AUTH_JWKS_URI:http://localhost:8083/.well-known/jwks.json}
+          jws-algorithms: RS256
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}

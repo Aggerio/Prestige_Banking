@@ -1,9 +1,6 @@
 import { SvgIconProps } from '@mui/material';
 import CreditCardIcon from 'components/icons/menu-icons/CreditCardIcon';
 import HomeIcon from 'components/icons/menu-icons/HomeIcon';
-import InvestIcon from 'components/icons/menu-icons/InvestIcon';
-import LoanIcon from 'components/icons/menu-icons/LoanIcon';
-import ServiceIcon from 'components/icons/menu-icons/ServiceIcon';
 import SettingsIcon from 'components/icons/menu-icons/SettingsIcon';
 import SignInIcon from 'components/icons/menu-icons/SignInIcon';
 import SignUpIcon from 'components/icons/menu-icons/SignUpIcon';
@@ -14,10 +11,7 @@ export enum linkEnum {
   Dashboard = 'dashboard',
   Transactions = 'transactions',
   Accounts = 'accounts',
-  Investments = 'investments',
   Credit = 'credit-cards',
-  Loans = 'loans',
-  Services = 'Services',
   Setting = 'Setting',
   Login = 'login',
   Signup = 'sign-up',
@@ -55,31 +49,10 @@ export const menuLinks: MenuLinkType[] = [
     available: false,
   },
   {
-    id: 4,
-    title: linkEnum.Investments,
-    link: '#!',
-    icon: InvestIcon,
-    available: false,
-  },
-  {
     id: 5,
     title: linkEnum.Credit,
     link: '#!',
     icon: CreditCardIcon,
-    available: false,
-  },
-  {
-    id: 6,
-    title: linkEnum.Loans,
-    link: '#!',
-    icon: LoanIcon,
-    available: false,
-  },
-  {
-    id: 7,
-    title: linkEnum.Services,
-    link: '#!',
-    icon: ServiceIcon,
     available: false,
   },
   {

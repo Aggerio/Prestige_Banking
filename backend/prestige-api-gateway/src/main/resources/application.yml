@@ -16,7 +16,7 @@ spring:
                 - Path=/api/v1/auth/**,/.well-known/jwks.json
 
             - id: customer-service
-              uri: lb://customerService
+              uri: lb://CUSTOMER-SERVICE
               predicates:
                 - Path=/api/v1/customers/**,/api/v1/accounts/me
 
@@ -29,6 +29,11 @@ spring:
               uri: lb://PUBLIC-INFORMATION-SERVICE
               predicates:
                 - Path=/api/v1/public/**
+
+            - id: chatbot-service
+              uri: lb://CHATBOT-SERVICE
+              predicates:
+                - Path=/api/v1/chat/**
 
   security:
     oauth2:

@@ -8,7 +8,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transaction_details", uniqueConstraints = @UniqueConstraint(name = "uq_transaction_transfer_type", columnNames = {"transfer_id", "transaction_type"}))
+@Table(
+        name = "transaction_details",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uq_transaction_transfer_type",
+                columnNames = {"transfer_id", "transaction_type"}
+        )
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TransactionDetail {
@@ -46,7 +52,15 @@ public class TransactionDetail {
     @Column(length = 250)
     private String remarks;
 
-    public TransactionDetail(Long transferId, String reference, Account account, TransactionType type, BigDecimal amount, LocalDateTime at, String remarks) {
+    public TransactionDetail(
+            Long transferId,
+            String reference,
+            Account account,
+            TransactionType type,
+            BigDecimal amount,
+            LocalDateTime at,
+            String remarks
+    ) {
         this.transferId = transferId;
         this.referenceNumber = reference;
         this.accountNumber = account.getAccountNumber();

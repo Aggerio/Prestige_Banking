@@ -26,6 +26,7 @@ public class TransferController {
         this.queries = queries;
     }
 
+
     @PostMapping("/transfers")
     public ResponseEntity<TransferResponse> transfer(@AuthenticationPrincipal Jwt jwt,
             @RequestHeader("Idempotency-Key") String key, @Valid @RequestBody TransferRequest request) {

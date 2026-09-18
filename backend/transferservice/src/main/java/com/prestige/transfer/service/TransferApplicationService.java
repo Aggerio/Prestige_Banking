@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 
 @Service
@@ -41,7 +40,8 @@ public class TransferApplicationService {
         Optional<FundTransfer> afterLock = transfers.findBySourceAccountNumberAndIdempotencyKey(request.sourceAccountNumber(), idempotencyKey);
         if (afterLock.isPresent()) { metrics.counter("transfer.idempotent_replays").increment(); return new TransferExecution(replay(afterLock.get(), hash), false); }
         validate(source, destination, request);
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC); source.debit(request.amount()); destination.credit(request.amount());
+        LocalDateTime now = LocalDateTime.now();
+        source.debit(request.amount()); destination.credit(request.amount());
         FundTransfer transfer = transfers.saveAndFlush(new FundTransfer(idempotencyKey, source.getAccountNumber(), destination.getAccountNumber(), request.destinationAccountHolderName(), request.destinationIfscCode(), request.amount(), reference(), hash, now));
         transactions.save(new TransactionDetail(transfer.getTransferId(), transfer.getReferenceNumber(), source, TransactionType.DEBIT, request.amount(), now, "Transfer to " + request.destinationAccountHolderName()));
         transactions.save(new TransactionDetail(transfer.getTransferId(), transfer.getReferenceNumber(), destination, TransactionType.CREDIT, request.amount(), now, "Transfer received"));

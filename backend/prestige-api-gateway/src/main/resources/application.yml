@@ -1,6 +1,10 @@
 spring:
-  application: { name: API-GATEWAY }
-  main: { web-application-type: reactive }
+  application:
+    name: API-GATEWAY
+
+  main:
+    web-application-type: reactive
+
   cloud:
     gateway:
       server:
@@ -12,7 +16,7 @@ spring:
                 - Path=/api/v1/auth/**,/.well-known/jwks.json
 
             - id: customer-service
-              uri: lb://CUSTOMER-SERVICE
+              uri: lb://customerService
               predicates:
                 - Path=/api/v1/customers/**,/api/v1/accounts/me
 
@@ -25,6 +29,7 @@ spring:
               uri: lb://PUBLIC-INFORMATION-SERVICE
               predicates:
                 - Path=/api/v1/public/**
+
   security:
     oauth2:
       resourceserver:
@@ -32,7 +37,10 @@ spring:
           issuer-uri: ${AUTH_ISSUER:http://localhost:8083}
           jwk-set-uri: ${AUTH_JWKS_URI:http://localhost:8083/.well-known/jwks.json}
           jws-algorithms: RS256
-server: { port: 8080 }
+
+server:
+  port: 8080
+
 eureka:
   client:
     service-url:

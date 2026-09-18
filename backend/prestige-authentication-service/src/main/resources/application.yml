@@ -1,14 +1,21 @@
 spring:
-  application: { name: AUTHENTICATION-SERVICE }
+  application:
+    name: AUTHENTICATION-SERVICE
+
   datasource:
-    url: ${DB_URL:jdbc:oracle:thin:@localhost:1521/freepdb1}
+    url: ${DB_URL:jdbc:oracle:thin:@localhost:1521:free}
     username: ${DB_USERNAME:system}
     password: ${DB_PASSWORD:root}
     driver-class-name: oracle.jdbc.OracleDriver
+
   jpa:
-    hibernate: { ddl-auto: validate }
+    hibernate:
+      ddl-auto: validate
     open-in-view: false
-server: { port: 8083 }
+
+server:
+  port: 8083
+
 security:
   jwt:
     issuer: ${AUTH_ISSUER:http://localhost:8083}
@@ -19,11 +26,17 @@ security:
     key-alias: ${JWT_KEY_ALIAS:prestige-auth}
     key-password: ${JWT_KEY_PASSWORD:keystore-password}
     access-token-ttl: PT10M
+
   refresh-token:
     ttl: P30D
     pepper: ${REFRESH_TOKEN_PEPPER:KrBh4WLEVTv3v1cjAzR/Ojpc9hV6oy+3K0wWUewXjS4=}
     cookie-name: PBS_REFRESH
+
 eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+
+  instance:
+    hostname: localhost
+    prefer-ip-address: false

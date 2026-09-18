@@ -1,0 +1,223 @@
+name: prestige-banking
+
+x-java-service: &java-service
+  build:
+    context: .
+    dockerfile: infra/Dockerfile.java
+  restart: unless-stopped
+  networks:
+    - banking
+
+x-database-environment: &database-environment
+  SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle:1521/FREEPDB1
+  SPRING_DATASOURCE_USERNAME: system
+  SPRING_DATASOURCE_PASSWORD: ${ORACLE_PASSWORD:-PrestigeLocal1!}
+  SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+x-eureka-environment: &eureka-environment
+  EUREKA_URL: http://eureka-server:8761/eureka
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+  EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD:-PrestigeLocal1!}
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./backend/chatbot-service/db/oracle-chatbot-schema.sql:/container-entrypoint-initdb.d/10-chatbot-schema.sql:ro
+      - ./backend/chatbot-service/db/oracle-chatbot-seed.sql:/container-entrypoint-initdb.d/20-chatbot-seed.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks:
+      - banking
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks:
+      - banking
+
+  ollama-init:
+    image: ollama/ollama:latest
+    environment:
+      OLLAMA_HOST: ollama:11434
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-gemma3:1b}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+    command: ["/bin/sh", "-c", "ollama pull $${OLLAMA_CHAT_MODEL} && ollama pull $${OLLAMA_EMBEDDING_MODEL}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - banking
+
+  eureka-server:
+    <<: *java-service
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.java
+      args:
+        SERVICE_DIR: prestige-eureka-server
+    ports:
+      - "8761:8761"
+
+  authentication-service:
+    <<: *java-service
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.java
+      args:
+        SERVICE_DIR: prestige-authentication-service
+    environment:
+      <<: [*database-environment, *eureka-environment]
+      DB_URL: jdbc:oracle:thin:@//oracle:1521/FREEPDB1
+      DB_USERNAME: system
+      DB_PASSWORD: ${ORACLE_PASSWORD:-PrestigeLocal1!}
+      AUTH_ISSUER: http://authentication-service:8083
+      JWT_KEYSTORE_LOCATION: file:/app/keys/auth-service.p12
+    volumes:
+      - ./backend/prestige-authentication-service/keys:/app/keys:ro
+    depends_on:
+      oracle:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  customer-service:
+    <<: *java-service
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.java
+      args:
+        SERVICE_DIR: customer-service
+    environment:
+      <<: [*database-environment, *eureka-environment]
+      EUREKA_INSTANCE_HOSTNAME: customer-service
+      AUTH_ISSUER: http://authentication-service:8083
+      AUTH_JWKS_URI: http://authentication-service:8083/.well-known/jwks.json
+    depends_on:
+      oracle:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  transfer-service:
+    <<: *java-service
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.java
+      args:
+        SERVICE_DIR: transferservice
+    environment:
+      <<: [*database-environment, *eureka-environment]
+      EUREKA_INSTANCE_HOSTNAME: transfer-service
+      AUTH_ISSUER: http://authentication-service:8083
+      AUTH_JWKS_URI: http://authentication-service:8083/.well-known/jwks.json
+    depends_on:
+      oracle:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  public-info-service:
+    <<: *java-service
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.java
+      args:
+        SERVICE_DIR: public-info
+    environment:
+      <<: [*database-environment, *eureka-environment]
+      EUREKA_INSTANCE_HOSTNAME: public-info-service
+    depends_on:
+      oracle:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  chatbot-service:
+    <<: *java-service
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.java
+      args:
+        SERVICE_DIR: chatbot-service
+    environment:
+      <<: [*database-environment, *eureka-environment]
+      DB_URL: jdbc:oracle:thin:@//oracle:1521/FREEPDB1
+      DB_USERNAME: system
+      DB_PASSWORD: ${ORACLE_PASSWORD:-PrestigeLocal1!}
+      EUREKA_INSTANCE_HOSTNAME: chatbot-service
+      AUTH_ISSUER: http://authentication-service:8083
+      AUTH_JWKS_URI: http://authentication-service:8083/.well-known/jwks.json
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-gemma3:1b}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+    depends_on:
+      oracle:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      ollama-init:
+        condition: service_completed_successfully
+
+  api-gateway:
+    <<: *java-service
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.java
+      args:
+        SERVICE_DIR: prestige-api-gateway
+    environment:
+      <<: *eureka-environment
+      AUTH_ISSUER: http://authentication-service:8083
+      AUTH_JWKS_URI: http://authentication-service:8083/.well-known/jwks.json
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_started
+      authentication-service:
+        condition: service_started
+      customer-service:
+        condition: service_started
+      transfer-service:
+        condition: service_started
+      public-info-service:
+        condition: service_started
+      chatbot-service:
+        condition: service_started
+
+  frontend:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      api-gateway:
+        condition: service_started
+    networks:
+      - banking
+
+networks:
+  banking:
+    driver: bridge
+
+volumes:
+  oracle-data:
+  ollama-data:
+

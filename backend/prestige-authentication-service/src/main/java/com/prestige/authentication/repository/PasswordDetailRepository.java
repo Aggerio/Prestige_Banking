@@ -7,7 +7,11 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PasswordDetailRepository extends JpaRepository<PasswordDetail, Long> {
-    List<PasswordDetail> findByCustomerIdAndPasswordType(Long id, String type);
-
-    List<PasswordDetail> findByCustomerIdAndAccountNumberAndPasswordType(Long id, String account, String type);
-}
+    List<PasswordDetail>
+    findByCustomerIdAndPasswordTypeOrderByChangedAtDesc(
+            Long customerId, String passwordType
+    );
+    List<PasswordDetail>
+    findByCustomerIdAndAccountNumberAndPasswordTypeOrderByChangedAtDesc(
+            Long customerId, String accountNumber, String passwordType
+    );}

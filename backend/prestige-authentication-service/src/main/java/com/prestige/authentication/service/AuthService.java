@@ -29,6 +29,8 @@ public class AuthService {
     private final RefreshProperties refresh;
     private final SecureRandom random = new SecureRandom();
 
+    private static final int PASSWORD_CHANGE_HISTORY_LIMIT = 5;
+
     public AuthService(CustomerRepository c, AccountRepository a, PasswordDetailRepository h, AuthSessionRepository s,
                        PasswordEncoder e, JwtEncoder j, JwtProperties p, RefreshProperties r) {
         customers = c;
@@ -80,10 +82,16 @@ public class AuthService {
         if (!encoder.matches(r.currentPassword(), c.getLoginPasswordHash()))
             throw new IllegalArgumentException("Current password is incorrect");
         validate(r.newPassword(), r.confirmPassword());
-        notUsed(r.newPassword(), history.findByCustomerIdAndPasswordType(id, "LOGIN"));
+        notUsed(
+                r.newPassword(),
+                history.findByCustomerIdAndPasswordTypeOrderByChangedAtDesc(id, "LOGIN")
+        );
         String old = c.getLoginPasswordHash(), next = encoder.encode(r.newPassword());
         c.setLoginPasswordHash(next);
         history.save(new PasswordDetail(id, null, "LOGIN", old, next));
+        retainLatest(
+                history.findByCustomerIdAndPasswordTypeOrderByChangedAtDesc(id, "LOGIN")
+        );
         sessions.revokeAll(id, LocalDateTime.now());
     }
 
@@ -94,11 +102,20 @@ public class AuthService {
         if (!encoder.matches(r.currentPassword(), a.getTransactionPasswordHash()))
             throw new IllegalArgumentException("Current transaction password is incorrect");
         validate(r.newPassword(), r.confirmPassword());
-        notUsed(r.newPassword(),
-                history.findByCustomerIdAndAccountNumberAndPasswordType(id, r.accountNumber(), "TRANSACTION"));
+        notUsed(
+                r.newPassword(),
+                history.findByCustomerIdAndAccountNumberAndPasswordTypeOrderByChangedAtDesc(
+                        id, r.accountNumber(), "TRANSACTION"
+                )
+        );
         String old = a.getTransactionPasswordHash(), next = encoder.encode(r.newPassword());
         a.setTransactionPasswordHash(next);
         history.save(new PasswordDetail(id, r.accountNumber(), "TRANSACTION", old, next));
+        retainLatest(
+                history.findByCustomerIdAndAccountNumberAndPasswordTypeOrderByChangedAtDesc(
+                        id, r.accountNumber(), "TRANSACTION"
+                )
+        );
     }
 
     private TokenAndRefresh newSession(Long customer, String family) {
@@ -133,11 +150,32 @@ public class AuthService {
             throw new IllegalArgumentException("Password must be 8+ characters with uppercase, number, and @, *, or $");
     }
 
-    private void notUsed(String candidate, Iterable<PasswordDetail> rows) {
-        for (PasswordDetail p : rows)
-            if ((p.getOldPasswordHash() != null && encoder.matches(candidate, p.getOldPasswordHash()))
-                    || (p.getNewPasswordHash() != null && encoder.matches(candidate, p.getNewPasswordHash())))
-                throw new IllegalArgumentException("A previous password cannot be reused");
+    private void notUsed(String candidate, List<PasswordDetail> rows) {
+        for (int index = 0; index < rows.size(); index++) {
+            PasswordDetail detail = rows.get(index);
+
+            boolean matchesOldPassword =
+                    encoder.matches(candidate, detail.getOldPasswordHash());
+
+            boolean matchesLatestNewPassword =
+                    index == 0
+                            && detail.getNewPasswordHash() != null
+                            && encoder.matches(candidate, detail.getNewPasswordHash());
+
+            if (matchesOldPassword || matchesLatestNewPassword) {
+                throw new IllegalArgumentException(
+                        "A previous password cannot be reused"
+                );
+            }
+        }
+    }
+
+    private void retainLatest(List<PasswordDetail> rows) {
+        if (rows.size() > PASSWORD_CHANGE_HISTORY_LIMIT) {
+            history.deleteAll(
+                    rows.subList(PASSWORD_CHANGE_HISTORY_LIMIT, rows.size())
+            );
+        }
     }
 
     public record TokenAndRefresh(TokenResponse token, String refreshToken) {

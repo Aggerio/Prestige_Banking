@@ -63,7 +63,8 @@ public class AuthConfig {
     SecurityFilterChain security(HttpSecurity http, JwtDecoder decoder) throws Exception {
         return http.csrf(csrf -> csrf.disable()).sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a.requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/.well-known/jwks.json").permitAll().anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/.well-known/jwks.json").permitAll()
+                        .anyRequest().authenticated())
                 .oauth2ResourceServer(o -> o.jwt(j -> j.decoder(decoder))).build();
     }
 

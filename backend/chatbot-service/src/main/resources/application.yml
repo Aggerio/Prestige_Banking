@@ -1,0 +1,27 @@
+spring:
+  application: { name: CHATBOT-SERVICE }
+  datasource:
+    url: ${DB_URL:jdbc:oracle:thin:@localhost:1521/free}
+    username: ${DB_USERNAME:system}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate: { ddl-auto: validate }
+    open-in-view: false
+server: { port: 8085 }
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+chatbot:
+  ollama:
+    base-url: ${OLLAMA_URL:http://localhost:11434}
+    # MiniMax through Ollama; override with a locally available model if required.
+    chat-model: ${OLLAMA_CHAT_MODEL:gemma4:31b-cloud}
+    # Reserved for the semantic-vector upgrade; Phase 1 uses transparent lexical retrieval.
+    embedding-model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+    timeout: ${OLLAMA_TIMEOUT:PT45S}

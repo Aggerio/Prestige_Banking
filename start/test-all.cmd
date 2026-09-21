@@ -40,7 +40,7 @@ set "LOGIN_BODY=%TEMP%\prestige-login-%RANDOM%.json"
 set "LOGIN_RESPONSE=%TEMP%\prestige-login-response-%RANDOM%.json"
 set "LOGIN_STATUS=%LOGIN_RESPONSE%.status"
 
-powershell -NoProfile -Command "$payload = @{ customerId = [long]%TEST_CUSTOMER_ID%; password = '%TEST_LOGIN_PASSWORD%' } ^| ConvertTo-Json -Compress; [System.IO.File]::WriteAllText('%LOGIN_BODY%', $payload)"
+powershell -NoProfile -Command "$payload = @{ customerId = [long]%TEST_CUSTOMER_ID%; password = '%TEST_LOGIN_PASSWORD%' } | ConvertTo-Json -Compress; [System.IO.File]::WriteAllText('%LOGIN_BODY%', $payload)"
 curl.exe --silent --show-error --output "%LOGIN_RESPONSE%" --write-out "%%{http_code}" --request POST --header "Content-Type: application/json" --data-binary "@%LOGIN_BODY%" "%GATEWAY%/api/v1/auth/login" > "%LOGIN_STATUS%"
 
 set "LOGIN_CODE="
@@ -73,7 +73,7 @@ set "TRANSFER_STATUS=%TRANSFER_RESPONSE%.status"
 set "IDEMPOTENCY_KEY=smoke-%RANDOM%-%RANDOM%"
 set "TRANSFER_REFERENCE="
 
-powershell -NoProfile -Command "$payload = @{ sourceAccountNumber = '%TEST_SOURCE_ACCOUNT%'; destinationAccountNumber = '%TEST_DESTINATION_ACCOUNT%'; destinationAccountHolderName = '%TEST_DESTINATION_NAME%'; destinationIfscCode = '%TEST_DESTINATION_IFSC%'; amount = [decimal]'%TEST_TRANSFER_AMOUNT%'; transactionPassword = '%TEST_TRANSACTION_PASSWORD%' } ^| ConvertTo-Json -Compress; [System.IO.File]::WriteAllText('%TRANSFER_BODY%', $payload)"
+powershell -NoProfile -Command "$payload = @{ sourceAccountNumber = '%TEST_SOURCE_ACCOUNT%'; destinationAccountNumber = '%TEST_DESTINATION_ACCOUNT%'; destinationAccountHolderName = '%TEST_DESTINATION_NAME%'; destinationIfscCode = '%TEST_DESTINATION_IFSC%'; amount = [decimal]'%TEST_TRANSFER_AMOUNT%'; transactionPassword = '%TEST_TRANSACTION_PASSWORD%' } | ConvertTo-Json -Compress; [System.IO.File]::WriteAllText('%TRANSFER_BODY%', $payload)"
 curl.exe --silent --show-error --output "%TRANSFER_RESPONSE%" --write-out "%%{http_code}" --request POST --header "Authorization: Bearer !ACCESS_TOKEN!" --header "Idempotency-Key: %IDEMPOTENCY_KEY%" --header "Content-Type: application/json" --data-binary "@%TRANSFER_BODY%" "%GATEWAY%/api/v1/transfers" > "%TRANSFER_STATUS%"
 
 set "STATUS="

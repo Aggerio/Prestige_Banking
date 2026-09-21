@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import Logo from 'components/common/Logo';
+import ShaderBackdrop from 'components/common/ShaderBackdrop';
 import { getInvestors, getPublicHome, PublicContent, PublicHome } from 'api/banking';
 import { apiError } from 'api/client';
 import { useEffect, useState } from 'react';
@@ -71,13 +72,35 @@ const PublicHomePage = () => {
         </Stack>
       </Container>
 
-      <Box sx={{ bgcolor: 'primary.darker', color: 'common.white', overflow: 'hidden' }}>
-        <Container maxWidth="xl" sx={{ py: { xs: 8, md: 12 } }}>
+      <Box
+        sx={{
+          position: 'relative',
+          color: 'common.white',
+          overflow: 'hidden',
+          isolation: 'isolate',
+        }}
+      >
+        <ShaderBackdrop />
+        <Box
+          sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(5, 10, 49, 0.22)', zIndex: -1 }}
+        />
+        <Container maxWidth="xl" sx={{ position: 'relative', py: { xs: 8, md: 12 } }}>
           <Grid container spacing={5} alignItems="center">
             <Grid item xs={12} md={7}>
-              <Typography variant="overline" sx={{ color: 'primary.lighter', letterSpacing: 2 }}>
-                PRESTIGE DIGITAL BANKING
-              </Typography>
+              <Stack direction="row" alignItems="center" gap={1.25}>
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    bgcolor: 'success.light',
+                    boxShadow: '0 0 18px rgba(17, 215, 156, .9)',
+                  }}
+                />
+                <Typography variant="overline" sx={{ color: 'primary.lighter', letterSpacing: 2 }}>
+                  PRESTIGE DIGITAL BANKING
+                </Typography>
+              </Stack>
               <Typography
                 sx={{
                   mt: 2,
@@ -86,7 +109,7 @@ const PublicHomePage = () => {
                   lineHeight: 1.12,
                 }}
               >
-                Banking that keeps pace with your life.
+                A more brilliant way to move money.
               </Typography>
               <Typography
                 sx={{
@@ -110,8 +133,8 @@ const PublicHomePage = () => {
                   Access your account
                 </Button>
                 <Button
-                  component={RouterLink}
-                  to="#offers"
+                  component="a"
+                  href="#offers"
                   size="large"
                   variant="outlined"
                   sx={{ color: 'common.white', borderColor: 'primary.lighter' }}
@@ -125,10 +148,11 @@ const PublicHomePage = () => {
                 sx={{
                   p: 4,
                   borderRadius: 5,
-                  bgcolor: 'rgba(255,255,255,0.12)',
+                  bgcolor: 'rgba(255,255,255,0.11)',
                   color: 'common.white',
                   border: '1px solid rgba(255,255,255,0.22)',
-                  boxShadow: 'none',
+                  boxShadow: '0 24px 70px rgba(0,0,0,.2)',
+                  backdropFilter: 'blur(16px)',
                 }}
               >
                 <IconifyIcon icon="solar:shield-check-bold" width={42} />
@@ -139,6 +163,23 @@ const PublicHomePage = () => {
                   Your accounts, cards, statements, and transactions are always a few clear steps
                   away.
                 </Typography>
+                <Stack direction="row" gap={1.5} mt={4}>
+                  {[
+                    ['solar:wallet-money-bold', 'Accounts'],
+                    ['solar:card-bold', 'Cards'],
+                    ['solar:graph-up-bold', 'Insights'],
+                  ].map(([icon, label]) => (
+                    <Stack
+                      key={label}
+                      alignItems="center"
+                      gap={0.5}
+                      sx={{ flex: 1, py: 1.25, borderRadius: 2.5, bgcolor: 'rgba(255,255,255,.1)' }}
+                    >
+                      <IconifyIcon icon={icon} width={20} />
+                      <Typography variant="caption">{label}</Typography>
+                    </Stack>
+                  ))}
+                </Stack>
               </Card>
             </Grid>
           </Grid>

@@ -12,7 +12,7 @@
     <artifactId>prestige-eureka-server</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <spring-cloud.version>2025.1.3</spring-cloud.version>
     </properties>
     <dependencies>

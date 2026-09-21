@@ -26,7 +26,7 @@ spring:
                 - Path=/api/v1/transfers/**,/api/v1/accounts/*/transactions
 
             - id: public-information-service
-              uri: lb://PUBLIC-INFORMATION-SERVICE
+              uri: lb://PUBLIC-INFO-SERVICE
               predicates:
                 - Path=/api/v1/public/**
 

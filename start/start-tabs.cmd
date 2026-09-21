@@ -42,13 +42,13 @@ call :wait_http "Public Info Service" "http://localhost:8004/actuator/health" ||
 call :start_tab "API Gateway" "%ROOT%\backend\prestige-api-gateway"
 call :wait_http "API Gateway" "http://localhost:8080/.well-known/jwks.json" || exit /b 1
 
-wt -w "%WINDOW%" new-tab --title "Prestige Frontend" -d "%ROOT%\frontend" cmd /k "npm run dev -- --host 0.0.0.0"
-call :wait_http "Frontend" "http://localhost:5173/" || exit /b 1
+wt -w "%WINDOW%" new-tab --title "Prestige Frontend" -d "%ROOT%\frontend" cmd /k "npm run dev -- --host 0.0.0.0 --port 3000 --strictPort"
+call :wait_http "Frontend" "http://localhost:3000/" || exit /b 1
 
 echo.
 echo All services are running in the Prestige Services terminal window.
 echo Gateway:  http://localhost:8080
-echo Frontend: http://localhost:5173
+echo Frontend: http://localhost:3000
 echo Eureka:   http://localhost:8761
 exit /b 0
 

@@ -3,7 +3,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 
 set "GATEWAY=http://localhost:8080"
 set "EUREKA=http://localhost:8761"
-set "FRONTEND=http://localhost:5173"
+set "FRONTEND=http://localhost:3000"
 set /a PASSED=0
 set /a FAILED=0
 

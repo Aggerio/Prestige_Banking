@@ -1,12 +1,15 @@
 @echo off
 setlocal EnableExtensions
 
-echo Stopping Java and Vite processes started for the local stack...
-taskkill /FI "WINDOWTITLE eq Eureka Server" /T /F >nul 2>nul
-taskkill /FI "WINDOWTITLE eq Authentication Service" /T /F >nul 2>nul
-taskkill /FI "WINDOWTITLE eq Customer Service" /T /F >nul 2>nul
-taskkill /FI "WINDOWTITLE eq Transfer Service" /T /F >nul 2>nul
-taskkill /FI "WINDOWTITLE eq Public Info Service" /T /F >nul 2>nul
-taskkill /FI "WINDOWTITLE eq API Gateway" /T /F >nul 2>nul
-taskkill /FI "WINDOWTITLE eq Prestige Frontend" /T /F >nul 2>nul
-echo Stop requests sent.
+echo Stopping the local stack by its service ports...
+for %%P in (3000 8080 8004 8002 8001 8083 8761) do call :stop_port %%P
+echo Stop requests sent. The Windows Terminal tabs remain open for their logs.
+exit /b 0
+
+:stop_port
+set "PORT=%~1"
+for /f %%I in ('powershell -NoProfile -Command "Get-NetTCPConnection -State Listen -LocalPort %PORT% -ErrorAction SilentlyContinue ^| Select-Object -ExpandProperty OwningProcess -Unique"') do (
+    echo Stopping the process on port %PORT%...
+    taskkill /PID %%I /T /F >nul 2>nul
+)
+exit /b 0

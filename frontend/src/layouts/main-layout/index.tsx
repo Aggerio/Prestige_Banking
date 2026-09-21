@@ -1,6 +1,5 @@
 import { Box, Stack } from '@mui/material';
 import MainNavbar from 'layouts/main-layout/appbar/Appbar';
-import Footer from 'layouts/main-layout/footer/Footer';
 import MobileSidebar from 'layouts/main-layout/sidebar/MobileSidebar';
 import Sidebar from 'layouts/main-layout/sidebar/Sidebar';
 import { PropsWithChildren, useState } from 'react';
@@ -57,10 +56,9 @@ const MainLayout = ({ children }: PropsWithChildren) => {
               flex: 1,
               gap: 1,
             }}
-          >
-            {children}
-            <Footer />
-          </Stack>
+            >
+              {children}
+            </Stack>
         </Stack>
       </Box>
     </>

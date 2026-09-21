@@ -56,9 +56,9 @@ const MainLayout = ({ children }: PropsWithChildren) => {
               flex: 1,
               gap: 1,
             }}
-            >
-              {children}
-            </Stack>
+          >
+            {children}
+          </Stack>
         </Stack>
       </Box>
     </>

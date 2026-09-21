@@ -14,4 +14,13 @@ After startup, run the integrated smoke test:
 start\test-all.cmd
 ```
 
-The test checks Gateway routing, JWT protection, and Eureka registration for every service in the default stack. Stop the stack with `start\stop-all.cmd`.
+The test checks Gateway routing, every public-content endpoint, JWT protection, and Eureka registration for every service in the default stack. With test credentials supplied, it also verifies login plus authenticated customer, account, activity, transfer-read, and transfer-validation requests. Stop the stack with `start\stop-all.cmd`.
+
+To also verify an authenticated customer request, set the local test password only for the current terminal session before running the smoke test:
+
+```powershell
+$env:PRESTIGE_TEST_LOGIN_PASSWORD = 'your-local-login-password'
+.\start\test-all.cmd
+```
+
+The test uses customer ID `101` by default. Override it by setting `PRESTIGE_TEST_CUSTOMER_ID` in the same session.

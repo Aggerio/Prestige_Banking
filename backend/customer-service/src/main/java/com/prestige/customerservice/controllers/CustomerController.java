@@ -2,8 +2,9 @@ package com.prestige.customerservice.controllers;
 
 import com.prestige.customerservice.dtos.CustomerQuery;
 import com.prestige.customerservice.services.abstractions.CustomerServiceManager;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +22,8 @@ public class CustomerController {
 
     @GetMapping("/me")
     public CustomerQuery getMyCustomer(
-            @RequestHeader("X-Customer-Id") Long customerId
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        return customerServiceManager.getMyCustomer(customerId);
+        return customerServiceManager.getMyCustomer(Long.valueOf(jwt.getSubject()));
     }
 }

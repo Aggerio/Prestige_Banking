@@ -10,10 +10,12 @@ import CustomPagination from 'components/sections/dashboard/invoice/CustomPagina
 import NoData from 'components/sections/dashboard/invoice/NoData';
 import RenderCellDescription from 'components/sections/dashboard/invoice/RenderCellDescription';
 import RenderCellDownload from 'components/sections/dashboard/invoice/RenderCellDownload';
-import { invoiceRowData, RowData } from 'data/invoice-data';
+import { RowData } from 'data/invoice-data';
 import { currencyFormat, dateFormatFromUTC } from 'helpers/utils';
+import { getTransactions, Transaction } from 'api/banking';
 import { useBreakpoints } from 'providers/useBreakpoints';
 import { SyntheticEvent, useEffect, useState } from 'react';
+import { useDashboard } from 'providers/DashboardProvider';
 
 const columns: GridColDef[] = [
   {
@@ -91,7 +93,9 @@ let rowHeight = 60; // default row height
 const InvoiceOverviewTable: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<GridRowsProp<RowData>>([]);
+  const [totalRows, setTotalRows] = useState(0);
   const [value, setValue] = useState(0);
+  const { selectedAccount } = useDashboard();
   const { down } = useBreakpoints();
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -109,32 +113,49 @@ const InvoiceOverviewTable: React.FC = () => {
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
-    filterData(newValue);
+    setPaginationModel((current) => ({ ...current, page: 0 }));
   };
 
   const handlePaginationModelChange = (model: GridPaginationModel) => {
     setPaginationModel(model);
   };
 
-  const filterData = (tabIndex: number) => {
-    switch (tabIndex) {
-      case 1:
-        setItems(invoiceRowData.filter((row) => row.description.revenue === 'up'));
-        break;
-      case 2:
-        setItems(invoiceRowData.filter((row) => row.description.revenue === 'down'));
-        break;
-      default:
-        setItems(invoiceRowData);
-        break;
-    }
-  };
+  const mapTransaction = (item: Transaction) => ({
+    id: item.transactionId,
+    description: {
+      title: item.remarks || item.referenceNumber,
+      revenue: item.movement === 'DEPOSIT' ? 'up' : 'down',
+    },
+    transactionId: item.referenceNumber,
+    type: item.movement,
+    card: 'Account',
+    date: item.transactionAt,
+    amount: item.amount,
+  });
 
   useEffect(() => {
+    if (!selectedAccount) {
+      setItems([]);
+      setTotalRows(0);
+      return;
+    }
     setLoading(true);
-    filterData(value);
-    setLoading(false);
-  }, [value]);
+    const movement = value === 1 ? 'DEPOSIT' : value === 2 ? 'WITHDRAWAL' : undefined;
+    void getTransactions(selectedAccount, {
+      page: paginationModel.page,
+      size: paginationModel.pageSize,
+      movement,
+    })
+      .then((response) => {
+        setItems(response.data.items.map(mapTransaction));
+        setTotalRows(response.data.totalElements);
+      })
+      .catch(() => {
+        setItems([]);
+        setTotalRows(0);
+      })
+      .finally(() => setLoading(false));
+  }, [selectedAccount, value, paginationModel]);
 
   return (
     <Stack sx={{ overflow: 'auto', justifyContent: 'space-between' }}>
@@ -177,11 +198,8 @@ const InvoiceOverviewTable: React.FC = () => {
       >
         <DataGrid
           rowHeight={rowHeight}
-          rows={items.slice(
-            paginationModel.page * paginationModel.pageSize,
-            (paginationModel.page + 1) * paginationModel.pageSize,
-          )}
-          rowCount={items.length}
+          rows={items}
+          rowCount={totalRows}
           columns={columns}
           disableRowSelectionOnClick
           paginationMode="server"
@@ -216,7 +234,7 @@ const InvoiceOverviewTable: React.FC = () => {
       <Box sx={{ mt: 2, display: 'flex', justifyContent: { xs: 'center', md: 'flex-end' } }}>
         <CustomPagination
           page={paginationModel.page + 1}
-          pageCount={Math.ceil(items.length / paginationModel.pageSize)}
+          pageCount={Math.max(1, Math.ceil(totalRows / paginationModel.pageSize))}
           onPageChange={(event, value) =>
             setPaginationModel((prev) => ({ ...prev, page: value - 1 }))
           }

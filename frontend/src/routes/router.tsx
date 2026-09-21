@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import paths, { rootPaths } from './path';
+import RequireAuth from 'components/common/RequireAuth';
+import { DashboardProvider } from 'providers/DashboardProvider';
 
 /* ---------------- Lazy loads various components ------------------------- */
 const App = lazy(() => import('App'));
@@ -11,9 +13,6 @@ const Spinner = lazy(() => import('components/loading/Splash'));
 const LoadingProgress = lazy(() => import('components/loading/LoadingProgress'));
 
 const LoginPage = lazy(() => import('pages/authentication/login'));
-const SignUpPage = lazy(() => import('pages/authentication/signup'));
-const ForgetPasswordPage = lazy(() => import('pages/authentication/forget-password'));
-const ResetPasswordPage = lazy(() => import('pages/authentication/reset-password'));
 
 const NotFoundPage = lazy(() => import('pages/not-found'));
 /* -------------------------------------------------------------------------- */
@@ -31,21 +30,22 @@ export const routes = [
     children: [
       {
         path: paths.default,
-        element: (
-          <MainLayout>
-            <Suspense fallback={<LoadingProgress />}>
-              <Outlet />
-            </Suspense>
-          </MainLayout>
-        ),
+        element: <RequireAuth />,
         children: [
           {
-            index: true,
-            element: <Dashboard />,
-          },
-          {
-            path: paths.transactions,
-            element: <Dashboard />,
+            element: (
+              <DashboardProvider>
+                <MainLayout>
+                  <Suspense fallback={<LoadingProgress />}>
+                    <Outlet />
+                  </Suspense>
+                </MainLayout>
+              </DashboardProvider>
+            ),
+            children: [
+              { index: true, element: <Dashboard /> },
+              { path: paths.transactions, element: <Dashboard /> },
+            ],
           },
         ],
       },
@@ -57,18 +57,9 @@ export const routes = [
             path: paths.login,
             element: <LoginPage />,
           },
-          {
-            path: paths.signup,
-            element: <SignUpPage />,
-          },
-          {
-            path: paths.forgetPassword,
-            element: <ForgetPasswordPage />,
-          },
-          {
-            path: paths.resetPassword,
-            element: <ResetPasswordPage />,
-          },
+          { path: paths.signup, element: <Navigate to={paths.login} replace /> },
+          { path: paths.forgetPassword, element: <Navigate to={paths.login} replace /> },
+          { path: paths.resetPassword, element: <Navigate to={paths.login} replace /> },
         ],
       },
       {

@@ -4,43 +4,20 @@ import CoinIcon from 'components/icons/card-icons/CoinIcon';
 import CreditCardIcon from 'components/icons/card-icons/CreditCardIcon';
 import PaypalIcon from 'components/icons/card-icons/PaypalIcon';
 import { currencyFormat } from 'helpers/utils';
-
-/* ---------------------------- Transaction Data ---------------------------- */
-const transactions = [
-  {
-    id: 1,
-    icon: CreditCardIcon,
-    bgcolor: 'warning.light',
-    title: 'Deposit from my Card',
-    type: 'debit',
-    date: '25 January 2021',
-    amount: 500,
-    amountColor: 'error.main',
-  },
-  {
-    id: 2,
-    icon: PaypalIcon,
-    bgcolor: 'neutral.light',
-    title: 'Deposit Paypal',
-    type: 'credit',
-    date: '25 January 2021',
-    amount: 500,
-    amountColor: 'success.main',
-  },
-  {
-    id: 3,
-    icon: CoinIcon,
-    bgcolor: 'success.lighter',
-    title: 'Jemi Wilson',
-    type: 'credit',
-    date: '25 January 2021',
-    amount: 500,
-    amountColor: 'success.main',
-  },
-];
-/* -------------------------------------------------------------------------- */
+import { useDashboard } from 'providers/DashboardProvider';
 
 const RecentTransactions = () => {
+  const { transactions: apiTransactions } = useDashboard();
+  const transactions = apiTransactions.slice(0, 3).map((transaction, index) => ({
+    id: transaction.transactionId,
+    icon: index === 0 ? CreditCardIcon : index === 1 ? PaypalIcon : CoinIcon,
+    bgcolor: index === 0 ? 'warning.light' : 'neutral.light',
+    title: transaction.remarks || transaction.referenceNumber,
+    type: transaction.movement === 'DEPOSIT' ? 'credit' : 'debit',
+    date: new Date(transaction.transactionAt).toLocaleDateString(),
+    amount: transaction.amount,
+    amountColor: transaction.movement === 'DEPOSIT' ? 'success.main' : 'error.main',
+  }));
   return (
     <CardContainer title="Recent Transactions">
       <Card sx={{ p: { xs: 0.5, xl: 1 } }}>
@@ -125,6 +102,9 @@ const RecentTransactions = () => {
                 </Stack>
               </ListItem>
             ),
+          )}
+          {!transactions.length && (
+            <ListItem sx={{ color: 'text.secondary' }}>No recent transactions.</ListItem>
           )}
         </List>
       </Card>

@@ -2,8 +2,6 @@ import { SvgIconProps } from '@mui/material';
 import CreditCardIcon from 'components/icons/menu-icons/CreditCardIcon';
 import HomeIcon from 'components/icons/menu-icons/HomeIcon';
 import SettingsIcon from 'components/icons/menu-icons/SettingsIcon';
-import SignInIcon from 'components/icons/menu-icons/SignInIcon';
-import SignUpIcon from 'components/icons/menu-icons/SignUpIcon';
 import TransferIcon from 'components/icons/menu-icons/TransferIcon';
 import UserIcon from 'components/icons/menu-icons/UserIcon';
 
@@ -13,10 +11,6 @@ export enum linkEnum {
   Accounts = 'accounts',
   Credit = 'credit-cards',
   Setting = 'Setting',
-  Login = 'login',
-  Signup = 'sign-up',
-  ForgetPassword = 'forget-password',
-  ResetPassword = 'reset-password',
 }
 
 export interface MenuLinkType {
@@ -37,9 +31,9 @@ export const menuLinks: MenuLinkType[] = [
   {
     id: 2,
     title: linkEnum.Transactions,
-    link: '#!',
+    link: '/transactions',
     icon: TransferIcon,
-    available: false,
+    available: true,
   },
   {
     id: 3,
@@ -61,19 +55,5 @@ export const menuLinks: MenuLinkType[] = [
     link: '#!',
     icon: SettingsIcon,
     available: false,
-  },
-  {
-    id: 9,
-    title: linkEnum.Login,
-    link: '/authentication/login',
-    icon: SignInIcon,
-    available: true,
-  },
-  {
-    id: 10,
-    title: linkEnum.Signup,
-    link: '/authentication/sign-up',
-    icon: SignUpIcon,
-    available: true,
   },
 ];

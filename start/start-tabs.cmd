@@ -32,7 +32,7 @@ call :start_tab "Authentication Service" "%ROOT%\backend\prestige-authentication
 call :wait_http "Authentication Service" "http://localhost:8083/.well-known/jwks.json" || exit /b 1
 
 call :start_tab "Customer Service" "%ROOT%\backend\customer-service"
-call :start_tab "Transfer Service" "%ROOT%\backend\transferservice"
+call :start_tab "Transfer Service" "%ROOT%\backend\transferservice" "-Dspring-boot.run.profiles=jwt"
 call :start_tab "Public Info Service" "%ROOT%\backend\public-info"
 
 call :wait_http "Customer Service" "http://localhost:8001/actuator/health" || exit /b 1
@@ -53,11 +53,11 @@ echo Eureka:   http://localhost:8761
 exit /b 0
 
 :start_first_tab
-start "Prestige Services" wt -w "%WINDOW%" --title "%~1" -d "%~2" cmd /k "mvn -q clean spring-boot:run"
+start "Prestige Services" wt -w "%WINDOW%" --title "%~1" -d "%~2" cmd /k "mvn -q clean spring-boot:run %~3"
 exit /b 0
 
 :start_tab
-wt -w "%WINDOW%" new-tab --title "%~1" -d "%~2" cmd /k "mvn -q clean spring-boot:run"
+wt -w "%WINDOW%" new-tab --title "%~1" -d "%~2" cmd /k "mvn -q clean spring-boot:run %~3"
 exit /b 0
 
 :wait_http

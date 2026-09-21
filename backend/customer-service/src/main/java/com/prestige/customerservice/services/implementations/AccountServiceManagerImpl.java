@@ -8,6 +8,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class AccountServiceManagerImpl
@@ -23,23 +25,29 @@ public class AccountServiceManagerImpl
 
     @Override
     public AccountQuery getMyAccount(Long customerId) {
-
-        Account account = (Account) accountRepository
-                .findByCustomer_CustomerId(customerId)
+        return getMyAccounts(customerId)
                 .stream()
                 .findFirst()
                 .orElseThrow(() ->
                         new EntityNotFoundException("Account not found"));
+    }
 
+    @Override
+    public List<AccountQuery> getMyAccounts(Long customerId) {
+        return accountRepository.findAllByCustomer_CustomerIdOrderByAccountCreatedAtAsc(customerId)
+                .stream()
+                .map(this::toQuery)
+                .toList();
+    }
+
+    private AccountQuery toQuery(Account account) {
         AccountQuery query = new AccountQuery();
-
         query.setAccountNumber(account.getAccountNumber());
         query.setAccountType(account.getAccountType().name());
         query.setBalance(account.getAvailableBalance());
         query.setTransferLimit(account.getTransferLimit());
         query.setMinimumBalance(account.getMinimumBalance());
         query.setStatus(account.getAccountStatus().name());
-
         return query;
     }
 }

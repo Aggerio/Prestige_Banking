@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "Prestige Banking Backend - Local",
+    "description": "## Setup\n1. Run `backend/schema.sql` once against an empty Oracle schema.\n2. Start Eureka, authentication service, customer service, transfer service, then API gateway.\n3. Set `baseUrl`, `accessToken`, and account variables. The original password hashes are intentionally preserved, so obtain the JWT using an existing known account credential.\n4. Run the read requests in order.\n\nThe collection verifies account/card isolation, masked card responses, transaction movement filtering, and dashboard analytics. It is safe to rerun the read-only requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "accessToken", "value": "" },
+    { "key": "customerId", "value": "101" },
+    { "key": "accountNumber", "value": "PBS1000001" },
+    { "key": "secondAccountNumber", "value": "PBS1000006" },
+    { "key": "foreignAccountNumber", "value": "PBS1000002" },
+    { "key": "months", "value": "6" }
+  ],
+  "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+  "item": [
+    {
+      "name": "Gateway health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/actuator/health" },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('gateway is healthy', () => pm.response.to.have.status(200));"] } }]
+    },
+    {
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "List my accounts",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/accounts" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('returns owned accounts', () => pm.response.to.have.status(200));", "const body = pm.response.json();", "pm.expect(body).to.be.an('array').with.length.greaterThan(1);", "pm.expect(body.map(a => a.accountNumber)).to.include(pm.collectionVariables.get('accountNumber'));", "pm.expect(body.map(a => a.accountNumber)).to.include(pm.collectionVariables.get('secondAccountNumber'));", "pm.expect(JSON.stringify(body)).not.to.include('transactionPasswordHash');"] } }]
+        },
+        {
+          "name": "Get backward-compatible account summary",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/accounts/me" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('returns one account summary', () => pm.response.to.have.status(200));", "pm.expect(pm.response.json()).to.have.property('accountNumber');"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Cards",
+      "item": [
+        {
+          "name": "List my cards",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/cards" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('returns only safe card fields', () => pm.response.to.have.status(200));", "const cards = pm.response.json();", "pm.expect(cards).to.be.an('array').with.length.greaterThan(2);", "cards.forEach(card => { pm.expect(card.maskedPan).to.include('****'); pm.expect(card).not.to.have.property('cvvHash'); pm.expect(card).not.to.have.property('cvv'); });"] } }]
+        },
+        {
+          "name": "Filter cards by owned account",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/cards?accountNumber={{accountNumber}}" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('filters owned cards', () => pm.response.to.have.status(200));", "pm.response.json().forEach(card => pm.expect(card.accountNumber).to.eql(pm.collectionVariables.get('accountNumber')));"] } }]
+        },
+        {
+          "name": "Reject foreign account card filter",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/cards?accountNumber={{foreignAccountNumber}}" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('blocks another customer account', () => pm.response.to.have.status(403));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "Transactions and analytics",
+      "item": [
+        {
+          "name": "All account transactions",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/accounts/{{accountNumber}}/transactions?page=0&size=5" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('returns paginated transaction details', () => pm.response.to.have.status(200));", "const body = pm.response.json();", "pm.expect(body).to.have.property('items');", "body.items.forEach(item => { pm.expect(item).to.have.property('transactionId'); pm.expect(['DEPOSIT', 'WITHDRAWAL']).to.include(item.movement); });"] } }]
+        },
+        {
+          "name": "Deposit transactions",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/accounts/{{accountNumber}}/transactions?movement=DEPOSIT&page=0&size=20" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('filters deposits', () => pm.response.to.have.status(200));", "pm.response.json().items.forEach(item => { pm.expect(item.movement).to.eql('DEPOSIT'); pm.expect(item.transactionType).to.eql('CREDIT'); });"] } }]
+        },
+        {
+          "name": "Withdrawal transactions",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/accounts/{{accountNumber}}/transactions?movement=WITHDRAWAL&page=0&size=20" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('filters withdrawals', () => pm.response.to.have.status(200));", "pm.response.json().items.forEach(item => { pm.expect(item.movement).to.eql('WITHDRAWAL'); pm.expect(item.transactionType).to.eql('DEBIT'); });"] } }]
+        },
+        {
+          "name": "Dashboard analytics",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/accounts/{{accountNumber}}/analytics?months={{months}}" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('returns dashboard aggregates', () => pm.response.to.have.status(200));", "const body = pm.response.json();", "pm.expect(body.weeklyActivity).to.have.length(7);", "pm.expect(body.monthlyExpenses).to.have.length(Number(pm.collectionVariables.get('months')));", "pm.expect(body.balanceHistory).to.have.length(Number(pm.collectionVariables.get('months')));", "body.monthlyExpenses.forEach(point => pm.expect(Number(point.withdrawals)).to.be.at.least(0));"] } }]
+        },
+        {
+          "name": "Reject foreign account analytics",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/accounts/{{foreignAccountNumber}}/analytics?months=6" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('blocks another customer account', () => pm.response.to.have.status(403));"] } }]
+        }
+      ]
+    }
+  ]
+}

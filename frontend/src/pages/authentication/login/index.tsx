@@ -1,4 +1,4 @@
-import { Box, Button, Card, Container, Divider, Link, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import LoginForm from 'components/sections/authentication/LoginForm';
 
@@ -29,17 +29,10 @@ const LoginPage = () => {
                 fontSize: { xs: 'subtitle1.fontSize', sm: 'body2.fontSize' },
               }}
             >
-              Don’t have an account?
-              <Link
-                href="/authentication/sign-up"
-                variant="subtitle2"
-                sx={{ ml: 0.75, '&:hover': { color: 'primary.light' } }}
-              >
-                Create One Now!
-              </Link>
+              Sign in with your customer ID and password.
             </Typography>
 
-            <Stack direction="row" spacing={{ xs: 1, sm: 2 }}>
+            <Stack direction="row" spacing={{ xs: 1, sm: 2 }} sx={{ display: 'none' }}>
               <Button fullWidth size="large" color="neutral" variant="outlined" sx={{ p: 1 }}>
                 <IconifyIcon icon="eva:google-fill" color="error.main" />
               </Button>

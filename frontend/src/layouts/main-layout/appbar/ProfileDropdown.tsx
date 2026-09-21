@@ -13,6 +13,9 @@ import ProfileImage from 'assets/avatar.jpg';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { MouseEvent, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
+import { useAuth } from 'providers/AuthProvider';
+import { useDashboard } from 'providers/DashboardProvider';
+import { useNavigate } from 'react-router-dom';
 
 /* ------------------------Profile dropdown Data --------------------------- */
 const profileData = [
@@ -27,6 +30,9 @@ const profileData = [
 /* -------------------------------------------------------------------------- */
 const ProfileDropdown = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { logout } = useAuth();
+  const { customer } = useDashboard();
+  const navigate = useNavigate();
 
   const handleOpenDropdown = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -78,20 +84,10 @@ const ProfileDropdown = () => {
             <Avatar src={ProfileImage} alt="Profile Image" sx={{ width: 65, height: 65 }} />
             <Box>
               <Typography variant="subtitle2" color="text.primary" fontWeight={600}>
-                Charlene Reed
+                {customer?.customerName || 'Customer'}
               </Typography>
               <Typography variant="caption" color="textSecondary">
-                Designer
-              </Typography>
-              <Typography
-                variant="subtitle2"
-                color="textSecondary"
-                display="flex"
-                alignItems="center"
-                gap={0.5}
-              >
-                <IconifyIcon icon="majesticons:mail-line" />
-                info@dashbank.com
+                {customer?.status || 'ACTIVE'}
               </Typography>
             </Box>
           </Stack>
@@ -148,7 +144,14 @@ const ProfileDropdown = () => {
             </Box>
           ))}
           <Box mt={1.25}>
-            <Button onClick={handleClose} variant="outlined" color="error" fullWidth>
+            <Button
+              onClick={() => {
+                void logout().finally(() => navigate('/authentication/login'));
+              }}
+              variant="outlined"
+              color="error"
+              fullWidth
+            >
               Logout
             </Button>
           </Box>

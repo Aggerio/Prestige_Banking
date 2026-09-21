@@ -6,7 +6,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record TransactionResponse(
+        Long transactionId,
         String referenceNumber,
+        String movement,
         TransactionType transactionType,
         BigDecimal amount,
         LocalDateTime transactionAt,

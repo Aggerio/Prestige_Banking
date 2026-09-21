@@ -18,12 +18,12 @@ spring:
             - id: customer-service
               uri: lb://CUSTOMER-SERVICE
               predicates:
-                - Path=/api/v1/customers/**,/api/v1/accounts/me
+                - Path=/api/v1/customers/**,/api/v1/accounts/me,/api/v1/accounts,/api/v1/cards/**
 
             - id: transfer-service
               uri: lb://TRANSFER-SERVICE
               predicates:
-                - Path=/api/v1/transfers/**,/api/v1/accounts/*/transactions
+                - Path=/api/v1/transfers/**,/api/v1/accounts/*/transactions,/api/v1/accounts/*/analytics
 
             - id: public-information-service
               uri: lb://PUBLIC-INFO-SERVICE

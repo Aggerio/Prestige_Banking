@@ -1,26 +1,44 @@
 import { Button, Grid, IconButton, InputAdornment, Link, TextField } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { useBreakpoints } from 'providers/useBreakpoints';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'providers/AuthProvider';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login, error } = useAuth();
+  const [customerId, setCustomerId] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { up } = useBreakpoints();
   const upSM = up('sm');
-  const handleClick = () => {
-    navigate('/');
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!customerId || !password) return;
+    setSubmitting(true);
+    try {
+      await login(Number(customerId), password);
+      navigate('/dashboard');
+    } catch {
+      /* provider supplies message */
+    } finally {
+      setSubmitting(false);
+    }
   };
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <Grid container spacing={3} sx={{ mb: 2.5 }}>
         <Grid item xs={12}>
           <TextField
             fullWidth
             size={upSM ? 'medium' : 'small'}
-            name="email"
-            label="Email address"
+            name="customerId"
+            label="Customer ID"
+            type="number"
+            value={customerId}
+            onChange={(event) => setCustomerId(event.target.value)}
           />
         </Grid>
         <Grid item xs={12}>
@@ -30,6 +48,8 @@ const LoginForm = () => {
             name="password"
             label="Password"
             type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -42,24 +62,24 @@ const LoginForm = () => {
           />
         </Grid>
       </Grid>
-      <Grid container justifyContent="flex-end" sx={{ my: 3 }}>
-        <Grid item>
-          <Link href="/authentication/forget-password" variant="subtitle2" underline="hover">
-            Forgot password?
-          </Link>
+      {error && (
+        <Grid container sx={{ mt: 2 }}>
+          <Grid item>
+            <Link color="error.main">{error}</Link>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
       <Button
         fullWidth
         size={upSM ? 'large' : 'medium'}
         type="submit"
         variant="contained"
         color="primary"
-        onClick={handleClick}
+        disabled={submitting || !customerId || !password}
       >
         Login
       </Button>
-    </>
+    </form>
   );
 };
 

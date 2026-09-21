@@ -23,7 +23,7 @@ public class GatewaySecurityConfig {
     @Bean
     CorsConfigurationSource cors() {
         CorsConfiguration c = new CorsConfiguration();
-        c.setAllowedOrigins(List.of("http://localhost:5173"));
+        c.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
         c.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS"));
         c.setAllowedHeaders(List.of("Authorization", "Content-Type", "Idempotency-Key"));
         c.setAllowCredentials(true);

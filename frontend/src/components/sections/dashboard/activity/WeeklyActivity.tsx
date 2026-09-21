@@ -1,23 +1,21 @@
 import CardContainer from 'components/common/CardContainter';
 import WeeklyActivityChart from 'components/sections/dashboard/activity/WeeklyActivityChart';
-import { TransactionDataType, transactionData } from 'data/activity-chart';
+import { TransactionDataType } from 'data/activity-chart';
 import ReactECharts from 'echarts-for-react';
 import { useChartResize } from 'providers/useEchartResize';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
+import { useDashboard } from 'providers/DashboardProvider';
 
 const WeeklyActivity = () => {
   const chartRef = useRef<ReactECharts>(null);
-  const [chartData, setChartData] = useState<TransactionDataType>([]);
+  const { analytics } = useDashboard();
+  const chartData: TransactionDataType =
+    analytics?.weeklyActivity.map((point) => ({
+      day: new Date(point.date).toLocaleDateString(undefined, { weekday: 'short' }),
+      deposit: point.deposits,
+      withdraw: point.withdrawals,
+    })) || [];
   useChartResize(chartRef);
-  // Fetch sales data
-  useEffect(() => {
-    const fetchData = () => {
-      setChartData(transactionData);
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <CardContainer title="Weekly Activity">
       <WeeklyActivityChart chartRef={chartRef} seriesData={chartData} />

@@ -42,7 +42,7 @@ call :wait_http "Public Info Service" "http://localhost:8004/actuator/health" ||
 call :start_tab "API Gateway" "%ROOT%\backend\prestige-api-gateway"
 call :wait_http "API Gateway" "http://localhost:8080/.well-known/jwks.json" || exit /b 1
 
-wt -w "%WINDOW%" new-tab --title "Prestige Frontend" -d "%ROOT%\frontend" cmd /k "npm run dev -- --host 0.0.0.0 --port 3000 --strictPort"
+wt -w "%WINDOW%" new-tab --title "Prestige Frontend" -d "%ROOT%\frontend" cmd /k "set PRESTIGE_STACK=1&&npm run dev -- --host 0.0.0.0 --port 3000 --strictPort"
 call :wait_http "Frontend" "http://localhost:3000/" || exit /b 1
 
 echo.
@@ -53,11 +53,11 @@ echo Eureka:   http://localhost:8761
 exit /b 0
 
 :start_first_tab
-start "Prestige Services" wt -w "%WINDOW%" --title "%~1" -d "%~2" cmd /k "mvn -q clean spring-boot:run %~3"
+start "Prestige Services" wt -w "%WINDOW%" --title "%~1" -d "%~2" cmd /k "set PRESTIGE_STACK=1&&mvn -q clean spring-boot:run %~3"
 exit /b 0
 
 :start_tab
-wt -w "%WINDOW%" new-tab --title "%~1" -d "%~2" cmd /k "mvn -q clean spring-boot:run %~3"
+wt -w "%WINDOW%" new-tab --title "%~1" -d "%~2" cmd /k "set PRESTIGE_STACK=1&&mvn -q clean spring-boot:run %~3"
 exit /b 0
 
 :wait_http

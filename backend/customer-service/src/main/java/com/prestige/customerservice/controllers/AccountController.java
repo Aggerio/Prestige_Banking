@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/accounts")
 public class AccountController {
@@ -25,5 +27,10 @@ public class AccountController {
             @AuthenticationPrincipal Jwt jwt
     ) {
         return accountServiceManager.getMyAccount(Long.valueOf(jwt.getSubject()));
+    }
+
+    @GetMapping
+    public List<AccountQuery> getMyAccounts(@AuthenticationPrincipal Jwt jwt) {
+        return accountServiceManager.getMyAccounts(Long.valueOf(jwt.getSubject()));
     }
 }

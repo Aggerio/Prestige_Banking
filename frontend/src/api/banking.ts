@@ -44,6 +44,18 @@ export type Analytics = {
   monthlyExpenses: { month: string; withdrawals: number }[];
   balanceHistory: { month: string; closingBalance: number }[];
 };
+export type PublicContent = {
+  contentId: number;
+  contentType: 'OFFER' | 'INVESTOR' | 'ABOUT_US' | 'CONTACT_US';
+  contentKey: string;
+  title: string;
+  contentBody: string;
+  imageUrl: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  displayOrder: number;
+};
+export type PublicHome = { bankName: string; welcomeMessage: string; offers: PublicContent[] };
 
 export const login = (customerId: number, password: string) =>
   client.post('/api/v1/auth/login', { customerId, password });
@@ -55,6 +67,8 @@ export const getTransactions = (accountNumber: string, params: Record<string, un
   client.get<TransactionPage>(`/api/v1/accounts/${accountNumber}/transactions`, { params });
 export const getAnalytics = (accountNumber: string) =>
   client.get<Analytics>(`/api/v1/accounts/${accountNumber}/analytics`, { params: { months: 12 } });
+export const getPublicHome = () => client.get<PublicHome>('/api/v1/public/home');
+export const getInvestors = () => client.get<PublicContent[]>('/api/v1/public/investors');
 export const createTransfer = (payload: {
   sourceAccountNumber: string;
   destinationAccountNumber: string;

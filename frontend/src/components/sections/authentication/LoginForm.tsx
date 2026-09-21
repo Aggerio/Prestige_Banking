@@ -20,7 +20,7 @@ const LoginForm = () => {
     setSubmitting(true);
     try {
       await login(Number(customerId), password);
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       /* provider supplies message */
     } finally {

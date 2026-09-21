@@ -24,7 +24,7 @@ export const menuLinks: MenuLinkType[] = [
   {
     id: 1,
     title: linkEnum.Dashboard,
-    link: '/',
+    link: '/dashboard',
     icon: HomeIcon,
     available: true,
   },

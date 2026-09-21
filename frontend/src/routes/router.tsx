@@ -9,6 +9,8 @@ const App = lazy(() => import('App'));
 const MainLayout = lazy(() => import('layouts/main-layout'));
 const AuthLayout = lazy(() => import('layouts/auth-layout'));
 const Dashboard = lazy(() => import('pages/dashboard'));
+const TransactionsPage = lazy(() => import('pages/transactions'));
+const PublicHomePage = lazy(() => import('pages/public-home'));
 const Spinner = lazy(() => import('components/loading/Splash'));
 const LoadingProgress = lazy(() => import('components/loading/LoadingProgress'));
 
@@ -28,8 +30,8 @@ export const routes = [
       </Suspense>
     ),
     children: [
+      { index: true, element: <PublicHomePage /> },
       {
-        path: paths.default,
         element: <RequireAuth />,
         children: [
           {
@@ -43,8 +45,8 @@ export const routes = [
               </DashboardProvider>
             ),
             children: [
-              { index: true, element: <Dashboard /> },
-              { path: paths.transactions, element: <Dashboard /> },
+              { path: paths.dashboard, element: <Dashboard /> },
+              { path: paths.transactions, element: <TransactionsPage /> },
             ],
           },
         ],

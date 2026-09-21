@@ -21,13 +21,13 @@ const fragmentShader = `
     float first = wave(uv, vec2(0.26, 0.36), 0.55);
     float second = wave(uv, vec2(1.20, 0.88), 0.42);
     float ribbon = sin((uv.x + uv.y * 0.6) * 5.0 + u_time * 0.18) * 0.5 + 0.5;
-    vec3 base = vec3(0.025, 0.045, 0.19);
-    vec3 indigo = vec3(0.13, 0.12, 0.95);
-    vec3 violet = vec3(0.54, 0.12, 0.98);
-    vec3 cyan = vec3(0.04, 0.80, 0.90);
-    vec3 color = mix(base, indigo, first * 0.52);
-    color = mix(color, violet, second * 0.34);
-    color += cyan * ribbon * 0.10;
+    vec3 base = vec3(0.035, 0.06, 0.16);
+    vec3 navy = vec3(0.18, 0.24, 0.51);
+    vec3 blue = vec3(0.34, 0.45, 0.67);
+    vec3 mist = vec3(0.78, 0.84, 0.93);
+    vec3 color = mix(base, navy, first * 0.60);
+    color = mix(color, blue, second * 0.38);
+    color += mist * ribbon * 0.08;
     gl_FragColor = vec4(color, 1.0);
   }
 `;

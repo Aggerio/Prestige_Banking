@@ -68,7 +68,7 @@ const BankingPhone = () => (
               width: 26,
               height: 26,
               borderRadius: 1.75,
-              background: 'linear-gradient(135deg, #3614dc, #8d31f5)',
+              background: 'linear-gradient(135deg, #2D3E81, #5B74AA)',
             }}
           />
           <Typography fontWeight={700}>Hey, Aarav</Typography>
@@ -81,7 +81,7 @@ const BankingPhone = () => (
           p: 2.25,
           borderRadius: 4,
           color: 'common.white',
-          background: 'linear-gradient(135deg, #19046d 0%, #4521dc 58%, #832dee 100%)',
+          background: 'linear-gradient(135deg, #192657 0%, #2D3E81 58%, #5B74AA 100%)',
           boxShadow: '0 16px 30px rgba(51, 26, 183, .25)',
         }}
       >
@@ -108,7 +108,7 @@ const BankingPhone = () => (
           ['solar:chart-2-bold', 'Invest'],
         ].map(([icon, label]) => (
           <Stack key={label} alignItems="center" gap={0.5} sx={{ flex: 1 }}>
-            <Box sx={{ p: 1.1, borderRadius: 2.5, bgcolor: '#ebe8ff', color: '#3717db' }}>
+            <Box sx={{ p: 1.1, borderRadius: 2.5, bgcolor: '#E8EDF6', color: '#2D3E81' }}>
               <IconifyIcon icon={icon} width={20} />
             </Box>
             <Typography variant="caption">{label}</Typography>
@@ -181,7 +181,12 @@ const PublicHomePage = () => {
           py={3}
         >
           <Logo />
-          <Button component={RouterLink} to="/authentication/login" variant="contained">
+          <Button
+            component={RouterLink}
+            to="/authentication/login"
+            variant="contained"
+            sx={{ bgcolor: '#2D3E81', '&:hover': { bgcolor: '#1D2A60' } }}
+          >
             Sign in
           </Button>
         </Stack>
@@ -197,7 +202,7 @@ const PublicHomePage = () => {
       >
         <ShaderBackdrop />
         <Box
-          sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(5, 10, 49, 0.22)', zIndex: -1 }}
+          sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(10, 18, 48, 0.26)', zIndex: -1 }}
         />
         <Container maxWidth="xl" sx={{ position: 'relative', py: { xs: 8, md: 12 } }}>
           <Grid container spacing={{ xs: 6, md: 5 }} alignItems="center">
@@ -243,7 +248,7 @@ const PublicHomePage = () => {
                   to="/authentication/login"
                   size="large"
                   variant="contained"
-                  color="secondary"
+                  sx={{ bgcolor: '#F7F2E9', color: '#2D3E81', '&:hover': { bgcolor: '#E7EDF7' } }}
                 >
                   Access your account
                 </Button>
@@ -266,7 +271,7 @@ const PublicHomePage = () => {
                     width: 210,
                     height: 210,
                     borderRadius: '50%',
-                    bgcolor: 'secondary.main',
+                    bgcolor: '#6B84B8',
                     filter: 'blur(64px)',
                     opacity: 0.4,
                     top: 80,
@@ -384,7 +389,7 @@ const PublicHomePage = () => {
             gap={2}
           >
             <Box>
-              <Typography variant="overline" color="secondary.main" letterSpacing={2}>
+              <Typography variant="overline" sx={{ color: '#5872AA' }} letterSpacing={2}>
                 CURATED FOR YOU
               </Typography>
               <Typography variant="h2" color="primary.darker">
@@ -409,8 +414,8 @@ const PublicHomePage = () => {
                     color: index === 0 ? 'common.white' : 'primary.darker',
                     background:
                       index === 0
-                        ? 'linear-gradient(135deg, #160850 0%, #3817c8 58%, #902be8 100%)'
-                        : 'linear-gradient(145deg, #ffffff 0%, #f0efff 100%)',
+                        ? 'linear-gradient(135deg, #152351 0%, #2D3E81 58%, #617CB1 100%)'
+                        : 'linear-gradient(145deg, #FFFFFF 0%, #EFF3F9 100%)',
                     boxShadow: index === 0 ? '0 22px 50px rgba(57, 25, 197, .24)' : 'none',
                   }}
                 >
@@ -477,7 +482,7 @@ const PublicHomePage = () => {
           p={{ xs: 3, md: 5 }}
           borderRadius={6}
           sx={{
-            bgcolor: '#09072a',
+            bgcolor: '#142251',
             color: 'common.white',
             overflow: 'hidden',
             position: 'relative',
@@ -489,7 +494,7 @@ const PublicHomePage = () => {
               width: 380,
               height: 380,
               borderRadius: '50%',
-              bgcolor: 'secondary.main',
+              bgcolor: '#6B84B8',
               filter: 'blur(110px)',
               opacity: 0.38,
               right: -160,
@@ -517,7 +522,7 @@ const PublicHomePage = () => {
             <Box
               sx={{ alignSelf: { md: 'center' }, display: 'flex', alignItems: 'center', gap: 1 }}
             >
-              <IconifyIcon icon="solar:graph-up-bold" width={30} color="#8e64d4" />
+              <IconifyIcon icon="solar:graph-up-bold" width={30} color="#A9BBD8" />
               <Typography fontWeight={700}>Smart decisions start here</Typography>
             </Box>
           </Stack>

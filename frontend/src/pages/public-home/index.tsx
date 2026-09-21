@@ -17,30 +17,6 @@ import { apiError } from 'api/client';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
-const ContentCard = ({ content, icon }: { content: PublicContent; icon: string }) => (
-  <Card sx={{ height: 1, p: 3, borderRadius: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
-    <Stack direction="row" justifyContent="space-between" alignItems="center">
-      <Box sx={{ p: 1.25, borderRadius: 2.5, bgcolor: 'primary.lighter', color: 'primary.main' }}>
-        <IconifyIcon icon={icon} width={24} />
-      </Box>
-      {content.imageUrl && (
-        <Box
-          component="img"
-          src={content.imageUrl}
-          alt=""
-          sx={{ width: 48, height: 48, objectFit: 'contain' }}
-        />
-      )}
-    </Stack>
-    <Typography variant="h5" color="primary.darker">
-      {content.title}
-    </Typography>
-    <Typography color="text.secondary" sx={{ lineHeight: 1.7, flexGrow: 1 }}>
-      {content.contentBody}
-    </Typography>
-  </Card>
-);
-
 const BankingPhone = () => (
   <Box
     aria-label="Preview of the digital banking experience"
@@ -348,15 +324,144 @@ const PublicHomePage = () => {
             <CircularProgress />
           </Stack>
         )}
-        <Box id="offers" sx={{ scrollMarginTop: 24 }}>
-          <Typography variant="h3">Offers worth a closer look</Typography>
-          <Typography color="text.secondary" mt={1}>
-            Current opportunities from {home?.bankName || 'Prestige Banking'}.
-          </Typography>
-          <Grid container spacing={3} mt={1}>
-            {home?.offers.map((offer) => (
-              <Grid item xs={12} md={4} key={offer.contentId}>
-                <ContentCard content={offer} icon="solar:tag-price-bold" />
+        <Card
+          sx={{
+            mt: { xs: -2, md: -5 },
+            position: 'relative',
+            zIndex: 1,
+            borderRadius: 4,
+            p: { xs: 2, md: 2.5 },
+            boxShadow: '0 18px 45px rgba(41, 25, 125, .10)',
+          }}
+        >
+          <Grid container>
+            {[
+              ['solar:bolt-bold', 'Instant by default', 'Move money in seconds'],
+              ['solar:shield-check-bold', 'Always protected', 'Security at every step'],
+              ['solar:chart-square-bold', 'Clarity, not clutter', 'Your money in focus'],
+            ].map(([icon, title, body], index) => (
+              <Grid
+                item
+                xs={12}
+                md={4}
+                key={title}
+                sx={{ borderLeft: { md: index ? 1 : 0 }, borderColor: 'divider' }}
+              >
+                <Stack
+                  direction="row"
+                  gap={1.5}
+                  px={{ md: 2 }}
+                  py={{ xs: 1.25, md: 0 }}
+                  alignItems="center"
+                >
+                  <Box
+                    sx={{
+                      p: 1,
+                      borderRadius: 2,
+                      bgcolor: 'primary.lighter',
+                      color: 'primary.main',
+                    }}
+                  >
+                    <IconifyIcon icon={icon} width={20} />
+                  </Box>
+                  <Box>
+                    <Typography fontWeight={700}>{title}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {body}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Grid>
+            ))}
+          </Grid>
+        </Card>
+
+        <Box id="offers" sx={{ scrollMarginTop: 24, mt: { xs: 7, md: 10 } }}>
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            justifyContent="space-between"
+            alignItems={{ md: 'end' }}
+            gap={2}
+          >
+            <Box>
+              <Typography variant="overline" color="secondary.main" letterSpacing={2}>
+                CURATED FOR YOU
+              </Typography>
+              <Typography variant="h2" color="primary.darker">
+                Offers with real momentum.
+              </Typography>
+            </Box>
+            <Typography color="text.secondary" maxWidth={330}>
+              Current opportunities from {home?.bankName || 'Prestige Banking'}, chosen to make your
+              next move simpler.
+            </Typography>
+          </Stack>
+          <Grid container spacing={2.5} mt={1}>
+            {home?.offers.map((offer, index) => (
+              <Grid item xs={12} md={index === 0 ? 7 : 5} key={offer.contentId}>
+                <Card
+                  sx={{
+                    minHeight: { md: 260 },
+                    p: { xs: 3, md: 4 },
+                    borderRadius: 5,
+                    overflow: 'hidden',
+                    position: 'relative',
+                    color: index === 0 ? 'common.white' : 'primary.darker',
+                    background:
+                      index === 0
+                        ? 'linear-gradient(135deg, #160850 0%, #3817c8 58%, #902be8 100%)'
+                        : 'linear-gradient(145deg, #ffffff 0%, #f0efff 100%)',
+                    boxShadow: index === 0 ? '0 22px 50px rgba(57, 25, 197, .24)' : 'none',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      width: 220,
+                      height: 220,
+                      borderRadius: '50%',
+                      right: -75,
+                      top: -85,
+                      bgcolor: index === 0 ? 'rgba(255,255,255,.12)' : 'primary.lighter',
+                    }}
+                  />
+                  <Stack position="relative" sx={{ height: 1 }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Box
+                        sx={{
+                          p: 1.25,
+                          borderRadius: 2.5,
+                          bgcolor: index === 0 ? 'rgba(255,255,255,.14)' : 'primary.lighter',
+                          color: index === 0 ? 'common.white' : 'primary.main',
+                        }}
+                      >
+                        <IconifyIcon icon="solar:tag-price-bold" width={25} />
+                      </Box>
+                      <Typography variant="caption" sx={{ opacity: 0.75 }}>
+                        FEATURED OFFER
+                      </Typography>
+                    </Stack>
+                    <Typography variant="h4" mt={4}>
+                      {offer.title}
+                    </Typography>
+                    <Typography mt={1.25} sx={{ lineHeight: 1.7, opacity: index === 0 ? 0.78 : 1 }}>
+                      {offer.contentBody}
+                    </Typography>
+                    <Button
+                      component={RouterLink}
+                      to="/authentication/login"
+                      endIcon={<IconifyIcon icon="solar:arrow-right-up-linear" />}
+                      sx={{
+                        mt: 'auto',
+                        alignSelf: 'start',
+                        px: 0,
+                        color: index === 0 ? 'common.white' : 'primary.main',
+                      }}
+                    >
+                      Discover more
+                    </Button>
+                  </Stack>
+                </Card>
               </Grid>
             ))}
             {home && !home.offers.length && (
@@ -367,20 +472,82 @@ const PublicHomePage = () => {
           </Grid>
         </Box>
 
-        <Box mt={{ xs: 7, md: 10 }}>
-          <Typography variant="h3">Investment opportunities</Typography>
-          <Typography color="text.secondary" mt={1}>
-            Explore the investment updates published by our public-info service.
-          </Typography>
-          <Grid container spacing={3} mt={1}>
+        <Box
+          mt={{ xs: 8, md: 12 }}
+          p={{ xs: 3, md: 5 }}
+          borderRadius={6}
+          sx={{
+            bgcolor: '#09072a',
+            color: 'common.white',
+            overflow: 'hidden',
+            position: 'relative',
+          }}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              width: 380,
+              height: 380,
+              borderRadius: '50%',
+              bgcolor: 'secondary.main',
+              filter: 'blur(110px)',
+              opacity: 0.38,
+              right: -160,
+              bottom: -210,
+            }}
+          />
+          <Stack
+            position="relative"
+            direction={{ xs: 'column', md: 'row' }}
+            justifyContent="space-between"
+            gap={3}
+          >
+            <Box maxWidth={530}>
+              <Typography variant="overline" sx={{ color: 'primary.lighter', letterSpacing: 2 }}>
+                GROW WITH CONFIDENCE
+              </Typography>
+              <Typography variant="h2" mt={1}>
+                Make your money work with a clearer view.
+              </Typography>
+              <Typography mt={2} sx={{ color: 'primary.lighter', lineHeight: 1.75 }}>
+                Investment updates and opportunities, presented with the same simplicity as everyday
+                banking.
+              </Typography>
+            </Box>
+            <Box
+              sx={{ alignSelf: { md: 'center' }, display: 'flex', alignItems: 'center', gap: 1 }}
+            >
+              <IconifyIcon icon="solar:graph-up-bold" width={30} color="#8e64d4" />
+              <Typography fontWeight={700}>Smart decisions start here</Typography>
+            </Box>
+          </Stack>
+          <Grid container spacing={2.5} mt={2} position="relative">
             {investors.map((investment) => (
               <Grid item xs={12} md={4} key={investment.contentId}>
-                <ContentCard content={investment} icon="solar:chart-2-bold" />
+                <Card
+                  sx={{
+                    height: 1,
+                    p: 3,
+                    borderRadius: 4,
+                    bgcolor: 'rgba(255,255,255,.08)',
+                    color: 'common.white',
+                    border: '1px solid rgba(255,255,255,.12)',
+                    boxShadow: 'none',
+                  }}
+                >
+                  <IconifyIcon icon="solar:chart-2-bold" width={25} color="#a98df6" />
+                  <Typography variant="h5" mt={2}>
+                    {investment.title}
+                  </Typography>
+                  <Typography mt={1} sx={{ color: 'primary.lighter', lineHeight: 1.65 }}>
+                    {investment.contentBody}
+                  </Typography>
+                </Card>
               </Grid>
             ))}
             {home && !investors.length && (
               <Grid item xs={12}>
-                <Typography color="text.secondary">
+                <Typography sx={{ color: 'primary.lighter' }}>
                   No investment updates are available right now.
                 </Typography>
               </Grid>

@@ -12,7 +12,7 @@ import {
 import IconifyIcon from 'components/base/IconifyIcon';
 import Logo from 'components/common/Logo';
 import ShaderBackdrop from 'components/common/ShaderBackdrop';
-import { getInvestors, getPublicHome, PublicContent, PublicHome } from 'api/banking';
+import { getInvestors, getOffers, getPublicHome, PublicContent, PublicHome } from 'api/banking';
 import { apiError } from 'api/client';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -158,13 +158,15 @@ const BankingPhone = () => (
 
 const PublicHomePage = () => {
   const [home, setHome] = useState<PublicHome | null>(null);
+  const [offers, setOffers] = useState<PublicContent[]>([]);
   const [investors, setInvestors] = useState<PublicContent[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void Promise.all([getPublicHome(), getInvestors()])
-      .then(([homeResponse, investorResponse]) => {
+    void Promise.all([getPublicHome(), getOffers(), getInvestors()])
+      .then(([homeResponse, offerResponse, investorResponse]) => {
         setHome(homeResponse.data);
+        setOffers(offerResponse.data);
         setInvestors(investorResponse.data);
       })
       .catch((err) => setError(apiError(err)));
@@ -402,7 +404,7 @@ const PublicHomePage = () => {
             </Typography>
           </Stack>
           <Grid container spacing={2.5} mt={1}>
-            {home?.offers.map((offer, index) => (
+            {offers.map((offer, index) => (
               <Grid item xs={12} md={index === 0 ? 7 : 5} key={offer.contentId}>
                 <Card
                   sx={{
@@ -417,9 +419,39 @@ const PublicHomePage = () => {
                         ? 'linear-gradient(135deg, #152351 0%, #2D3E81 58%, #617CB1 100%)'
                         : 'linear-gradient(145deg, #FFFFFF 0%, #EFF3F9 100%)',
                     boxShadow: index === 0 ? '0 22px 50px rgba(57, 25, 197, .24)' : 'none',
+                    transition: 'transform 260ms ease, box-shadow 260ms ease',
+                    '&:hover, &:focus-within': {
+                      transform: 'translateY(-8px)',
+                      boxShadow:
+                        index === 0
+                          ? '0 32px 64px rgba(28, 47, 108, .35)'
+                          : '0 22px 44px rgba(36, 58, 125, .16)',
+                    },
+                    '&:hover .offer-orb, &:focus-within .offer-orb': { transform: 'scale(1.18)' },
+                    '&:hover .offer-arrow, &:focus-within .offer-arrow': {
+                      transform: 'translate(4px, -4px)',
+                    },
                   }}
                 >
+                  {offer.imageUrl && (
+                    <Box
+                      className="offer-image"
+                      component="img"
+                      src={offer.imageUrl}
+                      alt=""
+                      sx={{
+                        position: 'absolute',
+                        right: 18,
+                        bottom: 18,
+                        width: 66,
+                        height: 66,
+                        objectFit: 'contain',
+                        opacity: index === 0 ? 0.8 : 0.65,
+                      }}
+                    />
+                  )}
                   <Box
+                    className="offer-orb"
                     sx={{
                       position: 'absolute',
                       width: 220,
@@ -428,6 +460,7 @@ const PublicHomePage = () => {
                       right: -75,
                       top: -85,
                       bgcolor: index === 0 ? 'rgba(255,255,255,.12)' : 'primary.lighter',
+                      transition: 'transform 350ms ease',
                     }}
                   />
                   <Stack position="relative" sx={{ height: 1 }}>
@@ -456,11 +489,13 @@ const PublicHomePage = () => {
                       component={RouterLink}
                       to="/authentication/login"
                       endIcon={<IconifyIcon icon="solar:arrow-right-up-linear" />}
+                      className="offer-arrow"
                       sx={{
                         mt: 'auto',
                         alignSelf: 'start',
                         px: 0,
                         color: index === 0 ? 'common.white' : 'primary.main',
+                        transition: 'transform 220ms ease',
                       }}
                     >
                       Discover more
@@ -469,7 +504,7 @@ const PublicHomePage = () => {
                 </Card>
               </Grid>
             ))}
-            {home && !home.offers.length && (
+            {home && !offers.length && (
               <Grid item xs={12}>
                 <Typography color="text.secondary">No offers are available right now.</Typography>
               </Grid>
@@ -538,9 +573,21 @@ const PublicHomePage = () => {
                     color: 'common.white',
                     border: '1px solid rgba(255,255,255,.12)',
                     boxShadow: 'none',
+                    transition:
+                      'transform 260ms ease, background-color 260ms ease, border-color 260ms ease',
+                    '&:hover, &:focus-within': {
+                      transform: 'translateY(-7px)',
+                      bgcolor: 'rgba(255,255,255,.14)',
+                      borderColor: 'rgba(255,255,255,.3)',
+                    },
                   }}
                 >
-                  <IconifyIcon icon="solar:chart-2-bold" width={25} color="#a98df6" />
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: 'rgba(169,187,216,.14)' }}>
+                      <IconifyIcon icon="solar:chart-2-bold" width={25} color="#A9BBD8" />
+                    </Box>
+                    <IconifyIcon icon="solar:arrow-right-up-linear" width={20} color="#A9BBD8" />
+                  </Stack>
                   <Typography variant="h5" mt={2}>
                     {investment.title}
                   </Typography>

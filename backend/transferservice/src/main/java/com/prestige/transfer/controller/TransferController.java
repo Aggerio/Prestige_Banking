@@ -11,6 +11,8 @@ import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDateTime;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
@@ -45,9 +47,18 @@ public class TransferController {
 
     @GetMapping("/accounts/{accountNumber}/transactions")
     public TransactionPageResponse activity(@AuthenticationPrincipal Jwt jwt, @PathVariable String accountNumber,
+            @RequestParam(required = false) String movement,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
-        return queries.activity(customerId(jwt), accountNumber, page, size);
+        return queries.activity(customerId(jwt), accountNumber, movement, from, to, page, size);
+    }
+
+    @GetMapping("/accounts/{accountNumber}/analytics")
+    public AnalyticsResponse analytics(@AuthenticationPrincipal Jwt jwt, @PathVariable String accountNumber,
+            @RequestParam(defaultValue = "12") @Min(1) @Max(24) int months) {
+        return queries.analytics(customerId(jwt), accountNumber, months);
     }
 
     private Long customerId(Jwt jwt) {

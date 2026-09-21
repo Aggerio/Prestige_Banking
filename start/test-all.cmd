@@ -6,21 +6,15 @@ set "EUREKA=http://localhost:8761"
 set "FRONTEND=http://localhost:5173"
 set /a PASSED=0
 set /a FAILED=0
-set "CHAT_BODY=%TEMP%\prestige-chat-%RANDOM%.json"
-
-> "%CHAT_BODY%" echo {"message":"What information is public?"}
 
 call :expect "Eureka dashboard" GET "%EUREKA%/" "200"
 call :expect "Frontend" GET "%FRONTEND%/" "200"
 call :expect "Gateway to auth JWKS" GET "%GATEWAY%/.well-known/jwks.json" "200"
 call :expect "Gateway to public information" GET "%GATEWAY%/api/v1/public/home" "200 404"
-call :expect "Public chatbot" POST "%GATEWAY%/api/v1/chat/public" "200"
 call :expect "Customer API requires JWT" GET "%GATEWAY%/api/v1/customers/me" "401"
 call :expect "Transfer API requires JWT" GET "%GATEWAY%/api/v1/transfers/TEST-REFERENCE" "401"
-call :expect "Protected chatbot requires JWT" POST "%GATEWAY%/api/v1/chat" "401"
 call :check_eureka
 
-del "%CHAT_BODY%" >nul 2>nul
 echo.
 echo Smoke-test summary: !PASSED! passed, !FAILED! failed.
 if !FAILED! GTR 0 exit /b 1
@@ -34,11 +28,7 @@ set "EXPECTED=%~4"
 set "BODY=%TEMP%\prestige-response-%RANDOM%.txt"
 set "STATUS_FILE=%BODY%.status"
 
-if /I "%METHOD%"=="POST" (
-    curl.exe --silent --show-error --output "%BODY%" --write-out "%%{http_code}" --request POST --header "Content-Type: application/json" --data-binary "@%CHAT_BODY%" "%URL%" > "%STATUS_FILE%"
-) else (
-    curl.exe --silent --show-error --output "%BODY%" --write-out "%%{http_code}" --request GET "%URL%" > "%STATUS_FILE%"
-)
+curl.exe --silent --show-error --output "%BODY%" --write-out "%%{http_code}" --request %METHOD% "%URL%" > "%STATUS_FILE%"
 
 set "STATUS="
 set /p STATUS=<"%STATUS_FILE%"
@@ -61,7 +51,7 @@ exit /b 0
 :check_eureka
 set "REGISTRY=%TEMP%\prestige-eureka-%RANDOM%.json"
 curl.exe --silent --show-error --header "Accept: application/json" "%EUREKA%/eureka/apps" > "%REGISTRY%"
-for %%S in (API-GATEWAY AUTHENTICATION-SERVICE CUSTOMER-SERVICE TRANSFER-SERVICE PUBLIC-INFO-SERVICE CHATBOT-SERVICE) do (
+for %%S in (API-GATEWAY AUTHENTICATION-SERVICE CUSTOMER-SERVICE TRANSFER-SERVICE PUBLIC-INFO-SERVICE) do (
     findstr /I /C:"%%S" "%REGISTRY%" >nul
     if errorlevel 1 (
         echo FAIL  Eureka registration missing: %%S
@@ -73,4 +63,3 @@ for %%S in (API-GATEWAY AUTHENTICATION-SERVICE CUSTOMER-SERVICE TRANSFER-SERVICE
 )
 del "%REGISTRY%" >nul 2>nul
 exit /b 0
-

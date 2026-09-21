@@ -3,10 +3,10 @@
 Open a Command Prompt in the repository root and run:
 
 ```cmd
-start\start-all.cmd
+start\start-tabs.cmd
 ```
 
-The default launcher starts Eureka, authentication, customer, transfer, public-info, API Gateway, and frontend in separate windows. It expects a locally running Oracle instance compatible with the connection settings in each service. Chatbot is intentionally excluded from the default local workflow.
+The default launcher opens Eureka, authentication, customer, transfer, public-info, API Gateway, and frontend as tabs in a single `Prestige Services` Windows Terminal window. It expects a locally running Oracle instance compatible with the connection settings in each service. Chatbot is intentionally excluded from the default local workflow. Close that terminal window to stop every service.
 
 After startup, run the integrated smoke test:
 

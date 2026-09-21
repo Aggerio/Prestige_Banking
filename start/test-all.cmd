@@ -33,7 +33,20 @@ if not defined PRESTIGE_TEST_LOGIN_PASSWORD (
 )
 
 set "ACCESS_TOKEN="
-for /f "usebackq delims=" %%T in (`powershell -NoProfile -Command "$customerId = if ($env:PRESTIGE_TEST_CUSTOMER_ID) { [long]$env:PRESTIGE_TEST_CUSTOMER_ID } else { 101 }; $payload = @{ customerId = $customerId; password = $env:PRESTIGE_TEST_LOGIN_PASSWORD } ^| ConvertTo-Json -Compress; try { $response = Invoke-RestMethod -Method Post -Uri '%GATEWAY%/api/v1/auth/login' -ContentType 'application/json' -Body $payload -TimeoutSec 10; if ($response.tokenType -ne 'Bearer' -or [string]::IsNullOrWhiteSpace($response.accessToken)) { exit 1 }; [Console]::Write($response.accessToken) } catch { exit 1 }"`) do set "ACCESS_TOKEN=%%T"
+set "LOGIN_BODY=%TEMP%\prestige-login-%RANDOM%.json"
+set "LOGIN_RESPONSE=%TEMP%\prestige-login-response-%RANDOM%.json"
+set "LOGIN_STATUS=%LOGIN_RESPONSE%.status"
+
+powershell -NoProfile -Command "$customerId = if ($env:PRESTIGE_TEST_CUSTOMER_ID) { [long]$env:PRESTIGE_TEST_CUSTOMER_ID } else { 101 }; $payload = @{ customerId = $customerId; password = $env:PRESTIGE_TEST_LOGIN_PASSWORD } ^| ConvertTo-Json -Compress; [System.IO.File]::WriteAllText('%LOGIN_BODY%', $payload)"
+curl.exe --silent --show-error --output "%LOGIN_RESPONSE%" --write-out "%%{http_code}" --request POST --header "Content-Type: application/json" --data-binary "@%LOGIN_BODY%" "%GATEWAY%/api/v1/auth/login" > "%LOGIN_STATUS%"
+
+set "LOGIN_CODE="
+set /p LOGIN_CODE=<"%LOGIN_STATUS%"
+if "%LOGIN_CODE%"=="200" (
+    for /f "usebackq delims=" %%T in (`powershell -NoProfile -Command "try { $response = Get-Content -Raw '%LOGIN_RESPONSE%' ^| ConvertFrom-Json; if ($response.tokenType -eq 'Bearer' -and -not [string]::IsNullOrWhiteSpace($response.accessToken)) { [Console]::Write($response.accessToken) } } catch { exit 1 }"`) do set "ACCESS_TOKEN=%%T"
+)
+
+del "%LOGIN_BODY%" "%LOGIN_RESPONSE%" "%LOGIN_STATUS%" >nul 2>nul
 
 if not defined ACCESS_TOKEN (
     echo FAIL  Authenticated API suite: login did not return an access token.

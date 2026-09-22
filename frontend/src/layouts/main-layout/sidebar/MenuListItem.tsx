@@ -28,7 +28,7 @@ const MenuListItem = ({ menuItem, onDrawerClose }: MenuListProps) => {
           top: 0,
           bottom: 0,
           left: 0,
-          width: 6,
+          width: 3,
           borderTopRightRadius: 10,
           borderBottomRightRadius: 10,
           transition: 'background-color 0.5s ease',
@@ -39,21 +39,21 @@ const MenuListItem = ({ menuItem, onDrawerClose }: MenuListProps) => {
         href={menuItem.link}
         onClick={onDrawerClose}
         sx={{
-          py: 1.5,
-          px: 3,
+          py: 1.25,
+          px: 1.5,
           display: 'flex',
           alignItems: 'center',
           gap: 3.125,
           flex: 1,
-          borderRadius: 2,
-          color: isActive ? 'primary.main' : menuItem.available ? 'grey[700]' : 'action.disabled',
+          borderRadius: 1.5,
+          color: isActive ? 'common.white' : menuItem.available ? '#9BA9A3' : 'action.disabled',
           transition: 'color 0.35s ease',
           '&:hover, &:focus': {
-            backgroundColor: 'neutral.light',
-            boxShadow: 'shadows[10]',
-            color: !menuItem.available ? 'action.disabled' : 'primary.main',
+            backgroundColor: 'rgba(255,255,255,.07)',
+            boxShadow: 'none',
+            color: !menuItem.available ? 'action.disabled' : 'common.white',
             '& .MuiSvgIcon-root': {
-              color: !menuItem.available ? 'action.disabled' : 'primary.main',
+              color: !menuItem.available ? 'action.disabled' : 'common.white',
             },
           },
         }}
@@ -62,11 +62,7 @@ const MenuListItem = ({ menuItem, onDrawerClose }: MenuListProps) => {
           sx={{
             minWidth: 'auto',
 
-            color: isActive
-              ? 'primary.main'
-              : menuItem.available
-                ? 'neutral.dark'
-                : 'action.disabled',
+            color: isActive ? 'common.white' : menuItem.available ? '#9BA9A3' : 'action.disabled',
           }}
         >
           {itemIcon}

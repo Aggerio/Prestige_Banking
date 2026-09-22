@@ -40,7 +40,7 @@ const palette: PaletteOptions = {
     focus: grey[300],
     hoverOpacity: 0.05,
   },
-  background: { paper: grey[50] },
+  background: { default: '#EEF1EF', paper: '#F7F9F8' },
   neutral: {
     light: blue[100],
     main: grey[600],
@@ -76,18 +76,14 @@ const palette: PaletteOptions = {
   },
 
   grey,
-  text: {
-    primary: blue[900],
-    secondary: blue[200],
-    disabled: blue[50],
-  },
+  text: { primary: '#17231E', secondary: grey[600], disabled: grey[400] },
   divider: grey[100],
   gradients: {
-    blueGradient: `linear-gradient(to top right, ${blue[700]} 30%, ${blue[600]})`,
+    blueGradient: 'linear-gradient(135deg, #1C3840 0%, #142720 100%)',
     whiteGradient: 'linear-gradient(to bottom, rgba(255, 255, 255, .1) 0%, transparent)',
     whiteCardGradient:
       'linear-gradient(to bottom right, rgba(255, 255, 255, 0.15) 0%, transparent)',
-    bgGradient: 'linear-gradient(to right bottom, #f9fafb, #E6EFF5)',
+    bgGradient: 'radial-gradient(circle at 75% 20%, #213D38 0%, #121B1A 42%, #0B1110 100%)',
   },
 };
 

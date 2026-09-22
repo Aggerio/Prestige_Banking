@@ -12,14 +12,14 @@ const ButtonComponent: Components<Omit<Theme, 'components'>>['MuiButton'] = {
   styleOverrides: {
     root: ({ theme }) => ({
       ...theme.typography.button,
+      borderRadius: theme.shape.borderRadius * 1.25,
+      textTransform: 'none',
       '&.Mui-disabled': {
         backgroundColor: theme.palette.action.disabled,
         boxShadow: 'none',
         color: theme.palette.text.disabled,
       },
-      '&:hover': {
-        boxShadow: theme.shadows[5],
-      },
+      '&:hover': { boxShadow: '0 8px 18px rgba(12, 70, 52, .18)' },
     }),
     text: ({ theme }) => ({
       backgroundColor: 'transparent',
@@ -33,7 +33,7 @@ const ButtonComponent: Components<Omit<Theme, 'components'>>['MuiButton'] = {
       fontWeight: theme.typography.fontWeightMedium,
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
-      borderRadius: theme.shape.borderRadius * 12.5,
+      borderRadius: theme.shape.borderRadius * 1.25,
     }),
     textPrimary: ({ theme }) => ({
       '&.Mui-disabled': {

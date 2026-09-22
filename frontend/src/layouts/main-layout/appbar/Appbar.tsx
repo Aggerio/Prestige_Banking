@@ -29,7 +29,10 @@ const MainNavbar = ({ onDrawerToggle }: NavbarProps) => {
 
   return (
     <>
-      <AppBar position="sticky" sx={{ bgcolor: 'common.white' }}>
+      <AppBar
+        position="sticky"
+        sx={{ bgcolor: 'background.default', borderBottom: 1, borderColor: 'divider' }}
+      >
         <Toolbar
           sx={{
             justifyContent: 'space-between',
@@ -40,9 +43,9 @@ const MainNavbar = ({ onDrawerToggle }: NavbarProps) => {
           <Typography
             sx={{
               display: { xs: 'none', md: 'block' },
-              fontSize: { sm: 'h2.fontSize', xl: 'h1.fontSize' },
-              fontWeight: 600,
-              color: 'primary.darker',
+              fontSize: { sm: 'h4.fontSize', xl: 'h3.fontSize' },
+              fontWeight: 700,
+              color: 'text.primary',
               flex: 1,
               textAlign: { xs: 'center', md: 'left' },
               textTransform: 'capitalize',

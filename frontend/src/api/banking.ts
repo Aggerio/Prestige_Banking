@@ -81,3 +81,5 @@ export const createTransfer = (payload: {
   client.post('/api/v1/transfers', payload, {
     headers: { 'Idempotency-Key': crypto.randomUUID() },
   });
+export const changeLoginPassword = (payload: { currentPassword: string; newPassword: string }) =>
+  client.put('/api/v1/auth/passwords/login', payload);

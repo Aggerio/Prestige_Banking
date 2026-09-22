@@ -1,11 +1,10 @@
-import { Button, Dialog, DialogContent, Stack, Typography } from '@mui/material';
-import IconifyIcon from 'components/base/IconifyIcon';
+import { Grid, Stack, Typography } from '@mui/material';
+import WeeklyActivity from 'components/sections/dashboard/activity/WeeklyActivity';
+import ExpenseStatistics from 'components/sections/dashboard/expense/ExpenseStatistics';
 import QuickTransfer from 'components/sections/dashboard/transfer/QuickTransfer';
 import InvoiceOverviewTable from 'components/sections/dashboard/invoice/InvoiceOverviewTable';
-import { useState } from 'react';
 
 const TransactionsPage = () => {
-  const [open, setOpen] = useState(false);
   return (
     <Stack sx={{ minHeight: 'calc(100vh - 180px)', py: { xs: 2.5, md: 3.5 } }}>
       <Stack
@@ -22,23 +21,24 @@ const TransactionsPage = () => {
             Transactions
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Review account activity or create a new bank transfer.
+            Move money, review your cash flow, and inspect the full activity ledger.
           </Typography>
         </Stack>
-        <Button
-          variant="contained"
-          startIcon={<IconifyIcon icon="solar:add-circle-linear" />}
-          onClick={() => setOpen(true)}
-        >
-          New transaction
-        </Button>
       </Stack>
-      <InvoiceOverviewTable />
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
-        <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
+      <Grid container spacing={{ xs: 2, md: 2.5 }} mt={{ xs: 1, md: 2 }}>
+        <Grid item xs={12} xl={5}>
           <QuickTransfer />
-        </DialogContent>
-      </Dialog>
+        </Grid>
+        <Grid item xs={12} xl={7}>
+          <WeeklyActivity />
+        </Grid>
+        <Grid item xs={12}>
+          <ExpenseStatistics />
+        </Grid>
+        <Grid item xs={12}>
+          <InvoiceOverviewTable />
+        </Grid>
+      </Grid>
     </Stack>
   );
 };

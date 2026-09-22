@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import paths, { rootPaths } from './path';
 import RequireAuth from 'components/common/RequireAuth';
+import PageEnter from 'components/common/PageEnter';
 import { DashboardProvider } from 'providers/DashboardProvider';
 
 /* ---------------- Lazy loads various components ------------------------- */
@@ -32,7 +33,14 @@ export const routes = [
       </Suspense>
     ),
     children: [
-      { index: true, element: <PublicHomePage /> },
+      {
+        index: true,
+        element: (
+          <PageEnter>
+            <PublicHomePage />
+          </PageEnter>
+        ),
+      },
       {
         element: <RequireAuth />,
         children: [
@@ -41,7 +49,9 @@ export const routes = [
               <DashboardProvider>
                 <MainLayout>
                   <Suspense fallback={<LoadingProgress />}>
-                    <Outlet />
+                    <PageEnter>
+                      <Outlet />
+                    </PageEnter>
                   </Suspense>
                 </MainLayout>
               </DashboardProvider>

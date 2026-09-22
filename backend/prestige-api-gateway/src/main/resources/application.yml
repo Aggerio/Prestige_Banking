@@ -25,6 +25,11 @@ spring:
               predicates:
                 - Path=/api/v1/transfers/**,/api/v1/accounts/*/transactions,/api/v1/accounts/*/analytics
 
+            - id: notification-service
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/v1/notifications/**
+
             - id: public-information-service
               uri: lb://PUBLIC-INFO-SERVICE
               predicates:

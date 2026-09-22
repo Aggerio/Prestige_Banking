@@ -1,0 +1,11 @@
+package com.prestige.notification.service;
+import com.prestige.notification.api.*; import com.prestige.notification.domain.*; import java.time.LocalDateTime; import java.util.*; import org.springframework.context.ApplicationEventPublisher; import org.springframework.data.domain.PageRequest; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional;
+@Service public class NotificationService {
+ private final NotificationRepository repo; private final ApplicationEventPublisher events;
+ public NotificationService(NotificationRepository repo,ApplicationEventPublisher events){this.repo=repo;this.events=events;}
+ @Transactional public void receive(TransferCompletedEvent e){ create(e,e.senderCustomerId(),"SENDER","Transfer sent","You sent ₹"+e.amount()+" to "+e.receiverName()); create(e,e.receiverCustomerId(),"RECEIVER","Transfer received","You received ₹"+e.amount()+" from "+e.senderName()); }
+ private void create(TransferCompletedEvent e,Long id,String role,String title,String body){if(repo.findByEventIdAndCustomerIdAndRole(e.eventId(),id,role).isPresent())return; Notification n=repo.save(new Notification(e.eventId(),id,role,title,body,e.amount(),e.transferReference(),e.completedAt()));events.publishEvent(new Created(id,NotificationResponse.from(n)));}
+ @Transactional(readOnly=true) public NotificationPage list(Long customer,LocalDateTime before,int limit){List<Notification> rows=before==null?repo.findByCustomerIdOrderByCreatedAtDesc(customer,PageRequest.of(0,limit+1)):repo.findByCustomerIdAndCreatedAtBeforeOrderByCreatedAtDesc(customer,before,PageRequest.of(0,limit+1));boolean more=rows.size()>limit;if(more)rows=rows.subList(0,limit);return new NotificationPage(rows.stream().map(NotificationResponse::from).toList(),repo.countByCustomerIdAndReadAtIsNull(customer),more);}
+ @Transactional public NotificationResponse markRead(Long customer,Long id){Notification n=repo.findById(id).filter(x->x.getCustomerId().equals(customer)).orElseThrow(()->new NoSuchElementException("Notification not found"));n.markRead();return NotificationResponse.from(n);}
+ public record Created(Long customerId,NotificationResponse notification){}
+}

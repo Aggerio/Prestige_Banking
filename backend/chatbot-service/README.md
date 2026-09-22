@@ -1,37 +1,47 @@
-# Prestige Banking Chatbot Service
+# Prestige Banking Chatbot Service — Groq + Oracle Vector Search on Windows
 
-This service runs independently as a public FAQ/RAG and transfer/onboarding help API. It uses LangChain4j to call Ollama and persists its approved knowledge, conversations, and messages in its own Oracle schema.
+This is a single Java service. It runs the local ONNX embedding model in-process, stores the resulting vectors in Oracle, uses Oracle for cosine RAG search, and calls Groq only to generate grounded answers.
 
-## What is intentionally excluded
-
-- No chatbot endpoint can create a transfer or change customer data.
-- Phase 3 live account/transfer tools are not enabled yet; they require outbound service clients that forward the JWT and enforce customer ownership.
-- Phase 4 staff documentation must be a separate role-restricted endpoint and knowledge collection.
-
-## Database setup
-
-Run `db/oracle-chatbot-schema.sql` once, then `db/oracle-chatbot-seed.sql`. The seed data is starter content only. Replace it with approved content from the public-info team and bank policy owners before production.
-
-## Ollama setup
-
-Install Ollama on the machine or deploy it as an internal service, then pull models selected by the environment variables:
-
-```powershell
-ollama pull minimax-m2.5
-ollama pull nomic-embed-text
+```text
+chatbot-service (Java + local ONNX model) → Oracle AI Vector Search → Groq
 ```
 
-`OLLAMA_CHAT_MODEL` writes answers (for example, `gemma4:31b-cloud`).
-`OLLAMA_EMBEDDING_MODEL` must be an embedding-capable model such as `nomic-embed-text`; it searches the approved RAG knowledge before the chat model answers.
+No Python installation or companion embedding service is required.
 
-Start the app with `mvn spring-boot:run`. It expects Ollama at `http://localhost:11434` and Oracle at the configured `DB_URL`.
+## One-time database setup
 
-## APIs
+Connect as `chatbot_app` and run the scripts in this order:
 
-`POST /api/v1/chat/public` accepts `{"message":"What offers are available?"}`. `POST /api/v1/chat` is an equivalent compatibility endpoint.
+```text
+1. db/oracle-chatbot-schema.sql
+2. db/oracle-chatbot-seed.sql
+3. db/oracle-chatbot-vector-migration.sql
+```
 
-`POST /api/v1/chat/stream` accepts the same body and returns Server-Sent Events: `metadata`, one or more `token` events, then `complete`.
+Do not run `DBMS_VECTOR.LOAD_ONNX_MODEL` or `VECTOR_EMBEDDING`; Oracle on Windows cannot execute ONNX models internally.
 
-Reuse the returned `conversationId` in later requests. The service does not register with Eureka, depend on the API gateway, or validate tokens through the auth service.
+## Run the service
 
-Run it directly on port `8085`; configure only its local Oracle database and Ollama endpoint through the environment variables documented in `application.yml`.
+Keep the downloaded model at `C:\oracle-vector-models\all_MiniLM_L12_v2.onnx`, then populate vectors once:
+
+```powershell
+$env:DB_URL = 'jdbc:oracle:thin:@localhost:1521/FREEPDB1'
+$env:DB_USERNAME = 'chatbot_app'
+$env:DB_PASSWORD = 'your-password'
+$env:GROQ_API_KEY = 'your-groq-key'
+$env:RAG_REINDEX_ON_STARTUP = 'true'
+mvn spring-boot:run
+```
+
+On this first start, the Java application loads the ONNX model once, embeds the approved knowledge articles, and saves the 384-dimension vectors in Oracle. Stop the application after the successful initial indexing.
+
+Start normally after that:
+
+```powershell
+Remove-Item Env:RAG_REINDEX_ON_STARTUP -ErrorAction SilentlyContinue
+mvn spring-boot:run
+```
+
+`EMBEDDING_MODEL_PATH` is optional; set it only if the ONNX file is elsewhere. The default is `C:/oracle-vector-models/all_MiniLM_L12_v2.onnx`.
+
+`GROQ_CHAT_MODEL` defaults to `openai/gpt-oss-20b`. Store all secrets in environment variables or a secret store, never in source control.

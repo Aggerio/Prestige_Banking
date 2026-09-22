@@ -22,9 +22,6 @@ import com.prestige.chatbot.dto.ChatResponse;
 import com.prestige.chatbot.repository.ChatConversationRepository;
 import com.prestige.chatbot.repository.ChatMessageRepository;
 
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.chat.StreamingChatModel;
-import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 
 @Service
 public class ChatService {
@@ -37,17 +34,16 @@ public class ChatService {
             You cannot make transfers, change account details, reveal sensitive data, or ask for passwords, OTPs, card PINs, or full account numbers.
             Keep answers concise and professional. Give answers in complete sentences. Do not claim that an article says something it does not say.
             """;
-    private final ChatModel model;
-    private final StreamingChatModel streamingModel;
+    private final GroqChatClient groq;
     private final Executor streamingExecutor;
     private final KnowledgeRetrievalService retrieval;
     private final ChatConversationRepository conversations;
     private final ChatMessageRepository messages;
 
-    public ChatService(ChatModel model, StreamingChatModel streamingModel,
+    public ChatService(GroqChatClient groq,
                        @Qualifier("chatbotStreamingExecutor") Executor streamingExecutor,
                        KnowledgeRetrievalService retrieval, ChatConversationRepository conversations, ChatMessageRepository messages) {
-        this.model = model; this.streamingModel = streamingModel; this.streamingExecutor = streamingExecutor;
+        this.groq = groq; this.streamingExecutor = streamingExecutor;
         this.retrieval = retrieval; this.conversations = conversations; this.messages = messages;
     }
 
@@ -55,11 +51,9 @@ public class ChatService {
     public ChatResponse ask(String question, String conversationId, Long customerId) {
         ChatConversation conversation = conversation(conversationId, customerId);
         List<KnowledgeArticle> context = retrieval.retrieve(question, customerId != null);
-        String prompt = SYSTEM_INSTRUCTIONS + "\n\nKnowledge context:\n" + contextText(context)
-                + "\n\nCustomer question:\n" + question;
         String answer;
         try {
-            answer = model.chat(prompt);
+            answer = groq.complete(SYSTEM_INSTRUCTIONS, "Knowledge context:\n" + contextText(context) + "\n\nCustomer question:\n" + question);
         } catch (RuntimeException error) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "The banking assistant is temporarily unavailable. Please try again shortly.");
@@ -74,54 +68,24 @@ public class ChatService {
     public SseEmitter askStream(String question, String conversationId, Long customerId) {
         ChatConversation conversation = conversation(conversationId, customerId);
         List<KnowledgeArticle> context = retrieval.retrieve(question, true);
-        String prompt = SYSTEM_INSTRUCTIONS + "\n\nKnowledge context:\n" + contextText(context)
-                + "\n\nCustomer question:\n" + question;
         SseEmitter emitter = new SseEmitter(0L);
 
-        CompletableFuture.runAsync(() -> stream(prompt, question, conversation, context, emitter), streamingExecutor);
+        CompletableFuture.runAsync(() -> stream(question, conversation, context, emitter), streamingExecutor);
         return emitter;
     }
 
-    private void stream(String prompt, String question, ChatConversation conversation,
+    private void stream(String question, ChatConversation conversation,
                         List<KnowledgeArticle> context, SseEmitter emitter) {
-        StringBuilder answer = new StringBuilder();
         try {
             emitter.send(SseEmitter.event().name("metadata").data(Map.of(
                     "conversationId", conversation.getId(),
                     "sources", context.stream().map(KnowledgeArticle::getTitle).toList())));
-            streamingModel.chat(prompt, new StreamingChatResponseHandler() {
-                @Override
-                public void onPartialResponse(String token) {
-                    answer.append(token);
-                    try {
-                        emitter.send(SseEmitter.event().name("token").data(token));
-                    } catch (Exception exception) {
-                        throw new RuntimeException(exception);
-                    }
-                }
-
-                @Override
-                public void onCompleteResponse(dev.langchain4j.model.chat.response.ChatResponse response) {
-                    saveCompletedConversation(question, answer.toString(), conversation);
-                    try {
-                        emitter.send(SseEmitter.event().name("complete").data(Map.of("conversationId", conversation.getId())));
-                        emitter.complete();
-                    } catch (Exception exception) {
-                        emitter.completeWithError(exception);
-                    }
-                }
-
-                @Override
-                public void onError(Throwable error) {
-                    try {
-                        emitter.send(SseEmitter.event().name("error").data(Map.of(
-                                "message", "The banking assistant is temporarily unavailable. Please try again shortly.")));
-                    } catch (Exception ignored) {
-                        // The client may have disconnected before the error could be sent.
-                    }
-                    emitter.complete();
-                }
-            });
+            String answer = groq.complete(SYSTEM_INSTRUCTIONS,
+                    "Knowledge context:\n" + contextText(context) + "\n\nCustomer question:\n" + question);
+            emitter.send(SseEmitter.event().name("token").data(answer));
+            saveCompletedConversation(question, answer, conversation);
+            emitter.send(SseEmitter.event().name("complete").data(Map.of("conversationId", conversation.getId())));
+            emitter.complete();
         } catch (Exception error) {
             emitter.completeWithError(error);
         }

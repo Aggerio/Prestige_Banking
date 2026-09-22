@@ -48,7 +48,9 @@ const MyCards = () => {
                 selectAccount(cards.find((item) => item.cardId === card.id)?.accountNumber || '')
               }
               sx={{
-                cursor: 'pointer', minWidth: 0, borderRadius: 2,
+                cursor: 'pointer',
+                minWidth: 0,
+                borderRadius: 2,
                 transition: 'transform 220ms ease, filter 220ms ease',
                 transform: card.theme === 'blue' ? 'translateY(-3px)' : 'translateY(0)',
                 filter: card.theme === 'blue' ? 'none' : 'saturate(.78)',

@@ -1,6 +1,7 @@
 import { Alert, Box, Button, Card, Grid, Stack, TextField, Typography } from '@mui/material';
 import { apiError } from 'api/client';
 import { changeLoginPassword } from 'api/banking';
+import BalanceHistory from 'components/sections/dashboard/balance/BalanceHistory';
 import { FormEvent, useState } from 'react';
 import { useDashboard } from 'providers/DashboardProvider';
 
@@ -36,7 +37,7 @@ const AccountsPage = () => {
         Account details
       </Typography>
       <Typography variant="body2" color="text.secondary" mt={1} mb={4}>
-        Review your banking profile and keep your sign-in secure.
+        Review account balances, history, profile details, and sign-in security.
       </Typography>
       <Grid container spacing={2.5}>
         <Grid item xs={12} lg={7}>
@@ -83,6 +84,9 @@ const AccountsPage = () => {
               ))}
             </Stack>
           </Card>
+        </Grid>
+        <Grid item xs={12} lg={5}>
+          <BalanceHistory />
         </Grid>
         <Grid item xs={12} lg={5}>
           <Card component="form" onSubmit={submit} sx={{ p: { xs: 2.5, md: 3.5 } }}>

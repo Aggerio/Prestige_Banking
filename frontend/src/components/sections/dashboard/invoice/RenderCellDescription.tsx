@@ -12,17 +12,9 @@ const RenderCellDescription = ({ params }: ParamsProps) => {
   return (
     <Stack direction="row" alignItems="center" gap={1.25} sx={{ pl: 0.5, py: 1, width: 1 }}>
       {params.row.description.revenue === 'down' ? (
-        <Image
-          src={DataGriIncrementArrow}
-          alt="expense"
-          sx={{ width: 28, height: 28 }}
-        />
+        <Image src={DataGriIncrementArrow} alt="expense" sx={{ width: 28, height: 28 }} />
       ) : (
-        <Image
-          src={DataGridDecrementArrow}
-          alt="income"
-          sx={{ width: 28, height: 28 }}
-        />
+        <Image src={DataGridDecrementArrow} alt="income" sx={{ width: 28, height: 28 }} />
       )}
       <Typography
         sx={{

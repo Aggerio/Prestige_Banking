@@ -63,8 +63,14 @@ public class TransferQueryService {
         YearMonth currentMonth = YearMonth.now();
         YearMonth firstMonth = currentMonth.minusMonths(months - 1);
         LocalDateTime historyStart = firstMonth.atDay(1).atStartOfDay();
+        // Weekly activity can start in the preceding month when callers request a
+        // one-month analytics window.  Fetch from the earlier boundary so each of
+        // the seven returned days is based on the ledger, not an accidental zero.
+        LocalDate weeklyStart = LocalDate.now().minusDays(6);
+        LocalDateTime activityStart = weeklyStart.atStartOfDay();
+        LocalDateTime queryStart = historyStart.isBefore(activityStart) ? historyStart : activityStart;
         List<TransactionDetail> history = transactions
-                .findByAccountNumberAndTransactionAtGreaterThanEqualOrderByTransactionAtAsc(accountNumber, historyStart);
+                .findByAccountNumberAndTransactionAtGreaterThanEqualOrderByTransactionAtAsc(accountNumber, queryStart);
 
         Map<YearMonth, BigDecimal> monthlyNet = new HashMap<>();
         Map<YearMonth, BigDecimal> monthlyWithdrawals = new HashMap<>();
@@ -91,7 +97,6 @@ public class TransferQueryService {
         }
 
         LocalDate today = LocalDate.now();
-        LocalDate weeklyStart = today.minusDays(6);
         Map<LocalDate, BigDecimal> deposits = new HashMap<>();
         Map<LocalDate, BigDecimal> withdrawals = new HashMap<>();
         for (TransactionDetail transaction : history) {

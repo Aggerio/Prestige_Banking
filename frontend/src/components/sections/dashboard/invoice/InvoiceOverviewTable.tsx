@@ -1,4 +1,4 @@
-import { Box, Card, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Card, Chip, Stack, Tab, Tabs, Typography } from '@mui/material';
 import {
   DataGrid,
   GridColDef,
@@ -28,33 +28,61 @@ const columns: GridColDef[] = [
   },
   {
     field: 'transactionId',
-    headerName: 'Transaction ID',
+    headerName: 'Reference',
     flex: 1,
-    minWidth: 150,
+    minWidth: 130,
     hideable: false,
-    renderCell: (params) => <>#{params.value}</>,
+    renderCell: (params) => (
+      <Typography
+        sx={{
+          color: 'text.secondary',
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: '0.02em',
+        }}
+      >
+        {String(params.value).length > 16
+          ? `${String(params.value).slice(0, 7)}…${String(params.value).slice(-5)}`
+          : params.value}
+      </Typography>
+    ),
   },
   {
     field: 'type',
-    headerName: 'Type',
-    flex: 1,
-    minWidth: 100,
+    headerName: 'Direction',
+    minWidth: 118,
     hideable: false,
-  },
-  {
-    field: 'card',
-    headerName: 'Card',
-    minWidth: 100,
-    flex: 1,
-    hideable: false,
+    renderCell: (params) => {
+      const incoming = params.value === 'DEPOSIT';
+      return (
+        <Chip
+          label={incoming ? 'Incoming' : 'Outgoing'}
+          size="small"
+          sx={{
+            height: 25,
+            borderRadius: 1.5,
+            bgcolor: incoming ? 'success.lighter' : 'error.lighter',
+            color: incoming ? 'success.dark' : 'error.dark',
+            fontFamily: 'Space Grotesk, Manrope, sans-serif',
+            fontSize: 11,
+            fontWeight: 700,
+          }}
+        />
+      );
+    },
   },
   {
     field: 'date',
-    headerName: 'Date',
-    minWidth: 130,
+    headerName: 'Posted',
+    minWidth: 150,
     flex: 1,
     hideable: false,
-    renderCell: (params) => <>{dateFormatFromUTC(params.value)}</>,
+    renderCell: (params) => (
+      <Typography sx={{ color: 'text.secondary', fontSize: 13 }}>
+        {dateFormatFromUTC(params.value)}
+      </Typography>
+    ),
   },
   {
     field: 'amount',
@@ -67,7 +95,11 @@ const columns: GridColDef[] = [
       const symbol = params.row.description.revenue === 'down' ? '-' : '+';
 
       return (
-        <Typography variant="body2" color={color}>
+        <Typography
+          variant="body2"
+          color={color}
+          sx={{ fontFamily: 'Space Grotesk, Manrope, sans-serif', fontWeight: 700 }}
+        >
           {symbol} {currencyFormat(params.value)}
         </Typography>
       );
@@ -75,10 +107,9 @@ const columns: GridColDef[] = [
   },
   {
     field: 'download',
-    headerName: 'Download',
+    headerName: 'Receipt',
     sortable: false,
-    flex: 1,
-    minWidth: 150,
+    minWidth: 92,
     renderCell: (params) => <RenderCellDownload params={params} />,
   },
 ];
@@ -159,21 +190,23 @@ const InvoiceOverviewTable: React.FC = () => {
 
   return (
     <Stack sx={{ overflow: 'auto', justifyContent: 'space-between' }}>
-      <Box sx={{ mb: 1.5, mt: 3 }}>
+      <Box sx={{ mb: 1.25, mt: 3 }}>
         <Typography
           sx={{
-            fontSize: {
-              xs: 'body2.fontSize',
-              md: 'h6.fontSize',
-              xl: 'h3.fontSize',
-            },
-            fontWeight: 600,
+            color: 'text.primary',
+            fontFamily: 'Space Grotesk, Manrope, sans-serif',
+            fontSize: { xs: 'h6.fontSize', md: 'h5.fontSize' },
+            fontWeight: 700,
+            letterSpacing: '-0.03em',
           }}
         >
-          Recent Invoice
+          Recent activity
+        </Typography>
+        <Typography sx={{ color: 'text.secondary', fontSize: 13, mt: 0.5 }}>
+          Your latest incoming and outgoing transfers.
         </Typography>
       </Box>
-      <Box sx={{ borderBottom: 1, borderColor: 'secondary.lighter', mb: 3.5 }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
         <Tabs value={value} onChange={handleChange} aria-label="transaction tabs">
           <Tab label="All Transactions" {...a11yProps(0)} />
           <Tab label="Income" {...a11yProps(1)} />
@@ -186,13 +219,13 @@ const InvoiceOverviewTable: React.FC = () => {
           display: { md: 'flex' },
           flexDirection: { md: 'column' },
           overflow: 'hidden',
-          borderRadius: 6.5,
+          borderRadius: 3,
           '&.MuiPaper-root': {
-            p: 1,
+            p: { xs: 0, md: 1 },
             border: 1,
-            borderColor: 'neutral.light',
+            borderColor: 'primary.lighter',
             bgcolor: { xs: 'transparent', sm: 'white' },
-            boxShadow: (theme) => `inset 0px -1px ${theme.palette.neutral.light}`, // color for row border
+            boxShadow: 'none',
           },
         }}
       >
@@ -211,7 +244,8 @@ const InvoiceOverviewTable: React.FC = () => {
           }}
           loading={loading}
           sx={{
-            px: { xs: 0, md: 3 },
+            border: 0,
+            px: { xs: 0, md: 1 },
             '& .MuiDataGrid-main': {
               minHeight: 300,
             },
@@ -219,14 +253,29 @@ const InvoiceOverviewTable: React.FC = () => {
               minHeight: 300,
               p: 0,
             },
+            '& .MuiDataGrid-columnHeaders': {
+              bgcolor: 'primary.lighter',
+              borderBottom: 0,
+            },
             '& .MuiDataGrid-columnHeader': {
-              fontSize: { xs: 13, lg: 16 },
+              color: 'primary.dark',
+              fontFamily: 'Space Grotesk, Manrope, sans-serif',
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: '0.07em',
+              textTransform: 'uppercase',
             },
             '& .MuiDataGrid-cell': {
-              fontSize: { xs: 13, lg: 16 },
+              borderBottomColor: 'primary.lighter',
+              fontSize: 14,
+              py: 0.5,
             },
-            '& .MuiTypography-root': {
-              fontSize: { xs: 13, lg: 16 },
+            '& .MuiDataGrid-row': {
+              transition: 'background-color 160ms ease',
+              '&:hover': { bgcolor: 'primary.lighter' },
+            },
+            '& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus': {
+              outline: 'none',
             },
           }}
         />

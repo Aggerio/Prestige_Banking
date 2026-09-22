@@ -1,4 +1,5 @@
 import { Button } from '@mui/material';
+import IconifyIcon from 'components/base/IconifyIcon';
 import { GridCellParams, GridValidRowModel } from '@mui/x-data-grid';
 import { useBreakpoints } from 'providers/useBreakpoints';
 
@@ -21,10 +22,21 @@ const RenderCellDownload = ({ params }: ParamsProps) => {
   return (
     <Button
       variant="outlined"
-      size={upLg ? 'medium' : 'small'}
+      size="small"
       onClick={() => handleDownloadRequest(params.row)}
+      startIcon={<IconifyIcon icon="solar:download-minimalistic-linear" />}
+      sx={{
+        borderColor: 'primary.light',
+        color: 'primary.dark',
+        fontFamily: 'Space Grotesk, Manrope, sans-serif',
+        fontSize: 11,
+        fontWeight: 700,
+        minWidth: upLg ? 84 : 34,
+        px: upLg ? 1.25 : 0.75,
+        '& .MuiButton-startIcon': { mr: upLg ? 0.5 : 0 },
+      }}
     >
-      Download
+      {upLg ? 'Receipt' : ''}
     </Button>
   );
 };

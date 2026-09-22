@@ -1,5 +1,6 @@
 import { Box, Link, Stack, Typography } from '@mui/material';
 import Logo from 'components/common/Logo';
+import PageEnter from 'components/common/PageEnter';
 import { Outlet } from 'react-router-dom';
 
 const AuthLayout = () => (
@@ -195,7 +196,9 @@ const AuthLayout = () => (
         <Logo />
       </Link>
       <Stack sx={{ flex: 1, justifyContent: 'center', maxWidth: 430, width: 1, mx: 'auto' }}>
-        <Outlet />
+        <PageEnter>
+          <Outlet />
+        </PageEnter>
       </Stack>
       <Typography variant="caption" sx={{ color: '#7F9188', mt: 4 }}>
         © 2026 Prestige Banking · Protected banking session

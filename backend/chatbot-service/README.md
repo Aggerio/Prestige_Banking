@@ -45,3 +45,24 @@ mvn spring-boot:run
 `EMBEDDING_MODEL_PATH` is optional; set it only if the ONNX file is elsewhere. The default is `C:/oracle-vector-models/all_MiniLM_L12_v2.onnx`.
 
 `GROQ_CHAT_MODEL` defaults to `openai/gpt-oss-20b`. Store all secrets in environment variables or a secret store, never in source control.
+
+## Chat API
+
+There are exactly two chatbot endpoints, and both require an `Authorization: Bearer <JWT>` header. The `sub` claim in that JWT must be the numeric customer ID.
+
+| Endpoint | Response | Purpose |
+| --- | --- | --- |
+| `POST /api/v1/chat` | JSON | Waits for the complete answer, then returns it in one response. |
+| `POST /api/v1/chat/stream` | `text/event-stream` | Sends Groq response chunks immediately as Server-Sent Events. |
+
+`POST /api/v1/chat/stream` emits a `metadata` event first, a `token` event for every Groq text delta, and then `complete`. On a service failure it emits `error`. There is no unauthenticated public-chat endpoint. Only `/actuator/health` remains public.
+
+You can send the streaming request from Postman to verify authentication and the endpoint. Postman clients sometimes display the SSE response only after buffering it, so use the following command to confirm visibly live chunks:
+
+```powershell
+curl.exe -N -X POST http://localhost:8085/api/v1/chat/stream `
+  -H "Authorization: Bearer <JWT>" `
+  -H "Content-Type: application/json" `
+  -H "Accept: text/event-stream" `
+  -d '{"message":"What public information is available?"}'
+```

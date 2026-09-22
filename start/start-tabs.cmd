@@ -23,6 +23,13 @@ if errorlevel 1 (
     exit /b 1
 )
 
+if not defined GROQ_API_KEY (
+    echo GROQ_API_KEY is not set.
+    echo In a new Command Prompt, run: setx GROQ_API_KEY "your-groq-api-key"
+    echo Then open a fresh terminal and run start-tabs.cmd again.
+    exit /b 1
+)
+
 echo Starting Prestige Banking services in Windows Terminal tabs...
 
 call :start_first_tab "Eureka Server" "%ROOT%\backend\prestige-eureka-server"
@@ -38,6 +45,9 @@ call :start_tab "Public Info Service" "%ROOT%\backend\public-info"
 call :wait_http "Customer Service" "http://localhost:8001/actuator/health" || exit /b 1
 call :wait_http "Transfer Service" "http://localhost:8002/actuator/health" || exit /b 1
 call :wait_http "Public Info Service" "http://localhost:8004/actuator/health" || exit /b 1
+
+call :start_tab "Chatbot Service" "%ROOT%\backend\chatbot-service"
+call :wait_http "Chatbot Service" "http://localhost:8085/actuator/health" || exit /b 1
 
 call :start_tab "API Gateway" "%ROOT%\backend\prestige-api-gateway"
 call :wait_http "API Gateway" "http://localhost:8080/.well-known/jwks.json" || exit /b 1

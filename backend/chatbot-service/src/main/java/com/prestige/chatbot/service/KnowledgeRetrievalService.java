@@ -22,8 +22,8 @@ public class KnowledgeRetrievalService {
         this.jdbc = jdbc; this.embeddings = embeddings; this.maxResults = maxResults;
     }
 
-    public List<KnowledgeArticle> retrieve(String question, boolean authenticated) {
-        Set<String> phases = authenticated ? Set.of("PHASE_1_PUBLIC", "PHASE_2_HELP") : Set.of("PHASE_1_PUBLIC");
+    public List<KnowledgeArticle> retrieve(String question) {
+        Set<String> phases = Set.of("PHASE_1_PUBLIC", "PHASE_2_HELP");
         String queryVector = embeddings.embedAsOracleVector(question);
         String sql = """
                 SELECT article_id, phase, title, body, source_ref, active, created_at

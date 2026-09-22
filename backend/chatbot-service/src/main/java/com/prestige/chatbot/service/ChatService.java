@@ -35,22 +35,27 @@ public class ChatService {
             Keep answers concise and professional. Give answers in complete sentences. Do not claim that an article says something it does not say.
             """;
     private final GroqChatClient groq;
-    private final Executor streamingExecutor;
     private final KnowledgeRetrievalService retrieval;
     private final ChatConversationRepository conversations;
     private final ChatMessageRepository messages;
+    private final Executor streamingExecutor;
 
     public ChatService(GroqChatClient groq,
-                       @Qualifier("chatbotStreamingExecutor") Executor streamingExecutor,
-                       KnowledgeRetrievalService retrieval, ChatConversationRepository conversations, ChatMessageRepository messages) {
-        this.groq = groq; this.streamingExecutor = streamingExecutor;
-        this.retrieval = retrieval; this.conversations = conversations; this.messages = messages;
+                       KnowledgeRetrievalService retrieval,
+                       ChatConversationRepository conversations,
+                       ChatMessageRepository messages,
+                       @Qualifier("chatbotStreamingExecutor") Executor streamingExecutor) {
+        this.groq = groq;
+        this.retrieval = retrieval;
+        this.conversations = conversations;
+        this.messages = messages;
+        this.streamingExecutor = streamingExecutor;
     }
 
     @Transactional
     public ChatResponse ask(String question, String conversationId, Long customerId) {
         ChatConversation conversation = conversation(conversationId, customerId);
-        List<KnowledgeArticle> context = retrieval.retrieve(question, customerId != null);
+        List<KnowledgeArticle> context = retrieval.retrieve(question);
         String answer;
         try {
             answer = groq.complete(SYSTEM_INSTRUCTIONS, "Knowledge context:\n" + contextText(context) + "\n\nCustomer question:\n" + question);
@@ -65,38 +70,65 @@ public class ChatService {
         return new ChatResponse(conversation.getId(), answer, context.stream().map(KnowledgeArticle::getTitle).toList());
     }
 
+    /**
+     * Streams Groq's SSE deltas to the caller as they arrive.  The client receives
+     * a metadata event first, zero or more token events, then a complete or error event.
+     */
     public SseEmitter askStream(String question, String conversationId, Long customerId) {
         ChatConversation conversation = conversation(conversationId, customerId);
-        List<KnowledgeArticle> context = retrieval.retrieve(question, true);
+        List<KnowledgeArticle> context = retrieval.retrieve(question);
+        List<String> sources = context.stream().map(KnowledgeArticle::getTitle).toList();
         SseEmitter emitter = new SseEmitter(0L);
 
-        CompletableFuture.runAsync(() -> stream(question, conversation, context, emitter), streamingExecutor);
+        CompletableFuture.runAsync(() -> streamAnswer(emitter, conversation, question, context, sources), streamingExecutor);
         return emitter;
     }
 
-    private void stream(String question, ChatConversation conversation,
-                        List<KnowledgeArticle> context, SseEmitter emitter) {
+    private void streamAnswer(SseEmitter emitter, ChatConversation conversation, String question,
+                              List<KnowledgeArticle> context, List<String> sources) {
+        StringBuilder answer = new StringBuilder();
         try {
-            emitter.send(SseEmitter.event().name("metadata").data(Map.of(
-                    "conversationId", conversation.getId(),
-                    "sources", context.stream().map(KnowledgeArticle::getTitle).toList())));
-            String answer = groq.complete(SYSTEM_INSTRUCTIONS,
-                    "Knowledge context:\n" + contextText(context) + "\n\nCustomer question:\n" + question);
-            emitter.send(SseEmitter.event().name("token").data(answer));
-            saveCompletedConversation(question, answer, conversation);
-            emitter.send(SseEmitter.event().name("complete").data(Map.of("conversationId", conversation.getId())));
+            emitter.send(SseEmitter.event().name("metadata")
+                    .data(Map.of("conversationId", conversation.getId(), "sources", sources)));
+            groq.stream(SYSTEM_INSTRUCTIONS,
+                    "Knowledge context:\n" + contextText(context) + "\n\nCustomer question:\n" + question,
+                    delta -> {
+                        answer.append(delta);
+                        try {
+                            emitter.send(SseEmitter.event().name("token").data(delta));
+                        } catch (Exception sendFailure) {
+                            throw new StreamingClientDisconnectedException(sendFailure);
+                        }
+                    });
+            saveCompletedConversation(conversation, question, answer.toString());
+            emitter.send(SseEmitter.event().name("complete")
+                    .data(Map.of("conversationId", conversation.getId(), "sources", sources)));
+            emitter.complete();
+        } catch (StreamingClientDisconnectedException ignored) {
             emitter.complete();
         } catch (Exception error) {
-            emitter.completeWithError(error);
+            try {
+                emitter.send(SseEmitter.event().name("error")
+                        .data(Map.of("message", "The banking assistant is temporarily unavailable. Please try again shortly.")));
+            } catch (Exception ignored) {
+                // The HTTP client may already have disconnected.
+            }
+            emitter.complete();
         }
     }
 
-    private void saveCompletedConversation(String question, String answer, ChatConversation conversation) {
+    private void saveCompletedConversation(ChatConversation conversation, String question, String answer) {
         Instant now = Instant.now();
         messages.save(new ChatMessage(UUID.randomUUID().toString(), conversation.getId(), "USER", question, now));
         messages.save(new ChatMessage(UUID.randomUUID().toString(), conversation.getId(), "ASSISTANT", answer, now));
         conversation.touch(now);
         conversations.save(conversation);
+    }
+
+    private static final class StreamingClientDisconnectedException extends RuntimeException {
+        private StreamingClientDisconnectedException(Exception cause) {
+            super(cause);
+        }
     }
 
     private ChatConversation conversation(String id, Long customerId) {

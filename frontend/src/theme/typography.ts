@@ -23,7 +23,7 @@ declare module '@mui/material/styles' {
 }
 
 const typography: TypographyOptions = {
-  fontFamily: ['Inter', 'sans-serif'].join(','),
+  fontFamily: ['Manrope', 'Inter', 'sans-serif'].join(','),
   fontWeightLight: 300,
   fontWeightRegular: 400,
   fontWeightMedium: 500,

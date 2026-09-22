@@ -1,62 +1,62 @@
-import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/material';
-import IconifyIcon from 'components/base/IconifyIcon';
+import { Box, Stack, Typography } from '@mui/material';
 import LoginForm from 'components/sections/authentication/LoginForm';
 
-const LoginPage = () => {
-  return (
-    <Box
+const LoginPage = () => (
+  <Box sx={{ width: 1 }}>
+    <Typography sx={{ color: '#9BE6C9', font: '11px DM Mono', letterSpacing: '.13em' }}>
+      SECURE ACCESS
+    </Typography>
+    <Typography
       sx={{
-        width: 1,
-        position: 'relative',
-        zIndex: 100,
+        mt: 1.5,
+        fontFamily: 'Fraunces',
+        fontSize: { xs: 40, sm: 48 },
+        fontWeight: 500,
+        letterSpacing: '-.06em',
+        lineHeight: 1,
       }}
     >
-      <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
-        <Container maxWidth="sm">
-          <Card
-            sx={{
-              p: { xs: 3, sm: 5 },
-              width: 1,
-            }}
-          >
-            <Typography variant="h4">Sign In</Typography>
-
-            <Typography
-              variant="body2"
-              sx={{
-                mt: 2,
-                mb: { xs: 3, sm: 5 },
-                fontSize: { xs: 'subtitle1.fontSize', sm: 'body2.fontSize' },
-              }}
-            >
-              Sign in with your customer ID and password.
-            </Typography>
-
-            <Stack direction="row" spacing={{ xs: 1, sm: 2 }} sx={{ display: 'none' }}>
-              <Button fullWidth size="large" color="neutral" variant="outlined" sx={{ p: 1 }}>
-                <IconifyIcon icon="eva:google-fill" color="error.main" />
-              </Button>
-              <Button fullWidth size="large" color="neutral" variant="outlined" sx={{ p: 1 }}>
-                <IconifyIcon icon="gg:facebook" color="primary.main" width={22} />
-              </Button>
-
-              <Button fullWidth size="large" color="neutral" variant="outlined" sx={{ p: 1 }}>
-                <IconifyIcon icon="logos:twitter" />
-              </Button>
-            </Stack>
-
-            <Divider sx={{ my: 3 }}>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                OR
-              </Typography>
-            </Divider>
-
-            <LoginForm />
-          </Card>
-        </Container>
-      </Stack>
+      Welcome back.
+    </Typography>
+    <Typography sx={{ color: '#91A29A', mt: 2, mb: 5, lineHeight: 1.65 }}>
+      Sign in with your customer ID and password to access your command desk.
+    </Typography>
+    <Box
+      sx={{
+        '& .MuiInputLabel-root': { color: '#91A29A' },
+        '& .MuiOutlinedInput-root': {
+          color: '#EEF5F1',
+          bgcolor: '#14201D',
+          '& fieldset': { borderColor: '#3A5147' },
+          '&:hover fieldset': { borderColor: '#6C8B7C' },
+        },
+        '& .MuiOutlinedInput-input': {
+          color: '#EEF5F1',
+          WebkitTextFillColor: '#EEF5F1',
+          caretColor: '#9BE6C9',
+          '&::placeholder': { color: '#789087', opacity: 1 },
+          '&:-webkit-autofill': {
+            WebkitTextFillColor: '#EEF5F1',
+            WebkitBoxShadow: '0 0 0 100px #14201D inset',
+            transition: 'background-color 9999s ease-out 0s',
+          },
+        },
+        '& .MuiButton-contained': {
+          mt: 1,
+          bgcolor: '#9BE6C9',
+          color: '#10251D',
+          '&:hover': { bgcolor: '#C2F1DC' },
+        },
+      }}
+    >
+      <LoginForm />
     </Box>
-  );
-};
-
+    <Stack direction="row" gap={1} alignItems="center" mt={3}>
+      <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#9BE6C9' }} />
+      <Typography variant="caption" sx={{ color: '#91A29A' }}>
+        Encrypted session · Account protection active
+      </Typography>
+    </Stack>
+  </Box>
+);
 export default LoginPage;

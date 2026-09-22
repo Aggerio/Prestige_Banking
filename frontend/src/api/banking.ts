@@ -68,6 +68,7 @@ export const getTransactions = (accountNumber: string, params: Record<string, un
 export const getAnalytics = (accountNumber: string) =>
   client.get<Analytics>(`/api/v1/accounts/${accountNumber}/analytics`, { params: { months: 12 } });
 export const getPublicHome = () => client.get<PublicHome>('/api/v1/public/home');
+export const getOffers = () => client.get<PublicContent[]>('/api/v1/public/offers');
 export const getInvestors = () => client.get<PublicContent[]>('/api/v1/public/investors');
 export const createTransfer = (payload: {
   sourceAccountNumber: string;
@@ -80,3 +81,5 @@ export const createTransfer = (payload: {
   client.post('/api/v1/transfers', payload, {
     headers: { 'Idempotency-Key': crypto.randomUUID() },
   });
+export const changeLoginPassword = (payload: { currentPassword: string; newPassword: string }) =>
+  client.put('/api/v1/auth/passwords/login', payload);

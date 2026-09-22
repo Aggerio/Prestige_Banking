@@ -26,7 +26,7 @@ const Sidebar = ({ drawerWidth }: SidebarProps) => {
         display: { xs: 'none', md: 'flex' },
         flexDirection: 'column',
         gap: 2,
-        py: 3.5,
+        py: 2.5,
         overflow: 'hidden',
         width: {
           xs: drawerWidth.sm,
@@ -35,12 +35,12 @@ const Sidebar = ({ drawerWidth }: SidebarProps) => {
         },
       }}
     >
-      <Toolbar sx={{ gap: 1, minHeight: 100, cursor: 'pointer' }}>
+      <Toolbar sx={{ gap: 1, minHeight: 72, cursor: 'pointer', color: 'common.white' }}>
         <Logo />
       </Toolbar>
 
       <SimpleBar style={{ maxHeight: 'calc(100vh - 100px)' }}>
-        <List sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <List sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, px: 1 }}>
           {menuLinks.map((menu) => (
             <MenuListItem key={menu.id} menuItem={menu} />
           ))}

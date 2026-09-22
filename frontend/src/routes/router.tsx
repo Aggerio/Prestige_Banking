@@ -10,6 +10,8 @@ const MainLayout = lazy(() => import('layouts/main-layout'));
 const AuthLayout = lazy(() => import('layouts/auth-layout'));
 const Dashboard = lazy(() => import('pages/dashboard'));
 const TransactionsPage = lazy(() => import('pages/transactions'));
+const CardsPage = lazy(() => import('pages/cards'));
+const AccountsPage = lazy(() => import('pages/accounts'));
 const PublicHomePage = lazy(() => import('pages/public-home'));
 const Spinner = lazy(() => import('components/loading/Splash'));
 const LoadingProgress = lazy(() => import('components/loading/LoadingProgress'));
@@ -47,6 +49,8 @@ export const routes = [
             children: [
               { path: paths.dashboard, element: <Dashboard /> },
               { path: paths.transactions, element: <TransactionsPage /> },
+              { path: paths.creditCards, element: <CardsPage /> },
+              { path: paths.accounts, element: <AccountsPage /> },
             ],
           },
         ],

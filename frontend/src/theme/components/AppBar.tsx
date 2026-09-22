@@ -6,8 +6,8 @@ const AppBarComponent: Components<Omit<Theme, 'components'>>['MuiAppBar'] = {
   styleOverrides: {
     root: ({ theme }) => ({
       boxShadow: 'none',
-      paddingTop: theme.spacing(2.5),
-      paddingBottom: theme.spacing(2.5),
+      paddingTop: theme.spacing(1.5),
+      paddingBottom: theme.spacing(1.5),
     }),
   },
 };

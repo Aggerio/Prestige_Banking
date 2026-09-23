@@ -24,10 +24,17 @@ if errorlevel 1 (
     exit /b 1
 )
 
+rem setx writes user variables to the registry but cannot update the Command
+rem Prompt that invoked it. Read that value as a fallback so this launcher can
+rem be run from an already-open prompt as well.
+if not defined GROQ_API_KEY (
+    for /f "tokens=1,2,*" %%A in ('reg query "HKCU\Environment" /v GROQ_API_KEY 2^>nul ^| findstr /r /c:"GROQ_API_KEY"') do set "GROQ_API_KEY=%%C"
+)
+
 if not defined GROQ_API_KEY (
     echo GROQ_API_KEY is not set.
-    echo In a new Command Prompt, run: setx GROQ_API_KEY "your-groq-api-key"
-    echo Then open a fresh terminal and run start-tabs.cmd again.
+    echo Set it permanently with: setx GROQ_API_KEY "your-groq-api-key"
+    echo Or set it for this prompt only with: set "GROQ_API_KEY=your-groq-api-key"
     exit /b 1
 )
 

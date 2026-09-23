@@ -18,6 +18,13 @@ public class KnowledgeArticle {
     @Column(name = "created_at", nullable = false) private Instant createdAt;
 
     protected KnowledgeArticle() { }
+    public static KnowledgeArticle fromDatabase(String id, String phase, String title, String body,
+                                                String sourceRef, String active, Instant createdAt) {
+        KnowledgeArticle article = new KnowledgeArticle();
+        article.id = id; article.phase = phase; article.title = title; article.body = body;
+        article.sourceRef = sourceRef; article.active = active; article.createdAt = createdAt;
+        return article;
+    }
     public String getId() { return id; }
     public String getPhase() { return phase; }
     public String getTitle() { return title; }

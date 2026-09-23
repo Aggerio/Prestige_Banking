@@ -2,7 +2,7 @@ $ErrorActionPreference = 'SilentlyContinue'
 
 # The command marker is set by start-tabs.cmd.  It lets this script close the
 # persistent cmd/Maven/npm process tree, rather than only its listener child.
-$ports = 3000, 8080, 8004, 8002, 8001, 8083, 8761
+$ports = 3000, 8080, 8085, 8004, 8002, 8001, 8083, 8761
 $processes = Get-CimInstance Win32_Process
 $byId = @{}
 foreach ($process in $processes) {

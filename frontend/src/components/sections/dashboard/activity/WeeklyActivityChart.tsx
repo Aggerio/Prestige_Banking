@@ -1,6 +1,6 @@
 import { SxProps, useTheme } from '@mui/material';
 import ReactEchart from 'components/base/ReactEchart';
-import { TransactionDataType } from 'data/activity-chart';
+import type { TransactionDataType } from 'data/activity-chart';
 import { LegendComponentOption } from 'echarts';
 import EChartsReactCore from 'echarts-for-react/lib/core';
 import { BarChart, BarSeriesOption } from 'echarts/charts';
@@ -84,7 +84,10 @@ const WeeklyActivityChart = ({ chartRef, ...rest }: WeeklyActivityChartProps) =>
       },
       tooltip: {
         trigger: 'item',
-        formatter: '{b}: ${c}',
+        formatter: (params: unknown) => {
+          const point = params as { name?: string; value?: number };
+          return `${point.name || ''}: ₹${Number(point.value || 0).toLocaleString('en-IN')}`;
+        },
         backgroundColor: palette.neutral.dark,
         textStyle: { color: palette.secondary.contrastText },
         borderWidth: 0,

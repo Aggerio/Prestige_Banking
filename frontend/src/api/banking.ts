@@ -20,7 +20,20 @@ export type Card = {
   accountType: string;
   availableBalance: number;
 };
-export type Customer = { customerId: number; customerName: string; age: number; status: string };
+export type Customer = {
+  customerId: number;
+  customerName: string;
+  age: number;
+  status: string;
+  bank: { bankId: number; bankName: string; ifscCode: string; branchName: string } | null;
+  address: {
+    addressId: number;
+    streetName: string;
+    city: string;
+    state: string;
+    pinCode: string;
+  } | null;
+};
 export type Transaction = {
   transactionId: number;
   referenceNumber: string;
@@ -63,12 +76,19 @@ export const logout = () => client.post('/api/v1/auth/logout');
 export const getCustomer = () => client.get<Customer>('/api/v1/customers/me');
 export const getAccounts = () => client.get<Account[]>('/api/v1/accounts');
 export const getCards = () => client.get<Card[]>('/api/v1/cards');
+export const changeCardStatus = (
+  cardId: number,
+  payload: { status: 'ACTIVE' | 'BLOCKED'; transactionPassword: string },
+) => client.patch<Card>(`/api/v1/cards/${cardId}/status`, payload);
 export const getTransactions = (accountNumber: string, params: Record<string, unknown>) =>
   client.get<TransactionPage>(`/api/v1/accounts/${accountNumber}/transactions`, { params });
 export const getAnalytics = (accountNumber: string) =>
   client.get<Analytics>(`/api/v1/accounts/${accountNumber}/analytics`, { params: { months: 12 } });
 export const getPublicHome = () => client.get<PublicHome>('/api/v1/public/home');
+export const getOffers = () => client.get<PublicContent[]>('/api/v1/public/offers');
 export const getInvestors = () => client.get<PublicContent[]>('/api/v1/public/investors');
+export const getAboutUs = () => client.get<PublicContent>('/api/v1/public/about-us');
+export const getContactUs = () => client.get<PublicContent>('/api/v1/public/contact-us');
 export const createTransfer = (payload: {
   sourceAccountNumber: string;
   destinationAccountNumber: string;
@@ -80,3 +100,12 @@ export const createTransfer = (payload: {
   client.post('/api/v1/transfers', payload, {
     headers: { 'Idempotency-Key': crypto.randomUUID() },
   });
+export const changeLoginPassword = (payload: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}) => client.put('/api/v1/auth/passwords/login', payload);
+export const verifyTransactionPassword = (payload: {
+  accountNumber: string;
+  transactionPassword: string;
+}) => client.post<{ verified: boolean }>('/api/v1/auth/passwords/transaction/verify', payload);

@@ -4,11 +4,12 @@ import MobileSidebar from 'layouts/main-layout/sidebar/MobileSidebar';
 import Sidebar from 'layouts/main-layout/sidebar/Sidebar';
 import { PropsWithChildren, useState } from 'react';
 
-const drawerWidth = { lg: 250, md: 240, sm: 230 };
+const drawerWidth = { lg: 288, md: 288, sm: 280 };
 
 const MainLayout = ({ children }: PropsWithChildren) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -27,7 +28,11 @@ const MainLayout = ({ children }: PropsWithChildren) => {
   return (
     <>
       <Box sx={{ display: 'flex' }}>
-        <Sidebar drawerWidth={drawerWidth} />
+        <Sidebar
+          drawerWidth={drawerWidth}
+          collapsed={sidebarCollapsed}
+          onToggle={() => setSidebarCollapsed((value) => !value)}
+        />
         <MobileSidebar
           onDrawerClose={handleDrawerClose}
           onDrawerTransitionEnd={handleDrawerTransitionEnd}
@@ -42,17 +47,18 @@ const MainLayout = ({ children }: PropsWithChildren) => {
             width: 1,
             maxWidth: {
               xs: 1,
-              md: `calc(100% - ${drawerWidth.md}px)`,
-              lg: `calc(100% - ${drawerWidth.lg}px)`,
+              md: `calc(100% - ${sidebarCollapsed ? 92 : drawerWidth.lg}px)`,
+              lg: `calc(100% - ${sidebarCollapsed ? 92 : drawerWidth.lg}px)`,
             },
+            transition: 'max-width 320ms cubic-bezier(.2,.8,.2,1)',
             justifyContent: 'space-between',
           }}
         >
           <MainNavbar onDrawerToggle={handleDrawerToggle} />
           <Stack
             sx={{
-              backgroundColor: { xs: 'common.white', md: 'background.paper' },
-              px: { xs: 3.15, md: 5, xl: 7 },
+              backgroundColor: 'background.default',
+              px: { xs: 2, md: 4, xl: 5 },
               flex: 1,
               gap: 1,
             }}

@@ -24,7 +24,7 @@ const notifications_data = [
   {
     id: uniqueId(),
     title: 'Transaction Successful',
-    description: 'You have received $500 from John Doe',
+    description: 'You have received ₹500 from John Doe',
     avatar: TransactionImage,
     createdAt: dayjs().toDate(),
     isUnRead: true,
@@ -32,7 +32,7 @@ const notifications_data = [
   {
     id: uniqueId(),
     title: 'Low Balance Alert',
-    description: 'Your account balance is below $100',
+    description: 'Your account balance is below ₹100',
     avatar: null,
     createdAt: dayjs().subtract(2, 'hour').subtract(45, 'minute').toDate(),
     isUnRead: true,
@@ -87,7 +87,7 @@ const NotificationDropdown = ({ open, onClose }: NotificationDropdownProps) => {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         slotProps={{
           paper: {
-            sx: { mt: 1.5, ml: 0.75, width: 300, bgcolor: 'common.white', borderRadius: '3%' },
+            sx: { mt: 1.5, ml: 0.75, width: 300, bgcolor: 'background.paper', borderRadius: '3%' },
           },
         }}
       >

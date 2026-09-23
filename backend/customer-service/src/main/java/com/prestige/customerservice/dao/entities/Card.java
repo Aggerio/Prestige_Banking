@@ -51,4 +51,9 @@ public class Card {
 
     public enum CardType { DEBIT, CREDIT }
     public enum CardStatus { ACTIVE, BLOCKED, EXPIRED }
+
+    public void changeStatus(CardStatus status) {
+        this.cardStatus = status;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

@@ -1,6 +1,6 @@
 import CardContainer from 'components/common/CardContainter';
 import WeeklyActivityChart from 'components/sections/dashboard/activity/WeeklyActivityChart';
-import { TransactionDataType } from 'data/activity-chart';
+import type { TransactionDataType } from 'data/activity-chart';
 import ReactECharts from 'echarts-for-react';
 import { useChartResize } from 'providers/useEchartResize';
 import { useRef } from 'react';

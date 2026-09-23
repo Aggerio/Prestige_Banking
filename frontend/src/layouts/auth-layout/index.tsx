@@ -47,7 +47,7 @@ const AuthLayout = () => (
         }}
       />
       <Link href="/" sx={{ color: 'common.white', display: 'flex', position: 'relative' }}>
-        <Logo />
+        <Logo light />
       </Link>
       <Box
         sx={{
@@ -171,9 +171,6 @@ const AuthLayout = () => (
         </Box>
       </Box>
       <Box sx={{ mt: 'auto', position: 'relative', maxWidth: 470 }}>
-        <Typography sx={{ color: '#9BE6C9', font: '11px DM Mono', letterSpacing: '.14em' }}>
-          YOUR FINANCES, IN FOCUS
-        </Typography>
         <Typography
           sx={{
             fontFamily: 'Fraunces',
@@ -181,28 +178,21 @@ const AuthLayout = () => (
             fontSize: { md: 46, lg: 58 },
             lineHeight: 0.99,
             letterSpacing: '-.06em',
-            mt: 2,
           }}
         >
-          A calmer way to stay in control.
-        </Typography>
-        <Typography sx={{ color: '#AAB7B1', mt: 3, lineHeight: 1.7 }}>
-          Your accounts, cards, transfers and financial activity—one secure command desk.
+          Welcome to Prestige Banking
         </Typography>
       </Box>
     </Box>
     <Stack sx={{ flex: 1, p: { xs: 3, sm: 5, md: 7 }, minWidth: 0 }}>
       <Link href="/" sx={{ display: { md: 'none' }, color: 'common.white', mb: 7 }}>
-        <Logo />
+        <Logo light />
       </Link>
       <Stack sx={{ flex: 1, justifyContent: 'center', maxWidth: 430, width: 1, mx: 'auto' }}>
         <PageEnter>
           <Outlet />
         </PageEnter>
       </Stack>
-      <Typography variant="caption" sx={{ color: '#7F9188', mt: 4 }}>
-        © 2026 Prestige Banking · Protected banking session
-      </Typography>
     </Stack>
   </Stack>
 );

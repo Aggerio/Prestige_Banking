@@ -1,9 +1,7 @@
 package com.prestige.customerservice.controllers;
 
-import com.prestige.customerservice.dtos.CardQuery;
-import com.prestige.customerservice.dtos.CardStatusRequest;
-import jakarta.validation.Valid;
-import com.prestige.customerservice.services.abstractions.CardServiceManager;
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.prestige.customerservice.dtos.CardQuery;
+import com.prestige.customerservice.dtos.CardStatusRequest;
+import com.prestige.customerservice.services.abstractions.CardServiceManager;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/cards")
@@ -37,5 +39,4 @@ public class CardController {
                                   @Valid @RequestBody CardStatusRequest request) {
         return cardService.changeStatus(Long.valueOf(jwt.getSubject()), cardId, request);
     }
-
 }

@@ -24,11 +24,11 @@ const PageEnter = ({ children }: PropsWithChildren) => {
               '& > * > *': {
                 animation: 'pageEnter 560ms cubic-bezier(.2,.8,.2,1) both',
               },
-              '& > * > :nth-of-type(1)': { animationDelay: '70ms' },
-              '& > * > :nth-of-type(2)': { animationDelay: '140ms' },
-              '& > * > :nth-of-type(3)': { animationDelay: '210ms' },
-              '& > * > :nth-of-type(4)': { animationDelay: '280ms' },
-              '& > * > :nth-of-type(5)': { animationDelay: '350ms' },
+              '& > * > :nth-child(1)': { animationDelay: '70ms' },
+              '& > * > :nth-child(2)': { animationDelay: '140ms' },
+              '& > * > :nth-child(3)': { animationDelay: '210ms' },
+              '& > * > :nth-child(4)': { animationDelay: '280ms' },
+              '& > * > :nth-child(5)': { animationDelay: '350ms' },
               '@media (prefers-reduced-motion: reduce)': {
                 '&, & *, & > *, & > * > *': { animation: 'none !important' },
               },

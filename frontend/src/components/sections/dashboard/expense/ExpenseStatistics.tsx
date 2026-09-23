@@ -1,6 +1,6 @@
 import CardContainer from 'components/common/CardContainter';
 import ExpenseStatisticsChart from 'components/sections/dashboard/expense/ExpenseStatisticsChart';
-import { ExpenseDataType } from 'data/expense-chart';
+import type { ExpenseDataType } from 'data/expense-chart';
 import ReactECharts from 'echarts-for-react';
 import { useChartResize } from 'providers/useEchartResize';
 import { useRef } from 'react';

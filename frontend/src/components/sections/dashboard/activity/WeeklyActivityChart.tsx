@@ -1,6 +1,6 @@
 import { SxProps, useTheme } from '@mui/material';
 import ReactEchart from 'components/base/ReactEchart';
-import { TransactionDataType } from 'data/activity-chart';
+import type { TransactionDataType } from 'data/activity-chart';
 import { LegendComponentOption } from 'echarts';
 import EChartsReactCore from 'echarts-for-react/lib/core';
 import { BarChart, BarSeriesOption } from 'echarts/charts';
@@ -41,7 +41,6 @@ const WeeklyActivityChart = ({ chartRef, ...rest }: WeeklyActivityChartProps) =>
   const { up } = useBreakpoints();
   const upSm = up('sm');
   const upMd = up('md');
-  const upLg = up('lg');
   const { palette } = theme;
   const barWidth = upMd ? 15 : upSm ? 10 : 7;
   const barSpacing = upMd ? 1 : upSm ? 0.8 : 0.6;
@@ -65,9 +64,16 @@ const WeeklyActivityChart = ({ chartRef, ...rest }: WeeklyActivityChartProps) =>
         data: xAxisData,
       },
       yAxis: {
-        axisLabel: { color: palette.primary.light, fontSize: 13 },
+        axisLabel: {
+          color: palette.text.secondary,
+          fontSize: 12,
+          formatter: (value: number) =>
+            value >= 1000 ? `₹${(value / 1000).toLocaleString('en-IN')}k` : `₹${value}`,
+        },
         axisLine: { show: false },
         axisTick: { show: false },
+        min: 0,
+        splitNumber: 4,
         splitLine: {
           lineStyle: {
             color: palette.secondary.contrastText,
@@ -83,8 +89,19 @@ const WeeklyActivityChart = ({ chartRef, ...rest }: WeeklyActivityChartProps) =>
         containLabel: true,
       },
       tooltip: {
-        trigger: 'item',
-        formatter: '{b}: ${c}',
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        formatter: (params: unknown) => {
+          const points = params as { name?: string; seriesName?: string; value?: number }[];
+          const title = points[0]?.name || '';
+          const values = points
+            .map(
+              (point) =>
+                `${point.seriesName}: ₹${Number(point.value || 0).toLocaleString('en-IN')}`,
+            )
+            .join('<br/>');
+          return `${title}<br/>${values}`;
+        },
         backgroundColor: palette.neutral.dark,
         textStyle: { color: palette.secondary.contrastText },
         borderWidth: 0,
@@ -93,7 +110,7 @@ const WeeklyActivityChart = ({ chartRef, ...rest }: WeeklyActivityChartProps) =>
       legend: {
         data: [
           { name: 'Deposit', icon: 'circle' },
-          { name: 'Withdraw', icon: 'circle' },
+          { name: 'Withdrawals', icon: 'circle' },
         ],
         itemGap: 33,
         itemHeight: 16,
@@ -119,25 +136,27 @@ const WeeklyActivityChart = ({ chartRef, ...rest }: WeeklyActivityChartProps) =>
             itemStyle: { color: palette.primary.dark },
           },
           showBackground: false,
-          barGap: barSpacing,
+          barGap: `${Math.round(barSpacing * 35)}%`,
+          barCategoryGap: '45%',
           animationDuration: 500,
         },
         {
           data: withdrawData,
           type: 'bar',
           stack: '2',
-          name: 'Withdraw',
+          name: 'Withdrawals',
           barWidth: barWidth,
           itemStyle: {
             borderRadius: 30,
           },
           color: palette.success.light,
           showBackground: false,
+          barCategoryGap: '45%',
           animationDuration: 500,
         },
       ],
     };
-  }, [theme, seriesData, upLg, barWidth]);
+  }, [theme, seriesData, barWidth, barSpacing]);
 
   return (
     <ReactEchart

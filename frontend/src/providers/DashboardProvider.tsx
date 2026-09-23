@@ -78,16 +78,29 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
     void refresh();
   }, [refresh]);
   useEffect(() => {
-    if (!selectedAccount) return;
+    if (!selectedAccount) {
+      setTransactions([]);
+      setAnalytics(null);
+      return undefined;
+    }
+    let active = true;
+    setTransactions([]);
+    setAnalytics(null);
     void Promise.all([
       getTransactions(selectedAccount, { page: 0, size: 20 }),
       getAnalytics(selectedAccount),
     ])
       .then(([transactionResponse, analyticsResponse]) => {
+        if (!active) return;
         setTransactions(transactionResponse.data.items);
         setAnalytics(analyticsResponse.data);
       })
-      .catch((err) => setError(apiError(err)));
+      .catch((err) => {
+        if (active) setError(apiError(err));
+      });
+    return () => {
+      active = false;
+    };
   }, [selectedAccount]);
 
   const transfer = async (

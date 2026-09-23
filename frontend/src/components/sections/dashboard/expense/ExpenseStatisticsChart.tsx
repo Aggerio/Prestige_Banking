@@ -1,6 +1,6 @@
 import { SxProps, useTheme } from '@mui/material';
 import ReactEchart from 'components/base/ReactEchart';
-import { ExpenseDataType } from 'data/expense-chart';
+import type { ExpenseDataType } from 'data/expense-chart';
 import { BarSeriesOption, XAXisComponentOption, YAXisComponentOption } from 'echarts';
 import EChartsReactCore from 'echarts-for-react/lib/core';
 import { BarChart } from 'echarts/charts';
@@ -34,7 +34,7 @@ const ExpenseStatisticsChart = ({ chartRef, ...rest }: ExpenseStatisticsChartPro
   const { palette } = theme;
   const chartOptions: ECOption = useMemo(() => {
     return {
-      backgroundColor: palette.common.white,
+      backgroundColor: palette.background.paper,
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },

@@ -43,8 +43,8 @@ const MobileSidebar = ({
         width: drawerWidth,
       }}
     >
-      <Toolbar sx={{ gap: 1, minHeight: 100 }}>
-        <Logo />
+      <Toolbar sx={{ gap: 1.5, minHeight: 110, px: 2.75 }}>
+        <Logo light size="large" />
       </Toolbar>
 
       <SimpleBar style={{ maxHeight: 'calc(100vh - 100px)' }}>

@@ -1,33 +1,10 @@
-import { Alert, Box, Button, Card, Grid, Stack, TextField, Typography } from '@mui/material';
-import { apiError } from 'api/client';
-import { changeLoginPassword } from 'api/banking';
+import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 import BalanceHistory from 'components/sections/dashboard/balance/BalanceHistory';
-import { FormEvent, useState } from 'react';
+import { currencyFormat } from 'helpers/utils';
 import { useDashboard } from 'providers/DashboardProvider';
 
 const AccountsPage = () => {
   const { customer, accounts } = useDashboard();
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const submit = async (event: FormEvent) => {
-    event.preventDefault();
-    setSaving(true);
-    setError(null);
-    setMessage(null);
-    try {
-      const response = await changeLoginPassword({ currentPassword, newPassword });
-      setMessage(response.data.message || 'Login password changed. Please sign in again.');
-      setCurrentPassword('');
-      setNewPassword('');
-    } catch (err) {
-      setError(apiError(err));
-    } finally {
-      setSaving(false);
-    }
-  };
   return (
     <Box sx={{ py: { xs: 2.5, md: 3.5 } }}>
       <Typography sx={{ font: '10px DM Mono', letterSpacing: '.13em', color: 'primary.main' }}>
@@ -37,10 +14,10 @@ const AccountsPage = () => {
         Account details
       </Typography>
       <Typography variant="body2" color="text.secondary" mt={1} mb={4}>
-        Review account balances, history, profile details, and sign-in security.
+        Review account balances, history, and profile details.
       </Typography>
       <Grid container spacing={2.5}>
-        <Grid item xs={12} lg={7}>
+        <Grid item xs={12}>
           <Card sx={{ p: { xs: 2.5, md: 3.5 } }}>
             <Typography variant="h5">Profile and accounts</Typography>
             <Grid container spacing={2} mt={1}>
@@ -59,76 +36,55 @@ const AccountsPage = () => {
                 </Grid>
               ))}
             </Grid>
-            <Stack gap={1.5} mt={4}>
+            <Grid container spacing={2} mt={2}>
               {accounts.map((account) => (
-                <Stack
-                  key={account.accountNumber}
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ py: 1.5, borderTop: 1, borderColor: 'divider' }}
-                >
-                  <Box>
-                    <Typography fontWeight={700}>{account.accountType}</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {account.accountNumber}
-                    </Typography>
+                <Grid item xs={12} md={6} key={account.accountNumber}>
+                  <Box
+                    sx={{
+                      height: 1,
+                      p: { xs: 2, md: 2.5 },
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: 2,
+                      bgcolor: 'background.default',
+                    }}
+                  >
+                    <Stack direction="row" justifyContent="space-between" gap={2} mb={2}>
+                      <Box>
+                        <Typography fontWeight={800}>{account.accountType} account</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {account.accountNumber}
+                        </Typography>
+                      </Box>
+                      <Typography fontWeight={800}>{currencyFormat(account.balance)}</Typography>
+                    </Stack>
+                    <Grid container spacing={1.5}>
+                      {[
+                        ['Bank name', customer?.bank?.bankName],
+                        ['IFSC code', customer?.bank?.ifscCode],
+                        ['Branch', customer?.bank?.branchName],
+                        ['Status', account.status],
+                        ['Transfer limit', currencyFormat(account.transferLimit)],
+                        ['Minimum balance', currencyFormat(account.minimumBalance)],
+                      ].map(([label, value]) => (
+                        <Grid item xs={6} key={label}>
+                          <Typography variant="caption" color="text.secondary">
+                            {label}
+                          </Typography>
+                          <Typography variant="body2" fontWeight={700} mt={0.25}>
+                            {value || '—'}
+                          </Typography>
+                        </Grid>
+                      ))}
+                    </Grid>
                   </Box>
-                  <Box textAlign="right">
-                    <Typography fontWeight={700}>₹ {account.balance.toLocaleString()}</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Limit ₹ {account.transferLimit.toLocaleString()}
-                    </Typography>
-                  </Box>
-                </Stack>
+                </Grid>
               ))}
-            </Stack>
+            </Grid>
           </Card>
         </Grid>
-        <Grid item xs={12} lg={5}>
+        <Grid item xs={12}>
           <BalanceHistory />
-        </Grid>
-        <Grid item xs={12} lg={5}>
-          <Card component="form" onSubmit={submit} sx={{ p: { xs: 2.5, md: 3.5 } }}>
-            <Typography variant="h5">Reset login password</Typography>
-            <Typography variant="body2" color="text.secondary" mt={1} mb={3}>
-              Use your current password to create a new secure sign-in.
-            </Typography>
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
-              </Alert>
-            )}
-            {message && (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                {message}
-              </Alert>
-            )}
-            <Stack gap={2}>
-              <TextField
-                required
-                label="Current password"
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-              <TextField
-                required
-                label="New password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                helperText="Use a password you have not used before."
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={saving || !currentPassword || !newPassword}
-              >
-                {saving ? 'Updating password…' : 'Update password'}
-              </Button>
-            </Stack>
-          </Card>
         </Grid>
       </Grid>
     </Box>

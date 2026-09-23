@@ -1,6 +1,6 @@
 import { AppBar, Badge, Box, IconButton, Link, Stack, Toolbar, Typography } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
-import Image from 'components/base/Image';
+import Logo from 'components/common/Logo';
 import NotificationDropdown from 'layouts/main-layout/appbar/NotificationDropdown';
 import LiveNotificationToast from 'layouts/main-layout/appbar/LiveNotificationToast';
 import ProfileDropdown from 'layouts/main-layout/appbar/ProfileDropdown';
@@ -43,22 +43,26 @@ const MainNavbar = ({ onDrawerToggle }: NavbarProps) => {
             gap: { xs: 0, lg: 2 },
           }}
         >
-          <Typography
-            sx={{
-              display: { xs: 'none', md: 'block' },
-              fontSize: { sm: 'h4.fontSize', xl: 'h3.fontSize' },
-              fontWeight: 700,
-              color: 'text.primary',
-              flex: 1,
-              textAlign: { xs: 'center', md: 'left' },
-              textTransform: 'capitalize',
-            }}
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{ flex: 1, display: { xs: 'none', md: 'flex' } }}
           >
-            {routeName}
-          </Typography>
+            <Typography
+              sx={{
+                fontSize: { sm: 'h4.fontSize', xl: 'h3.fontSize' },
+                fontWeight: 700,
+                color: 'text.primary',
+                textAlign: { xs: 'center', md: 'left' },
+                textTransform: 'capitalize',
+              }}
+            >
+              {routeName}
+            </Typography>
+          </Stack>
           <Stack direction="row" gap={1} sx={{ display: { xs: 'flex', md: 'none' } }}>
             <Link href="/" sx={{ display: 'flex', p: 0.5 }}>
-              <Image src="/bankdash/bankdash.svg" alt="Logo" sx={{ width: 25 }} />
+              <Logo />
             </Link>
             <IconButton onClick={onDrawerToggle} sx={{ display: { md: 'none' } }}>
               <IconifyIcon icon="mingcute:menu-line" color="primary.darker" width={25} />

@@ -30,6 +30,9 @@ public class Card {
     @Column(name = "masked_pan", nullable = false, unique = true, length = 24)
     private String maskedPan;
 
+    @Column(name = "unmasked_pan", nullable = false, unique = true, length = 19)
+    private String unmaskedPan;
+
     @Column(name = "expiry_month", nullable = false)
     private Integer expiryMonth;
 
@@ -51,4 +54,9 @@ public class Card {
 
     public enum CardType { DEBIT, CREDIT }
     public enum CardStatus { ACTIVE, BLOCKED, EXPIRED }
+
+    public void changeStatus(CardStatus status) {
+        this.cardStatus = status;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

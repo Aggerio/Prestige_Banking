@@ -1,0 +1,3 @@
+package com.prestige.notification.domain;
+import java.time.LocalDateTime; import java.util.*; import org.springframework.data.domain.Pageable; import org.springframework.data.jpa.repository.JpaRepository;
+public interface NotificationRepository extends JpaRepository<Notification,Long> { List<Notification> findByCustomerIdOrderByCreatedAtDesc(Long customerId, Pageable page); List<Notification> findByCustomerIdAndCreatedAtBeforeOrderByCreatedAtDesc(Long customerId, LocalDateTime before, Pageable page); long countByCustomerIdAndReadAtIsNull(Long customerId); Optional<Notification> findByEventIdAndCustomerIdAndRole(String eventId,Long customerId,String role); }

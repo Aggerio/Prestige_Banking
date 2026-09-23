@@ -1,17 +1,20 @@
-import { AppBar, Box, IconButton, Link, Stack, Toolbar, Typography } from '@mui/material';
+import { AppBar, Badge, Box, IconButton, Link, Stack, Toolbar, Typography } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import Image from 'components/base/Image';
 import NotificationDropdown from 'layouts/main-layout/appbar/NotificationDropdown';
+import LiveNotificationToast from 'layouts/main-layout/appbar/LiveNotificationToast';
 import ProfileDropdown from 'layouts/main-layout/appbar/ProfileDropdown';
 import SearchInput from 'layouts/main-layout/appbar/SearchInput';
 import SettingsDropdown from 'layouts/main-layout/appbar/SettingsDropdown';
 import { MouseEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useNotifications } from 'providers/NotificationProvider';
 interface NavbarProps {
   onDrawerToggle: () => void;
 }
 const MainNavbar = ({ onDrawerToggle }: NavbarProps) => {
   const [open, setOpen] = useState<null | HTMLElement>(null);
+  const { unreadCount } = useNotifications();
 
   const location = useLocation();
 
@@ -69,12 +72,18 @@ const MainNavbar = ({ onDrawerToggle }: NavbarProps) => {
 
             <Stack direction="row" sx={{ gap: { xs: 2.5, xl: 3.75 } }}>
               <SettingsDropdown />
-              <IconButton sx={{ bgcolor: 'background.paper' }} onClick={handleOpen}>
-                <IconifyIcon
-                  color="error.main"
-                  icon="lucide:bell-dot"
-                  sx={{ width: { xs: 18, md: 20, xl: 25 }, height: { xs: 18, md: 20, xl: 25 } }}
-                />
+              <IconButton
+                sx={{ bgcolor: 'background.paper' }}
+                onClick={handleOpen}
+                aria-label="Notifications"
+              >
+                <Badge color="error" variant="dot" invisible={unreadCount === 0}>
+                  <IconifyIcon
+                    color="error.main"
+                    icon="lucide:bell"
+                    sx={{ width: { xs: 18, md: 20, xl: 25 }, height: { xs: 18, md: 20, xl: 25 } }}
+                  />
+                </Badge>
               </IconButton>
 
               <NotificationDropdown open={open} onClose={handleClose} />
@@ -86,6 +95,7 @@ const MainNavbar = ({ onDrawerToggle }: NavbarProps) => {
           <SearchInput fullWidth={true} size={'small'} />
         </Box>
       </AppBar>
+      <LiveNotificationToast />
     </>
   );
 };

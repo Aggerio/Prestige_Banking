@@ -4,6 +4,7 @@ import paths, { rootPaths } from './path';
 import RequireAuth from 'components/common/RequireAuth';
 import PageEnter from 'components/common/PageEnter';
 import { DashboardProvider } from 'providers/DashboardProvider';
+import { NotificationProvider } from 'providers/NotificationProvider';
 
 /* ---------------- Lazy loads various components ------------------------- */
 const App = lazy(() => import('App'));
@@ -46,15 +47,17 @@ export const routes = [
         children: [
           {
             element: (
-              <DashboardProvider>
-                <MainLayout>
-                  <Suspense fallback={<LoadingProgress />}>
-                    <PageEnter>
-                      <Outlet />
-                    </PageEnter>
-                  </Suspense>
-                </MainLayout>
-              </DashboardProvider>
+              <NotificationProvider>
+                <DashboardProvider>
+                  <MainLayout>
+                    <Suspense fallback={<LoadingProgress />}>
+                      <PageEnter>
+                        <Outlet />
+                      </PageEnter>
+                    </Suspense>
+                  </MainLayout>
+                </DashboardProvider>
+              </NotificationProvider>
             ),
             children: [
               { path: paths.dashboard, element: <Dashboard /> },

@@ -1,0 +1,3 @@
+package com.prestige.notification.service;
+import com.fasterxml.jackson.databind.ObjectMapper; import com.prestige.notification.api.TransferCompletedEvent; import org.springframework.beans.factory.annotation.Value; import org.springframework.kafka.annotation.KafkaListener; import org.springframework.stereotype.Component;
+@Component public class TransferEventConsumer {private final ObjectMapper json=new ObjectMapper().findAndRegisterModules();private final NotificationService service;public TransferEventConsumer(NotificationService service){this.service=service;} @KafkaListener(topics="${app.notifications.topic}") public void consume(String payload) throws Exception {service.receive(json.readValue(payload,TransferCompletedEvent.class));}}

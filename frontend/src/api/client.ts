@@ -11,6 +11,7 @@ let refreshPromise: Promise<string | null> | null = null;
 export const setAccessToken = (value: string | null) => {
   token = value;
 };
+export const getAccessToken = () => token;
 
 client.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;

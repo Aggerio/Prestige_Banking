@@ -1,0 +1,48 @@
+{
+  "info": {
+    "name": "Prestige Chatbot — Authenticated + Streaming",
+    "description": "Only the two protected chatbot endpoints. Set access_token to a JWT whose sub claim is the numeric customer ID. The stream request relays live Groq token events; Postman can validate it, but curl -N is the clearest live-stream viewer.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8085" },
+    { "key": "access_token", "value": "PASTE_JWT_HERE" },
+    { "key": "conversation_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Ask — complete JSON response",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"message\": \"What public information is available?\",\n  \"conversationId\": \"{{conversation_id}}\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{base_url}}/api/v1/chat"
+      },
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "if (pm.response.code === 200) {",
+          "  const response = pm.response.json();",
+          "  pm.collectionVariables.set('conversation_id', response.conversationId);",
+          "}"
+        ] } }
+      ]
+    },
+    {
+      "name": "Ask — live SSE token stream",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" },
+          { "key": "Accept", "value": "text/event-stream", "type": "text" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"message\": \"Tell me what you can help with.\",\n  \"conversationId\": \"{{conversation_id}}\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{base_url}}/api/v1/chat/stream"
+      },
+      "response": []
+    }
+  ]
+}

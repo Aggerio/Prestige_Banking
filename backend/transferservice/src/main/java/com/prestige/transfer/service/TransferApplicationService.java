@@ -6,6 +6,9 @@ import com.prestige.transfer.domain.enums.*;
 import com.prestige.transfer.dto.*;
 import com.prestige.transfer.exception.*;
 import com.prestige.transfer.repository.*;
+import com.prestige.transfer.notifications.TransferCompletedEvent;
+import com.prestige.transfer.notifications.NotificationOutbox;
+import com.prestige.transfer.notifications.NotificationOutboxRepository;
 import io.micrometer.core.instrument.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -25,16 +28,18 @@ public class TransferApplicationService {
     private final TransactionDetailRepository transactions;
     private final AccountLockDao locks;
     private final MeterRegistry metrics;
+    private final NotificationOutboxRepository outbox;
 
     public TransferApplicationService(AccountRepository accounts, CustomerRepository customers,
             FundTransferRepository transfers, TransactionDetailRepository transactions, AccountLockDao locks,
-            MeterRegistry metrics) {
+            MeterRegistry metrics, NotificationOutboxRepository outbox) {
         this.accounts = accounts;
         this.customers = customers;
         this.transfers = transfers;
         this.transactions = transactions;
         this.locks = locks;
         this.metrics = metrics;
+        this.outbox = outbox;
     }
 
     @Transactional
@@ -91,6 +96,10 @@ public class TransferApplicationService {
                     "Transfer to " + request.destinationAccountHolderName()));
             transactions.save(new TransactionDetail(transfer.getTransferId(), transfer.getReferenceNumber(),
                     destination, TransactionType.CREDIT, request.amount(), now, "Transfer received"));
+            String senderName = customers.findById(source.getCustomerId()).map(Customer::getCustomerName).orElse("A customer");
+            outbox.save(NotificationOutbox.forTransfer(new TransferCompletedEvent(UUID.randomUUID().toString(),
+                    transfer.getReferenceNumber(), transfer.getAmount(), transfer.getCompletedAt(),
+                    source.getCustomerId(), senderName, destination.getCustomerId(), transfer.getDestinationName())));
             metrics.counter("transfer.completions").increment();
             return new TransferExecution(response(transfer), true);
         } catch (ApiException ex) {

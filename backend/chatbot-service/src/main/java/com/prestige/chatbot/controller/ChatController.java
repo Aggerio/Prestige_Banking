@@ -15,11 +15,6 @@ public class ChatController {
     private final ChatService chat;
     public ChatController(ChatService chat) { this.chat = chat; }
 
-    @PostMapping("/public")
-    public ChatResponse publicChat(@Valid @RequestBody ChatRequest request) {
-        return chat.ask(request.message(), request.conversationId(), null);
-    }
-
     @PostMapping
     public ChatResponse chat(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody ChatRequest request) {
         return chat.ask(request.message(), request.conversationId(), customerId(jwt));

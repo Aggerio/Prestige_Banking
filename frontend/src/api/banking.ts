@@ -52,6 +52,13 @@ export type TransactionPage = {
   totalElements: number;
   totalPages: number;
 };
+export type TransferDetails = {
+  transferId: number;
+  referenceNumber: string;
+  status: string;
+  amount: number;
+  completedAt: string;
+};
 export type Analytics = {
   accountNumber: string;
   weeklyActivity: { date: string; deposits: number; withdrawals: number }[];
@@ -85,6 +92,8 @@ export const getTransactions = (accountNumber: string, params: Record<string, un
   client.get<TransactionPage>(`/api/v1/accounts/${accountNumber}/transactions`, { params });
 export const getAnalytics = (accountNumber: string) =>
   client.get<Analytics>(`/api/v1/accounts/${accountNumber}/analytics`, { params: { months: 12 } });
+export const getTransfer = (referenceNumber: string) =>
+  client.get<TransferDetails>(`/api/v1/transfers/${encodeURIComponent(referenceNumber)}`);
 export const getPublicHome = () => client.get<PublicHome>('/api/v1/public/home');
 export const getOffers = () => client.get<PublicContent[]>('/api/v1/public/offers');
 export const getInvestors = () => client.get<PublicContent[]>('/api/v1/public/investors');

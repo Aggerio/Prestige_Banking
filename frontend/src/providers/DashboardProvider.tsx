@@ -51,14 +51,16 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [customerResponse, accountResponse, cardResponse] = await Promise.all([
+      const [customerResult, accountResult, cardResult] = await Promise.allSettled([
         getCustomer(),
         getAccounts(),
         getCards(),
       ]);
-      setCustomer(customerResponse.data);
+      if (accountResult.status === 'rejected') throw accountResult.reason;
+      const accountResponse = accountResult.value;
+      if (customerResult.status === 'fulfilled') setCustomer(customerResult.value.data);
+      if (cardResult.status === 'fulfilled') setCards(cardResult.value.data);
       setAccounts(accountResponse.data);
-      setCards(cardResponse.data);
       setSelectedAccount((current) =>
         current && accountResponse.data.some((account) => account.accountNumber === current)
           ? current

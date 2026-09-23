@@ -1,6 +1,6 @@
 import { alpha, SxProps, useTheme } from '@mui/material';
 import ReactEchart from 'components/base/ReactEchart';
-import { BalanceDataType } from 'data/balance-chart';
+import type { BalanceDataType } from 'data/balance-chart';
 import 'default-passive-events';
 import EChartsReactCore from 'echarts-for-react/lib/core';
 import { LineChart, LineSeriesOption } from 'echarts/charts';
@@ -85,7 +85,11 @@ const BalanceHistoryChart = ({ chartRef, ...rest }: BalanceHistoryChartProps) =>
 
       tooltip: {
         trigger: 'axis',
-        formatter: '{b}: ${c}',
+        formatter: (params: unknown) => {
+          const points = params as Array<{ axisValue?: string; value?: number }>;
+          const point = points[0];
+          return `${point?.axisValue || ''}: ₹${Number(point?.value || 0).toLocaleString('en-IN')}`;
+        },
       },
       color: alpha(palette.primary.main, 0.25),
       series: [

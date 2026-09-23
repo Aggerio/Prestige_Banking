@@ -130,11 +130,11 @@ const AuthLayout = () => (
               mt: 4,
             }}
           >
-            •••• 4432
+            •••• ••••
           </Typography>
           <Stack direction="row" justifyContent="space-between" mt={3}>
-            <Typography sx={{ font: '9px DM Mono', color: '#B4CBBF' }}>AGAM GUPTA</Typography>
-            <Typography sx={{ font: '9px DM Mono', color: '#B4CBBF' }}>09 / 29</Typography>
+            <Typography sx={{ font: '9px DM Mono', color: '#B4CBBF' }}>CARD HOLDER</Typography>
+            <Typography sx={{ font: '9px DM Mono', color: '#B4CBBF' }}>MM / YY</Typography>
           </Stack>
         </Box>
         <Box

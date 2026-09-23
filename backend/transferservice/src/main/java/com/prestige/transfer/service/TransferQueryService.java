@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.util.*;
 import com.prestige.transfer.domain.enums.TransactionType;
+import com.prestige.transfer.domain.enums.TransferStatus;
+import java.time.temporal.TemporalAdjusters;
 
 @Service
 public class TransferQueryService {
@@ -43,7 +45,16 @@ public class TransferQueryService {
         TransactionType type = movementType(movement);
         if (from != null && to != null && from.isAfter(to))
             throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_DATE_RANGE", "from must be before to.");
-        Page<TransactionDetail> result = transactions.findActivity(accountNumber, type, from, to, PageRequest.of(page, size));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TransactionDetail> result;
+        if (from == null && to == null) {
+            result = type == null
+                    ? transactions.findByAccountNumberOrderByTransactionAtDesc(accountNumber, pageable)
+                    : transactions.findByAccountNumberAndTransactionTypeOrderByTransactionAtDesc(
+                            accountNumber, type, pageable);
+        } else {
+            result = transactions.findActivity(accountNumber, type, from, to, pageable);
+        }
         List<TransactionResponse> items = result.getContent().stream()
                 .map(t -> new TransactionResponse(t.getTransactionId(), t.getReferenceNumber(), movement(t.getTransactionType()), t.getTransactionType(),
                         t.getTransactionAmount(), t.getTransactionAt(), t.getRemarks()))
@@ -60,17 +71,13 @@ public class TransferQueryService {
 
         Account account = accounts.findById(accountNumber).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "ACCOUNT_NOT_FOUND", "Account was not found."));
-        YearMonth currentMonth = YearMonth.now();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = now.toLocalDate();
+        YearMonth currentMonth = YearMonth.from(today);
         YearMonth firstMonth = currentMonth.minusMonths(months - 1);
         LocalDateTime historyStart = firstMonth.atDay(1).atStartOfDay();
-        // Weekly activity can start in the preceding month when callers request a
-        // one-month analytics window.  Fetch from the earlier boundary so each of
-        // the seven returned days is based on the ledger, not an accidental zero.
-        LocalDate weeklyStart = LocalDate.now().minusDays(6);
-        LocalDateTime activityStart = weeklyStart.atStartOfDay();
-        LocalDateTime queryStart = historyStart.isBefore(activityStart) ? historyStart : activityStart;
-        List<TransactionDetail> history = transactions
-                .findByAccountNumberAndTransactionAtGreaterThanEqualOrderByTransactionAtAsc(accountNumber, queryStart);
+        List<TransactionDetail> history = transactions.findCompletedActivity(
+                accountNumber, historyStart, now.plusNanos(1), TransferStatus.COMPLETED);
 
         Map<YearMonth, BigDecimal> monthlyNet = new HashMap<>();
         Map<YearMonth, BigDecimal> monthlyWithdrawals = new HashMap<>();
@@ -96,12 +103,13 @@ public class TransferQueryService {
             expenses.add(new AnalyticsResponse.MonthlyExpensePoint(month, monthlyWithdrawals.getOrDefault(month, BigDecimal.ZERO)));
         }
 
-        LocalDate today = LocalDate.now();
+        LocalDate weeklyStart = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate weeklyEnd = weeklyStart.plusDays(6);
         Map<LocalDate, BigDecimal> deposits = new HashMap<>();
         Map<LocalDate, BigDecimal> withdrawals = new HashMap<>();
         for (TransactionDetail transaction : history) {
             LocalDate date = transaction.getTransactionAt().toLocalDate();
-            if (date.isBefore(weeklyStart) || date.isAfter(today)) continue;
+            if (date.isBefore(weeklyStart) || date.isAfter(weeklyEnd)) continue;
             Map<LocalDate, BigDecimal> target = transaction.getTransactionType() == TransactionType.CREDIT ? deposits : withdrawals;
             target.merge(date, transaction.getTransactionAmount(), BigDecimal::add);
         }

@@ -10,7 +10,7 @@ const RenderCellDownload = ({ params }: ParamsProps) => {
   const { up } = useBreakpoints();
   const upLg = up('lg');
   const handleDownloadRequest = (row: GridValidRowModel) => {
-    const csv = `Transaction ID,Type,Date,Amount,Description\n${row.transactionId},${row.type},${row.date},${row.amount},"${row.description.title}"`;
+    const csv = `Transaction ID,Type,Date,Amount (INR),Description\n${row.transactionId},${row.type},${row.date},${row.amount},"${row.description.title}"`;
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
     const link = document.createElement('a');
     link.href = url;

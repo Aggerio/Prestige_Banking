@@ -48,6 +48,14 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Transaction password changed."));
     }
 
+    @PostMapping("/passwords/transaction/verify")
+    ResponseEntity<VerificationResponse> verifyTransactionPassword(
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody TransactionPasswordVerificationRequest r) {
+        auth.verifyTransactionPassword(Long.valueOf(jwt.getSubject()), r);
+        return ResponseEntity.ok(new VerificationResponse(true));
+    }
+
     //change .secure(true) when using browser
     private ResponseEntity<TokenResponse> token(AuthService.TokenAndRefresh r) {
         ResponseCookie c = ResponseCookie.from(props.cookieName(), r.refreshToken()).httpOnly(true).secure(false).sameSite("Strict").path("/api/v1/auth").maxAge(props.ttl()).build();

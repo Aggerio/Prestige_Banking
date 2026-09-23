@@ -3,7 +3,9 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogTitle,
   Grid,
+  IconButton,
   Snackbar,
   Stack,
   Typography,
@@ -17,10 +19,12 @@ import InvoiceOverviewTable from 'components/sections/dashboard/invoice/InvoiceO
 import RecentTransactions from 'components/sections/dashboard/transactions/RecentTransaction';
 import QuickTransfer from 'components/sections/dashboard/transfer/QuickTransfer';
 import { useState } from 'react';
+import { useDashboard } from 'providers/DashboardProvider';
 
 const Dashboard = () => {
   const [transferOpen, setTransferOpen] = useState(false);
   const [transferDone, setTransferDone] = useState(false);
+  const { customer } = useDashboard();
   const panel = (delay: number) => ({
     animation: `dashboardEnter 620ms cubic-bezier(.2,.8,.2,1) ${delay}ms both`,
   });
@@ -50,15 +54,10 @@ const Dashboard = () => {
       >
         <Box>
           <Typography
-            sx={{ font: '10px DM Mono', letterSpacing: '.13em', color: 'primary.main', mb: 1 }}
-          >
-            MONEY IN MOTION / TODAY
-          </Typography>
-          <Typography
             variant="h2"
             sx={{ fontFamily: 'Space Grotesk', letterSpacing: '-.06em', color: 'text.primary' }}
           >
-            Good afternoon.
+            Hello{customer?.customerName ? `, ${customer.customerName}` : ''}.
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.75 }}>
             Your accounts, activity and next move—at a glance.
@@ -108,6 +107,14 @@ const Dashboard = () => {
         TransitionProps={{ timeout: 260 }}
         PaperProps={{ sx: { borderRadius: 2, overflow: 'hidden' } }}
       >
+        <DialogTitle
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 0 }}
+        >
+          Make a transfer
+          <IconButton aria-label="Close transfer dialog" onClick={() => setTransferOpen(false)}>
+            <IconifyIcon icon="solar:close-circle-linear" />
+          </IconButton>
+        </DialogTitle>
         <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
           <QuickTransfer onSuccess={completeTransfer} />
         </DialogContent>

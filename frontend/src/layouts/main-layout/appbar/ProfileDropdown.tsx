@@ -2,14 +2,18 @@ import {
   Avatar,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   IconButton,
-  Link,
   Menu,
   Stack,
   Typography,
 } from '@mui/material';
-import ProfileImage from 'assets/avatar.jpg';
+import FemaleProfileImage from 'assets/profile-female.svg';
+import MaleProfileImage from 'assets/profile-male.svg';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { MouseEvent, useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
@@ -17,22 +21,27 @@ import { useAuth } from 'providers/AuthProvider';
 import { useDashboard } from 'providers/DashboardProvider';
 import { useNavigate } from 'react-router-dom';
 
-/* ------------------------Profile dropdown Data --------------------------- */
-const profileData = [
-  {
-    href: '#!',
-    title: 'My Profile',
-    subtitle: 'Account Settings',
-    icon: 'fa:user-circle-o',
-    color: 'primary.light',
-  },
-];
+const maleFirstNames = new Set([
+  'aarav',
+  'arjun',
+  'rohan',
+  'vihaan',
+  'aditya',
+  'rahul',
+  'raj',
+  'amit',
+  'vikram',
+  'karan',
+]);
 /* -------------------------------------------------------------------------- */
 const ProfileDropdown = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
   const { logout } = useAuth();
   const { customer } = useDashboard();
   const navigate = useNavigate();
+  const firstName = customer?.customerName.trim().split(/\s+/)[0]?.toLowerCase() || '';
+  const profileImage = maleFirstNames.has(firstName) ? MaleProfileImage : FemaleProfileImage;
 
   const handleOpenDropdown = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -44,20 +53,14 @@ const ProfileDropdown = () => {
     <Fragment>
       <IconButton sx={{ p: 0, position: 'relative' }} onClick={handleOpenDropdown}>
         <Avatar
-          alt="Avatar"
-          src={ProfileImage}
-          slotProps={{
-            img: {
-              sx: {
-                objectFit: 'cover',
-                position: 'absolute',
-                top: '75%',
-                left: '30%',
-                transform: 'translate(-50%, -50%) scale(1.5)',
-              },
-            },
+          alt={customer?.customerName || 'Customer profile'}
+          src={profileImage}
+          sx={{
+            width: { xs: 40, md: 45, xl: 60 },
+            height: { xs: 40, md: 45, xl: 60 },
+            bgcolor: 'transparent',
+            '& img': { objectFit: 'contain' },
           }}
-          sx={{ width: { xs: 40, md: 45, xl: 60 }, height: { xs: 40, md: 45, xl: 60 } }}
         />
       </IconButton>
       {/* Profile Menu Dropdown*/}
@@ -72,7 +75,7 @@ const ProfileDropdown = () => {
         sx={{
           '& .MuiMenu-paper': {
             width: 280,
-            bgcolor: 'common.white',
+            bgcolor: 'background.paper',
           },
         }}
       >
@@ -81,7 +84,16 @@ const ProfileDropdown = () => {
             User Profile
           </Typography>
           <Stack direction="row" py={2.5} spacing={1.5} alignItems="center">
-            <Avatar src={ProfileImage} alt="Profile Image" sx={{ width: 65, height: 65 }} />
+            <Avatar
+              src={profileImage}
+              alt={customer?.customerName || 'Customer profile'}
+              sx={{
+                width: 65,
+                height: 65,
+                bgcolor: 'transparent',
+                '& img': { objectFit: 'contain' },
+              }}
+            />
             <Box>
               <Typography variant="subtitle2" color="text.primary" fontWeight={600}>
                 {customer?.customerName || 'Customer'}
@@ -92,57 +104,17 @@ const ProfileDropdown = () => {
             </Box>
           </Stack>
           <Divider />
-          {profileData.map((profileItem) => (
-            <Box key={profileItem.title} sx={{ py: 1.5, px: 0 }}>
-              <Link href={profileItem.href}>
-                <Stack direction="row" spacing={1.5}>
-                  <Stack
-                    direction="row"
-                    sx={{
-                      width: 45,
-                      height: 45,
-                      bgcolor: 'neutral.light',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: 1.5,
-                    }}
-                  >
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        minwidth: 24,
-                        height: 24,
-                        bgcolor: 'transparent',
-                      }}
-                    >
-                      <IconifyIcon icon={profileItem.icon} color={profileItem.color} />
-                    </Avatar>
-                  </Stack>
-                  <div>
-                    <Typography
-                      variant="subtitle2"
-                      fontWeight={600}
-                      noWrap
-                      sx={{
-                        width: 150,
-                      }}
-                    >
-                      {profileItem.title}
-                    </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        width: 150,
-                      }}
-                      noWrap
-                    >
-                      {profileItem.subtitle}
-                    </Typography>
-                  </div>
-                </Stack>
-              </Link>
-            </Box>
-          ))}
+          <Button
+            fullWidth
+            startIcon={<IconifyIcon icon="solar:user-circle-linear" />}
+            onClick={() => {
+              handleClose();
+              setProfileOpen(true);
+            }}
+            sx={{ my: 1.5, justifyContent: 'flex-start' }}
+          >
+            My profile
+          </Button>
           <Box mt={1.25}>
             <Button
               onClick={() => {
@@ -157,6 +129,74 @@ const ProfileDropdown = () => {
           </Box>
         </Box>
       </Menu>
+      <Dialog open={profileOpen} onClose={() => setProfileOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Customer profile</DialogTitle>
+        <DialogContent>
+          <Stack direction="row" gap={2} alignItems="center" mb={3}>
+            <Avatar
+              src={profileImage}
+              alt={customer?.customerName || 'Customer profile'}
+              sx={{ width: 76, height: 76, bgcolor: 'transparent' }}
+            />
+            <Box>
+              <Typography variant="h5" color="text.primary" fontWeight={800}>
+                {customer?.customerName || '—'}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Customer ID {customer?.customerId || '—'} · {customer?.status || '—'}
+              </Typography>
+            </Box>
+          </Stack>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+              gap: 2,
+            }}
+          >
+            {[
+              ['Age', customer?.age],
+              ['Bank name', customer?.bank?.bankName],
+              ['IFSC code', customer?.bank?.ifscCode],
+              ['Branch name', customer?.bank?.branchName],
+              [
+                'Address',
+                customer?.address
+                  ? [
+                      customer.address.streetName,
+                      customer.address.city,
+                      customer.address.state,
+                      customer.address.pinCode,
+                    ]
+                      .filter(Boolean)
+                      .join(', ')
+                  : null,
+              ],
+            ].map(([label, value]) => (
+              <Box
+                key={label}
+                sx={{
+                  p: 2,
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: 1.5,
+                  gridColumn: label === 'Address' ? { sm: '1 / -1' } : undefined,
+                }}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  {label}
+                </Typography>
+                <Typography color="text.primary" fontWeight={700} mt={0.4}>
+                  {value || '—'}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setProfileOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 };

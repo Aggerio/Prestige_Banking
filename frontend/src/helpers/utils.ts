@@ -11,9 +11,9 @@ export const dateFormatFromUTC = (dateString: Date) => {
 };
 
 export const currencyFormat = (amount: number, options: Intl.NumberFormatOptions = {}) => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'usd',
+    currency: 'INR',
     maximumFractionDigits: 2,
     minimumFractionDigits: 0,
     ...options,
@@ -21,6 +21,6 @@ export const currencyFormat = (amount: number, options: Intl.NumberFormatOptions
 };
 
 export const numberFormat = (number: number, notation: 'standard' | 'compact' = 'standard') =>
-  new Intl.NumberFormat('en-US', {
+  new Intl.NumberFormat('en-IN', {
     notation,
   }).format(number);

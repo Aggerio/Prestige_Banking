@@ -1,4 +1,4 @@
-import { createTheme, Shadows } from '@mui/material';
+import { createTheme, PaletteMode, Shadows } from '@mui/material';
 import AppBarComponent from 'theme/components/AppBar';
 import AvatarComponent from 'theme/components/Avatar';
 import ButtonComponent from 'theme/components/Button';
@@ -40,46 +40,66 @@ declare module '@mui/material/styles' {
     xxl: true;
   }
 }
-export const theme = createTheme({
-  palette,
-  typography,
-  shadows: [...shadows] as Shadows,
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 900,
-      lg: 1200,
-      xl: 1536,
-      xxl: 1920,
+export const createAppTheme = (mode: PaletteMode) =>
+  createTheme({
+    palette: {
+      ...palette,
+      mode,
+      ...(mode === 'dark' && {
+        background: { default: '#07100D', paper: '#10201A' },
+        text: { primary: '#F2F8F4', secondary: '#A8BAB1', disabled: '#71847B' },
+        divider: 'rgba(220,240,230,.14)',
+        action: {
+          ...palette.action,
+          active: '#C6D8CF',
+          hover: 'rgba(255,255,255,.08)',
+          selected: 'rgba(155,230,201,.13)',
+          disabled: '#687A72',
+          disabledBackground: 'rgba(255,255,255,.08)',
+          focus: 'rgba(155,230,201,.22)',
+        },
+      }),
     },
-  },
-  components: {
-    MuiAppBar: AppBarComponent,
-    MuiAvatar: AvatarComponent,
-    MuiButton: ButtonComponent,
-    MuiButtonBase: ButtonBaseComponent,
-    MuiCard: CardComponent,
-    MuiCardContent: CardContentComponent,
-    MuiCssBaseline: CssBaselineComponent,
-    MuiDataGrid: DataGridComponent,
-    MuiDrawer: DrawerComponent,
-    MuiFilledInput: FilledInputComponent,
-    MuiIconButton: IconButtonComponent,
-    MuiInput: InputComponent,
-    MuiInputBase: InputBaseComponent,
-    MuiInputLabel: InputLabelComponent,
-    MuiInputAdornment: InputAdornmentComponent,
-    MuiLink: LinkComponent,
-    MuiListItem: ListItemComponent,
-    MuiListItemText: ListItemTextComponent,
-    MuiMenu: MenuComponent,
-    MuiOutlinedInput: OutlinedInputComponent,
-    MuiPagination: PaginationComponent,
-    MuiPaginationItem: PaginationItemComponent,
-    MuiTab: TabComponent,
-    MuiTabs: TabsComponent,
-    MuiToolbar: ToolbarComponent,
-    MuiTouchRipple: TouchRippleComponent,
-  },
-});
+    typography,
+    shadows: [...shadows] as Shadows,
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 900,
+        lg: 1200,
+        xl: 1536,
+        xxl: 1920,
+      },
+    },
+    components: {
+      MuiAppBar: AppBarComponent,
+      MuiAvatar: AvatarComponent,
+      MuiButton: ButtonComponent,
+      MuiButtonBase: ButtonBaseComponent,
+      MuiCard: CardComponent,
+      MuiCardContent: CardContentComponent,
+      MuiCssBaseline: CssBaselineComponent,
+      MuiDataGrid: DataGridComponent,
+      MuiDrawer: DrawerComponent,
+      MuiFilledInput: FilledInputComponent,
+      MuiIconButton: IconButtonComponent,
+      MuiInput: InputComponent,
+      MuiInputBase: InputBaseComponent,
+      MuiInputLabel: InputLabelComponent,
+      MuiInputAdornment: InputAdornmentComponent,
+      MuiLink: LinkComponent,
+      MuiListItem: ListItemComponent,
+      MuiListItemText: ListItemTextComponent,
+      MuiMenu: MenuComponent,
+      MuiOutlinedInput: OutlinedInputComponent,
+      MuiPagination: PaginationComponent,
+      MuiPaginationItem: PaginationItemComponent,
+      MuiTab: TabComponent,
+      MuiTabs: TabsComponent,
+      MuiToolbar: ToolbarComponent,
+      MuiTouchRipple: TouchRippleComponent,
+    },
+  });
+
+export const theme = createAppTheme('light');

@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public record CardQuery(
         Long cardId,
         String maskedPan,
-        String unmaskedPan,
         String cardType,
         String cardholderName,
         int expiryMonth,

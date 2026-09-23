@@ -27,7 +27,7 @@ public class Card {
     @Column(name = "cardholder_name", nullable = false, length = 150)
     private String cardholderName;
 
-    @Column(name = "masked_pan", nullable = false, unique = true, length = 24)
+    @Column(name = "masked_pan", nullable = false, unique = true, length = 16)
     private String maskedPan;
 
     @Column(name = "unmasked_pan", nullable = false, unique = true, length = 19)

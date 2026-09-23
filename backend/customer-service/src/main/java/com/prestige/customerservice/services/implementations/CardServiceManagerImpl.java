@@ -4,6 +4,8 @@ import com.prestige.customerservice.dao.entities.Card;
 import com.prestige.customerservice.dao.repositories.AccountRepository;
 import com.prestige.customerservice.dao.repositories.CardRepository;
 import com.prestige.customerservice.dtos.CardQuery;
+import com.prestige.customerservice.dtos.CardNumberQuery;
+import com.prestige.customerservice.dtos.CardNumberRevealRequest;
 import com.prestige.customerservice.dtos.CardStatusRequest;
 import com.prestige.customerservice.services.abstractions.CardServiceManager;
 import org.springframework.http.HttpStatus;
@@ -68,9 +70,19 @@ public class CardServiceManagerImpl implements CardServiceManager {
         return toQuery(cards.save(card));
     }
 
+    @Override
+    public CardNumberQuery revealCardNumber(Long customerId, Long cardId, CardNumberRevealRequest request) {
+        Card card = cards.findByCardIdAndAccount_Customer_CustomerId(cardId, customerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found"));
+        if (!passwordEncoder.matches(request.transactionPassword(), card.getAccount().getTransactionPasswordHash())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid transaction password");
+        }
+        return new CardNumberQuery(card.getUnmaskedPan());
+    }
+
     private CardQuery toQuery(Card card) {
         var account = card.getAccount();
-        return new CardQuery(card.getCardId(), card.getMaskedPan(), card.getUnmaskedPan(), card.getCardType().name(),
+        return new CardQuery(card.getCardId(), card.getMaskedPan(), card.getCardType().name(),
                 card.getCardholderName(), card.getExpiryMonth(), card.getExpiryYear(), card.getCardStatus().name(),
                 account.getAccountNumber(), account.getAccountType().name(), account.getAvailableBalance());
     }

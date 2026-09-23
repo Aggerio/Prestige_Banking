@@ -58,12 +58,12 @@ public class AuthController {
 
     //change .secure(true) when using browser
     private ResponseEntity<TokenResponse> token(AuthService.TokenAndRefresh r) {
-        ResponseCookie c = ResponseCookie.from(props.cookieName(), r.refreshToken()).httpOnly(true).secure(false).sameSite("Strict").path("/api/v1/auth").maxAge(props.ttl()).build();
+        ResponseCookie c = ResponseCookie.from(props.cookieName(), r.refreshToken()).httpOnly(true).secure(true).sameSite("Strict").path("/api/v1/auth").maxAge(props.ttl()).build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, c.toString()).body(r.token());
     }
 
     //change .secure(true) when using browser
     private String clearCookie() {
-        return ResponseCookie.from(props.cookieName(), "").httpOnly(true).secure(false).sameSite("Strict").path("/api/v1/auth").maxAge(0).build().toString();
+        return ResponseCookie.from(props.cookieName(), "").httpOnly(true).secure(true).sameSite("Strict").path("/api/v1/auth").maxAge(0).build().toString();
     }
 }

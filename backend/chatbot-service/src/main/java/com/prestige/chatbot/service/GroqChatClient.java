@@ -1,7 +1,5 @@
 package com.prestige.chatbot.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -11,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +17,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /** OpenAI-compatible Groq client. Groq is used only for generation, never retrieval. */
 @Component
@@ -36,7 +38,7 @@ public class GroqChatClient {
     public void stream(String systemPrompt, String userPrompt, Consumer<String> onToken) {
         if (apiKey == null || apiKey.isBlank()) throw unavailable("The banking assistant is not configured.");
         try {
-            String payload = json.writeValueAsString(Map.of("model", model, "temperature", 0.1, "stream", true,
+            String payload = json.writeValueAsString(Map.of("model", model, "temperature", 0, "stream", true,
                     "messages", List.of(Map.of("role", "system", "content", systemPrompt),
                             Map.of("role", "user", "content", userPrompt))));
             HttpRequest request = HttpRequest.newBuilder(streamingUri)
@@ -69,7 +71,7 @@ public class GroqChatClient {
     public String complete(String systemPrompt, String userPrompt) {
         if (apiKey == null || apiKey.isBlank()) throw unavailable("The banking assistant is not configured.");
         try {
-            String payload = json.writeValueAsString(Map.of("model", model, "temperature", 0.1,
+            String payload = json.writeValueAsString(Map.of("model", model, "temperature", 0,
                     "messages", List.of(Map.of("role", "system", "content", systemPrompt),
                             Map.of("role", "user", "content", userPrompt))));
             String response = client.post().uri("/chat/completions")

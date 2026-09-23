@@ -52,6 +52,7 @@ call :start_tab "Customer Service" "%ROOT%\backend\customer-service"
 call :start_tab "Transfer Service" "%ROOT%\backend\transferservice" "-Dspring-boot.run.profiles=jwt"
 call :start_tab "Notification Service" "%ROOT%\backend\notification-service"
 call :start_tab "Public Info Service" "%ROOT%\backend\public-info"
+call :start_tab "Chatbot Service" "%ROOT%\backend\chatbot-service"
 call :start_tab "API Gateway" "%ROOT%\backend\prestige-api-gateway"
 wt -w "%WINDOW%" new-tab --title "Prestige Frontend" -d "%ROOT%\frontend" cmd /k "set PRESTIGE_STACK=1&&npm run dev -- --host 0.0.0.0 --port 3000 --strictPort"
 
@@ -60,10 +61,8 @@ call :wait_http "Transfer Service" "http://localhost:8002/actuator/health" || ex
 call :wait_http "Notification Service" "http://localhost:8005/actuator/health" || exit /b 1
 call :wait_http "Public Info Service" "http://localhost:8004/actuator/health" || exit /b 1
 
-call :start_tab "Chatbot Service" "%ROOT%\backend\chatbot-service"
 call :wait_http "Chatbot Service" "http://localhost:8085/actuator/health" || exit /b 1
 
-call :start_tab "API Gateway" "%ROOT%\backend\prestige-api-gateway"
 call :wait_http "API Gateway" "http://localhost:8080/.well-known/jwks.json" || exit /b 1
 call :wait_http "Frontend" "http://localhost:3000/" || exit /b 1
 

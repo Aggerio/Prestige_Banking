@@ -22,7 +22,11 @@ const starterMessages: ChatMessage[] = [
     text: 'Hello! I am your Prestige Banking assistant. How can I help today?',
   },
 ];
-const quickPrompts = ['Account help', 'Transfers', 'Cards'];
+const quickPrompts = [
+  'How can I view my accounts?',
+  'How do I check a transfer status?',
+  'How can I keep my account secure?',
+];
 const cleanChatText = (text: string) => text.replace(/\*\*/g, '');
 const customerLanguageInstruction =
   '\n\nAnswer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.';

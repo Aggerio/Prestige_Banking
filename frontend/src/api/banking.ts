@@ -11,7 +11,6 @@ export type Account = {
 export type Card = {
   cardId: number;
   maskedPan: string;
-  unmaskedPan: string;
   cardType: string;
   cardholderName: string;
   expiryMonth: number;
@@ -21,6 +20,7 @@ export type Card = {
   accountType: string;
   availableBalance: number;
 };
+export type RevealedCardNumber = { unmaskedPan: string };
 export type Customer = {
   customerId: number;
   customerName: string;
@@ -88,6 +88,10 @@ export const changeCardStatus = (
   cardId: number,
   payload: { status: 'ACTIVE' | 'BLOCKED'; transactionPassword: string },
 ) => client.patch<Card>(`/api/v1/cards/${cardId}/status`, payload);
+export const revealCardNumber = (cardId: number, transactionPassword: string) =>
+  client.post<RevealedCardNumber>(`/api/v1/cards/${cardId}/unmasked-pan`, {
+    transactionPassword,
+  });
 export const getTransactions = (accountNumber: string, params: Record<string, unknown>) =>
   client.get<TransactionPage>(`/api/v1/accounts/${accountNumber}/transactions`, { params });
 export const getAnalytics = (accountNumber: string) =>

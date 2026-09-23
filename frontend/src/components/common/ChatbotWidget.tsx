@@ -8,46 +8,101 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { streamChat } from 'api/chat';
 import IconifyIcon from 'components/base/IconifyIcon';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 
-type ChatMessage = {
-  id: number;
-  sender: 'assistant' | 'user';
-  text: string;
-};
+type ChatMessage = { id: string; sender: 'assistant' | 'user'; text: string; sources?: string[] };
 
 const starterMessages: ChatMessage[] = [
   {
-    id: 1,
+    id: 'welcome',
     sender: 'assistant',
-    text: 'Hello! I’m your Prestige Banking assistant. How can I help today?',
+    text: 'Hello! I am your Prestige Banking assistant. How can I help today?',
   },
 ];
-
 const quickPrompts = ['Account help', 'Transfers', 'Cards'];
 
 const ChatbotWidget = () => {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>(starterMessages);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamError, setStreamError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const sendMessage = (event: FormEvent) => {
+  useEffect(() => () => abortRef.current?.abort(), []);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, isStreaming]);
+
+  const sendMessage = async (event: FormEvent) => {
     event.preventDefault();
     const text = draft.trim();
-    if (!text) return;
+    if (!text || isStreaming) return;
 
-    const timestamp = Date.now();
+    const assistantId = crypto.randomUUID();
     setMessages((current) => [
       ...current,
-      { id: timestamp, sender: 'user', text },
-      {
-        id: timestamp + 1,
-        sender: 'assistant',
-        text: 'Thanks for your message. Live assistant responses will be available soon.',
-      },
+      { id: crypto.randomUUID(), sender: 'user', text },
+      { id: assistantId, sender: 'assistant', text: '' },
     ]);
     setDraft('');
+    setStreamError(null);
+    setIsStreaming(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      await streamChat(
+        text,
+        conversationId,
+        {
+          onMetadata: (metadata) => setConversationId(metadata.conversationId),
+          onToken: (token) =>
+            setMessages((current) =>
+              current.map((item) =>
+                item.id === assistantId ? { ...item, text: item.text + token } : item,
+              ),
+            ),
+          onComplete: (metadata) => {
+            setConversationId(metadata.conversationId);
+            setMessages((current) =>
+              current.map((item) =>
+                item.id === assistantId ? { ...item, sources: metadata.sources } : item,
+              ),
+            );
+          },
+          onError: (message) => {
+            setStreamError(message);
+            setMessages((current) =>
+              current.map((item) =>
+                item.id === assistantId && !item.text ? { ...item, text: message } : item,
+              ),
+            );
+          },
+        },
+        controller.signal,
+      );
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'The banking assistant is temporarily unavailable.';
+        setStreamError(message);
+        setMessages((current) =>
+          current.map((item) =>
+            item.id === assistantId && !item.text ? { ...item, text: message } : item,
+          ),
+        );
+      }
+    } finally {
+      if (abortRef.current === controller) abortRef.current = null;
+      setIsStreaming(false);
+    }
   };
 
   return (
@@ -102,7 +157,7 @@ const ChatbotWidget = () => {
                 <Stack direction="row" alignItems="center" gap={0.6}>
                   <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#9BE6C9' }} />
                   <Typography variant="caption" sx={{ color: '#B9C9C1' }}>
-                    Interface preview
+                    {isStreaming ? 'Replying...' : 'Online'}
                   </Typography>
                 </Stack>
               </Box>
@@ -115,7 +170,6 @@ const ChatbotWidget = () => {
               <IconifyIcon icon="solar:close-circle-linear" width={23} />
             </IconButton>
           </Stack>
-
           <Stack gap={1.5} sx={{ flex: 1, overflowY: 'auto', px: 2, py: 2.25, bgcolor: '#F1F5F3' }}>
             <Typography variant="caption" textAlign="center" sx={{ color: 'text.secondary' }}>
               Chat history is stored only in this page session.
@@ -136,11 +190,28 @@ const ChatbotWidget = () => {
                   boxShadow: message.sender === 'user' ? 'none' : '0 5px 18px rgba(18,57,44,.06)',
                 }}
               >
-                <Typography variant="body2" sx={{ lineHeight: 1.55 }}>
-                  {message.text}
+                <Typography variant="body2" sx={{ lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
+                  {message.text || '...'}
                 </Typography>
+                {message.sources && message.sources.length > 0 && (
+                  <Stack direction="row" gap={0.5} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                    {message.sources.map((source) => (
+                      <Chip
+                        key={source}
+                        label={source}
+                        size="small"
+                        sx={{ height: 22, fontSize: 11 }}
+                      />
+                    ))}
+                  </Stack>
+                )}
               </Box>
             ))}
+            {streamError && (
+              <Typography variant="caption" sx={{ color: 'error.main', textAlign: 'center' }}>
+                {streamError}
+              </Typography>
+            )}
             {messages.length === 1 && (
               <Stack direction="row" gap={0.75} flexWrap="wrap" useFlexGap>
                 {quickPrompts.map((prompt) => (
@@ -154,13 +225,13 @@ const ChatbotWidget = () => {
                 ))}
               </Stack>
             )}
+            <div ref={messagesEndRef} />
           </Stack>
-
           <Box component="form" onSubmit={sendMessage} sx={{ p: 1.5, bgcolor: '#FFFFFF' }}>
             <TextField
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
-              placeholder="Type your message…"
+              placeholder="Type your message..."
               fullWidth
               size="small"
               inputProps={{ 'aria-label': 'Chat message' }}
@@ -170,7 +241,7 @@ const ChatbotWidget = () => {
                     <IconButton
                       type="submit"
                       aria-label="Send message"
-                      disabled={!draft.trim()}
+                      disabled={!draft.trim() || isStreaming}
                       sx={{ color: '#176D50' }}
                     >
                       <IconifyIcon icon="solar:plain-bold" width={21} />
@@ -189,7 +260,6 @@ const ChatbotWidget = () => {
           </Box>
         </Box>
       )}
-
       <Fab
         aria-label={open ? 'Close Prestige assistant' : 'Open Prestige assistant'}
         onClick={() => setOpen((value) => !value)}

@@ -14,6 +14,7 @@ const TransactionsPage = lazy(() => import('pages/transactions'));
 const CardsPage = lazy(() => import('pages/cards'));
 const AccountsPage = lazy(() => import('pages/accounts'));
 const PublicHomePage = lazy(() => import('pages/public-home'));
+const PublicInfoPage = lazy(() => import('pages/public-info'));
 const Spinner = lazy(() => import('components/loading/Splash'));
 const LoadingProgress = lazy(() => import('components/loading/LoadingProgress'));
 
@@ -41,6 +42,10 @@ export const routes = [
           </PageEnter>
         ),
       },
+      { path: paths.aboutUs, element: <PublicInfoPage kind="about" /> },
+      { path: paths.investors, element: <PublicInfoPage kind="investors" /> },
+      { path: paths.offers, element: <PublicInfoPage kind="offers" /> },
+      { path: paths.contactUs, element: <PublicInfoPage kind="contact" /> },
       {
         element: <RequireAuth />,
         children: [

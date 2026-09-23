@@ -10,6 +10,7 @@ import {
 import IconifyIcon from 'components/base/IconifyIcon';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import Logo from 'components/common/Logo';
+import PublicHeader from 'components/common/PublicHeader';
 import { Link as RouterLink } from 'react-router-dom';
 
 const rule = { borderColor: 'rgba(205, 227, 216, .17)', borderStyle: 'solid' };
@@ -263,46 +264,7 @@ const HomePage = () => {
           '@media (prefers-reduced-motion: reduce)': { '& *': { animation: 'none !important' } },
         }}
       >
-        <Container maxWidth="xl">
-          <Stack
-            component="header"
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            py={2.75}
-            sx={{ pr: 1, overflow: 'visible' }}
-          >
-            <Stack direction="row" alignItems="center" color="common.white">
-              <Logo light />
-            </Stack>
-            <Stack
-              direction="row"
-              gap={{ xs: 1, sm: 3 }}
-              alignItems="center"
-              sx={{ flexShrink: 0 }}
-            >
-              <Typography
-                variant="body2"
-                sx={{ display: { xs: 'none', sm: 'block' }, color: '#8FA299' }}
-              >
-                Personal banking
-              </Typography>
-              <Button
-                component={RouterLink}
-                to="/authentication/login"
-                variant="outlined"
-                sx={{
-                  color: '#B8D4C7',
-                  borderColor: '#456156',
-                  flexShrink: 0,
-                  '&:hover': { borderColor: '#A8E6CB', bgcolor: 'rgba(155,230,201,.06)' },
-                }}
-              >
-                Sign in
-              </Button>
-            </Stack>
-          </Stack>
-        </Container>
+        <PublicHeader />
         <Container
           maxWidth="xl"
           sx={{
@@ -459,14 +421,6 @@ const HomePage = () => {
               >
                 {home?.offers[0]?.title || (publicLoaded ? 'No active offer' : 'Loading…')}
               </Typography>
-              <Stack direction="row" justifyContent="space-between" mt={1.4}>
-                <Typography variant="caption">
-                  {home?.offers[0]?.contentKey || 'PUBLIC INFO'}
-                </Typography>
-                <Typography variant="caption" color="#178A68">
-                  Complete
-                </Typography>
-              </Stack>
             </Box>
             <Box
               sx={{

@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Chip,
   Fab,
   IconButton,
@@ -22,6 +23,11 @@ const starterMessages: ChatMessage[] = [
   },
 ];
 const quickPrompts = ['Account help', 'Transfers', 'Cards'];
+const cleanChatText = (text: string) => text.replace(/\*\*/g, '');
+const customerLanguageInstruction =
+  '\n\nAnswer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.';
+const customerFriendlyQuestion = (question: string) =>
+  `${question.slice(0, 2_000 - customerLanguageInstruction.length)}${customerLanguageInstruction}`;
 
 const ChatbotWidget = () => {
   const [open, setOpen] = useState(false);
@@ -38,9 +44,7 @@ const ChatbotWidget = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, isStreaming]);
 
-  const sendMessage = async (event: FormEvent) => {
-    event.preventDefault();
-    const text = draft.trim();
+  const sendMessage = async (text: string) => {
     if (!text || isStreaming) return;
 
     const assistantId = crypto.randomUUID();
@@ -57,7 +61,7 @@ const ChatbotWidget = () => {
 
     try {
       await streamChat(
-        text,
+        customerFriendlyQuestion(text),
         conversationId,
         {
           onMetadata: (metadata) => setConversationId(metadata.conversationId),
@@ -105,6 +109,19 @@ const ChatbotWidget = () => {
     }
   };
 
+  const submitMessage = (event: FormEvent) => {
+    event.preventDefault();
+    void sendMessage(draft.trim());
+  };
+
+  const startNewChat = () => {
+    if (isStreaming) return;
+    setMessages(starterMessages);
+    setConversationId(null);
+    setDraft('');
+    setStreamError(null);
+  };
+
   return (
     <>
       {open && (
@@ -114,10 +131,10 @@ const ChatbotWidget = () => {
           sx={{
             position: 'fixed',
             right: { xs: 12, sm: 24 },
+            top: { xs: 72, sm: 88 },
             bottom: { xs: 82, sm: 96 },
             zIndex: 1300,
-            width: { xs: 'calc(100vw - 24px)', sm: 380 },
-            height: { xs: 'min(560px, calc(100vh - 112px))', sm: 520 },
+            width: { xs: 'calc(100vw - 24px)', sm: 400 },
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -136,7 +153,7 @@ const ChatbotWidget = () => {
             direction="row"
             alignItems="center"
             justifyContent="space-between"
-            sx={{ px: 2.25, py: 1.75, color: '#F2F8F4', bgcolor: '#102C23' }}
+            sx={{ px: 2, py: 1.35, color: '#F2F8F4', bgcolor: '#102C23' }}
           >
             <Stack direction="row" alignItems="center" gap={1.25}>
               <Box
@@ -162,13 +179,22 @@ const ChatbotWidget = () => {
                 </Stack>
               </Box>
             </Stack>
-            <IconButton
-              aria-label="Close assistant"
-              onClick={() => setOpen(false)}
-              sx={{ color: '#DDE9E3' }}
-            >
-              <IconifyIcon icon="solar:close-circle-linear" width={23} />
-            </IconButton>
+            <Stack direction="row" gap={0.25}>
+              <Button
+                size="small"
+                startIcon={<IconifyIcon icon="solar:refresh-circle-linear" width={18} />}
+                disabled={isStreaming}
+                onClick={startNewChat}
+                sx={{
+                  minWidth: 0,
+                  px: 0.75,
+                  color: '#DDE9E3',
+                  '&.Mui-disabled': { color: '#71877E' },
+                }}
+              >
+                New chat
+              </Button>
+            </Stack>
           </Stack>
           <Stack gap={1.5} sx={{ flex: 1, overflowY: 'auto', px: 2, py: 2.25, bgcolor: '#F1F5F3' }}>
             <Typography variant="caption" textAlign="center" sx={{ color: 'text.secondary' }}>
@@ -191,7 +217,7 @@ const ChatbotWidget = () => {
                 }}
               >
                 <Typography variant="body2" sx={{ lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
-                  {message.text || '...'}
+                  {cleanChatText(message.text) || '...'}
                 </Typography>
                 {message.sources && message.sources.length > 0 && (
                   <Stack direction="row" gap={0.5} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
@@ -200,6 +226,9 @@ const ChatbotWidget = () => {
                         key={source}
                         label={source}
                         size="small"
+                        clickable
+                        disabled={isStreaming}
+                        onClick={() => void sendMessage(`Tell me more about ${source}.`)}
                         sx={{ height: 22, fontSize: 11 }}
                       />
                     ))}
@@ -219,7 +248,9 @@ const ChatbotWidget = () => {
                     key={prompt}
                     label={prompt}
                     size="small"
-                    onClick={() => setDraft(prompt)}
+                    clickable
+                    disabled={isStreaming}
+                    onClick={() => void sendMessage(prompt)}
                     sx={{ bgcolor: '#E2EEE8', color: '#245A46', fontWeight: 600 }}
                   />
                 ))}
@@ -227,14 +258,14 @@ const ChatbotWidget = () => {
             )}
             <div ref={messagesEndRef} />
           </Stack>
-          <Box component="form" onSubmit={sendMessage} sx={{ p: 1.5, bgcolor: '#FFFFFF' }}>
+          <Box component="form" onSubmit={submitMessage} sx={{ p: 1.5, bgcolor: '#FFFFFF' }}>
             <TextField
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               placeholder="Type your message..."
               fullWidth
               size="small"
-              inputProps={{ 'aria-label': 'Chat message' }}
+              inputProps={{ 'aria-label': 'Chat message', maxLength: 1_600 }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

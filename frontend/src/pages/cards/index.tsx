@@ -17,7 +17,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { changeCardStatus, type Card as BankCard, verifyTransactionPassword } from 'api/banking';
+import { changeCardStatus, revealCardNumber, type Card as BankCard } from 'api/banking';
 import { apiError } from 'api/client';
 import CreditCard from 'components/sections/dashboard/creditCards/CreditCard';
 import IconifyIcon from 'components/base/IconifyIcon';
@@ -34,7 +34,9 @@ const CardsPage = () => {
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [password, setPassword] = useState('');
-  const [revealedCardIds, setRevealedCardIds] = useState<Set<number>>(() => new Set());
+  const [revealedCardNumbers, setRevealedCardNumbers] = useState<Map<number, string>>(
+    () => new Map(),
+  );
   const [error, setError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -63,13 +65,12 @@ const CardsPage = () => {
     setVerifying(true);
     setError(null);
     try {
-      await verifyTransactionPassword({
-        accountNumber: selectedCard.accountNumber,
-        transactionPassword: password,
-      });
-      setRevealedCardIds((current) => {
-        const next = new Set(current);
-        next.add(selectedCard.cardId);
+      const {
+        data: { unmaskedPan },
+      } = await revealCardNumber(selectedCard.cardId, password);
+      setRevealedCardNumbers((current) => {
+        const next = new Map(current);
+        next.set(selectedCard.cardId, unmaskedPan);
         return next;
       });
       setNotice('Card number revealed.');
@@ -156,7 +157,7 @@ const CardsPage = () => {
       <Grid container spacing={2.5}>
         {filteredCards.map((card) => {
           const active = card.accountNumber === selectedAccount;
-          const panRevealed = revealedCardIds.has(card.cardId);
+          const revealedCardNumber = revealedCardNumbers.get(card.cardId);
           return (
             <Grid item xs={12} lg={6} key={card.cardId}>
               <Stack
@@ -184,19 +185,23 @@ const CardsPage = () => {
                     balance: String(card.availableBalance),
                     cardHolder: card.cardholderName,
                     validThru: `${String(card.expiryMonth).padStart(2, '0')}/${String(card.expiryYear).slice(-2)}`,
-                    cardNumber: panRevealed ? card.unmaskedPan : card.maskedPan,
+                    cardNumber: revealedCardNumber ?? card.maskedPan,
                     cardType: card.cardType,
                     status: card.status,
                   }}
                   actions={
                     <>
-                      <Tooltip title={panRevealed ? 'Hide card number' : 'Reveal card number'}>
+                      <Tooltip
+                        title={revealedCardNumber ? 'Hide card number' : 'Reveal card number'}
+                      >
                         <IconButton
-                          aria-label={panRevealed ? 'Hide card number' : 'Reveal card number'}
+                          aria-label={
+                            revealedCardNumber ? 'Hide card number' : 'Reveal card number'
+                          }
                           onClick={() => {
-                            if (panRevealed) {
-                              setRevealedCardIds((current) => {
-                                const next = new Set(current);
+                            if (revealedCardNumber) {
+                              setRevealedCardNumbers((current) => {
+                                const next = new Map(current);
                                 next.delete(card.cardId);
                                 return next;
                               });
@@ -215,7 +220,9 @@ const CardsPage = () => {
                           }}
                         >
                           <IconifyIcon
-                            icon={panRevealed ? 'solar:eye-closed-linear' : 'solar:eye-linear'}
+                            icon={
+                              revealedCardNumber ? 'solar:eye-closed-linear' : 'solar:eye-linear'
+                            }
                           />
                         </IconButton>
                       </Tooltip>

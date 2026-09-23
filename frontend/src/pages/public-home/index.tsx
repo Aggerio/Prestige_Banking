@@ -210,6 +210,9 @@ const HomePage = () => {
   const [contact, setContact] = useState<PublicContent | null>(null);
   const [publicLoaded, setPublicLoaded] = useState(false);
 
+const Reveal = ({ children, delay = 0 }: { children: ReactNode; delay?: number }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     let active = true;
     void Promise.allSettled([getPublicHome(), getInvestors(), getAboutUs(), getContactUs()]).then(
@@ -226,7 +229,70 @@ const HomePage = () => {
       active = false;
     };
   }, []);
+  return (
+    <Box
+      ref={ref}
+      sx={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translate3d(0,0,0)' : 'translate3d(0,32px,0)',
+        transition: `opacity 700ms cubic-bezier(.2,.8,.2,1) ${delay}ms, transform 700ms cubic-bezier(.2,.8,.2,1) ${delay}ms`,
+        '& .reveal-pop': {
+          opacity: visible ? 1 : 0,
+          transform: visible
+            ? 'translate3d(0,0,0) scale(1)'
+            : 'translate3d(14px,14px,0) scale(.94)',
+          transition: `opacity 480ms cubic-bezier(.2,.8,.2,1) ${delay + 340}ms, transform 480ms cubic-bezier(.2,.8,.2,1) ${delay + 340}ms`,
+        },
+        '@media (prefers-reduced-motion: reduce)': {
+          opacity: 1,
+          transform: 'none',
+          transition: 'none',
+        },
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
 
+const testimonials = [
+  {
+    quote:
+      'I no longer open my banking app hoping I’ll eventually find what I need. Everything is already in the right place.',
+    name: 'Rhea Kapoor',
+    initials: 'RK',
+    detail: 'Prestige customer since 2021',
+    reflection:
+      'Small decisions add up. So does a banking experience that respects your attention.',
+  },
+  {
+    quote:
+      'The transfer flow gives me the context I need before I move money. It feels intentional, never rushed.',
+    name: 'Arjun Malhotra',
+    initials: 'AM',
+    detail: 'Prestige customer since 2022',
+    reflection: 'Confidence comes from seeing the whole decision, not from adding more steps.',
+  },
+  {
+    quote:
+      'I can finally see how my weeks fit together—my balance, my cards and the patterns behind them.',
+    name: 'Naina Shah',
+    initials: 'NS',
+    detail: 'Prestige customer since 2020',
+    reflection: 'A quieter surface leaves room for better financial habits to take hold.',
+  },
+];
+
+const TestimonialStage = () => {
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const timer = window.setInterval(
+      () => setActive((value) => (value + 1) % testimonials.length),
+      6500,
+    );
+    return () => window.clearInterval(timer);
+  }, []);
+  const item = testimonials[active];
   return (
     <Box sx={{ minHeight: '100vh', overflow: 'hidden', bgcolor: '#0B1110', color: '#EEF5F1' }}>
       <Box

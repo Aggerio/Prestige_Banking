@@ -1,5 +1,4 @@
 import { Alert, Box, Button, Card, Chip, Stack, Tab, Tabs, Typography } from '@mui/material';
-import { Alert, Box, Button, Card, Chip, Stack, Tab, Tabs, Typography } from '@mui/material';
 import {
   DataGrid,
   GridColDef,
@@ -13,11 +12,8 @@ import RenderCellDescription from 'components/sections/dashboard/invoice/RenderC
 import RenderCellDownload from 'components/sections/dashboard/invoice/RenderCellDownload';
 import IconifyIcon from 'components/base/IconifyIcon';
 import type { RowData } from 'data/invoice-data';
-import IconifyIcon from 'components/base/IconifyIcon';
-import type { RowData } from 'data/invoice-data';
 import { currencyFormat, dateFormatFromUTC } from 'helpers/utils';
 import { getTransactions, Transaction } from 'api/banking';
-import { apiError } from 'api/client';
 import { apiError } from 'api/client';
 import { useBreakpoints } from 'providers/useBreakpoints';
 import { SyntheticEvent, useEffect, useState } from 'react';
@@ -35,26 +31,9 @@ const columns: GridColDef[] = [
   {
     field: 'transactionId',
     headerName: 'Reference',
-    headerName: 'Reference',
     flex: 1,
     minWidth: 130,
-    minWidth: 130,
     hideable: false,
-    renderCell: (params) => (
-      <Typography
-        sx={{
-          color: 'text.secondary',
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-          fontSize: 11,
-          fontWeight: 700,
-          letterSpacing: '0.02em',
-        }}
-      >
-        {String(params.value).length > 16
-          ? `${String(params.value).slice(0, 7)}…${String(params.value).slice(-5)}`
-          : params.value}
-      </Typography>
-    ),
     renderCell: (params) => (
       <Typography
         sx={{
@@ -75,27 +54,7 @@ const columns: GridColDef[] = [
     field: 'type',
     headerName: 'Direction',
     minWidth: 118,
-    headerName: 'Direction',
-    minWidth: 118,
     hideable: false,
-    renderCell: (params) => {
-      const incoming = params.value === 'DEPOSIT';
-      return (
-        <Chip
-          label={incoming ? 'Incoming' : 'Outgoing'}
-          size="small"
-          sx={{
-            height: 25,
-            borderRadius: 1.5,
-            bgcolor: incoming ? 'success.lighter' : 'error.lighter',
-            color: incoming ? 'success.dark' : 'error.dark',
-            fontFamily: 'Space Grotesk, Manrope, sans-serif',
-            fontSize: 11,
-            fontWeight: 700,
-          }}
-        />
-      );
-    },
     renderCell: (params) => {
       const incoming = params.value === 'DEPOSIT';
       return (
@@ -119,15 +78,8 @@ const columns: GridColDef[] = [
     field: 'date',
     headerName: 'Posted',
     minWidth: 150,
-    headerName: 'Posted',
-    minWidth: 150,
     flex: 1,
     hideable: false,
-    renderCell: (params) => (
-      <Typography sx={{ color: 'text.secondary', fontSize: 13 }}>
-        {dateFormatFromUTC(params.value)}
-      </Typography>
-    ),
     renderCell: (params) => (
       <Typography sx={{ color: 'text.secondary', fontSize: 13 }}>
         {dateFormatFromUTC(params.value)}
@@ -150,11 +102,6 @@ const columns: GridColDef[] = [
           color={color}
           sx={{ fontFamily: 'Space Grotesk, Manrope, sans-serif', fontWeight: 700 }}
         >
-        <Typography
-          variant="body2"
-          color={color}
-          sx={{ fontFamily: 'Space Grotesk, Manrope, sans-serif', fontWeight: 700 }}
-        >
           {symbol} {currencyFormat(params.value)}
         </Typography>
       );
@@ -163,9 +110,7 @@ const columns: GridColDef[] = [
   {
     field: 'download',
     headerName: 'Receipt',
-    headerName: 'Receipt',
     sortable: false,
-    minWidth: 92,
     minWidth: 92,
     renderCell: (params) => <RenderCellDownload params={params} />,
   },
@@ -223,43 +168,6 @@ const InvoiceOverviewTable: React.FC = () => {
     date: item.transactionAt,
     amount: item.amount,
   });
-
-  const generateAllReceipts = async () => {
-    if (!selectedAccount) return;
-    setGeneratingReceipts(true);
-    setReceiptError(null);
-    try {
-      const firstPage = await getTransactions(selectedAccount, { page: 0, size: 100 });
-      const remainingPages = await Promise.all(
-        Array.from({ length: Math.max(firstPage.data.totalPages - 1, 0) }, (_, page) =>
-          getTransactions(selectedAccount, { page: page + 1, size: 100 }),
-        ),
-      );
-      const transactions = [
-        ...firstPage.data.items,
-        ...remainingPages.flatMap((response) => response.data.items),
-      ];
-      const escape = (value: unknown) => `"${String(value ?? '').replace(/"/g, '""')}"`;
-      const rows = transactions.map((item) =>
-        [item.referenceNumber, item.movement, item.transactionAt, item.amount, item.remarks]
-          .map(escape)
-          .join(','),
-      );
-      const csv = ['Reference,Direction,Date,Amount (INR),Description', ...rows].join('\r\n');
-      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `prestige-receipts-${selectedAccount}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (error) {
-      setReceiptError(apiError(error));
-    } finally {
-      setGeneratingReceipts(false);
-    }
-  };
 
   const generateAllReceipts = async () => {
     if (!selectedAccount) return;
@@ -361,8 +269,6 @@ const InvoiceOverviewTable: React.FC = () => {
         >
           {generatingReceipts ? 'Generating…' : 'Generate all receipts'}
         </Button>
-          {generatingReceipts ? 'Generating…' : 'Generate all receipts'}
-        </Button>
       </Box>
       {receiptError && (
         <Alert severity="error" onClose={() => setReceiptError(null)} sx={{ mb: 2 }}>
@@ -391,15 +297,11 @@ const InvoiceOverviewTable: React.FC = () => {
           flexDirection: { md: 'column' },
           overflow: 'hidden',
           borderRadius: 3,
-          borderRadius: 3,
           '&.MuiPaper-root': {
-            p: { xs: 0, md: 1 },
             p: { xs: 0, md: 1 },
             border: 1,
             borderColor: 'primary.lighter',
-            borderColor: 'primary.lighter',
             bgcolor: { xs: 'transparent', sm: 'white' },
-            boxShadow: 'none',
             boxShadow: 'none',
           },
         }}
@@ -435,17 +337,7 @@ const InvoiceOverviewTable: React.FC = () => {
               bgcolor: 'primary.lighter',
               borderBottom: 0,
             },
-            '& .MuiDataGrid-columnHeaders': {
-              bgcolor: 'primary.lighter',
-              borderBottom: 0,
-            },
             '& .MuiDataGrid-columnHeader': {
-              color: 'primary.dark',
-              fontFamily: 'Space Grotesk, Manrope, sans-serif',
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: '0.07em',
-              textTransform: 'uppercase',
               color: 'primary.dark',
               fontFamily: 'Space Grotesk, Manrope, sans-serif',
               fontSize: 11,
@@ -457,16 +349,7 @@ const InvoiceOverviewTable: React.FC = () => {
               borderBottomColor: 'primary.lighter',
               fontSize: 14,
               py: 0.5,
-              borderBottomColor: 'primary.lighter',
-              fontSize: 14,
-              py: 0.5,
             },
-            '& .MuiDataGrid-row': {
-              transition: 'background-color 160ms ease',
-              '&:hover': { bgcolor: 'primary.lighter' },
-            },
-            '& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus': {
-              outline: 'none',
             '& .MuiDataGrid-row': {
               transition: 'background-color 160ms ease',
               '&:hover': { bgcolor: 'primary.lighter' },

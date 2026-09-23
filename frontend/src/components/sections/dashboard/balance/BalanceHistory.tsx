@@ -1,6 +1,6 @@
 import CardContainer from 'components/common/CardContainter';
 import BalanceHistoryChart from 'components/sections/dashboard/balance/BalanceHistoryChart';
-import { BalanceDataType } from 'data/balance-chart';
+import type { BalanceDataType } from 'data/balance-chart';
 import ReactECharts from 'echarts-for-react';
 import { useChartResize } from 'providers/useEchartResize';
 import { useRef } from 'react';

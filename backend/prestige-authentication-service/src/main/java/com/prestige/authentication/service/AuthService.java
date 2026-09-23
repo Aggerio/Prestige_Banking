@@ -101,6 +101,14 @@ public class AuthService {
         history.save(new PasswordDetail(id, r.accountNumber(), "TRANSACTION", old, next));
     }
 
+    @Transactional(readOnly = true)
+    public void verifyTransactionPassword(Long id, TransactionPasswordVerificationRequest r) {
+        Account account = accounts.findByAccountNumberAndCustomerId(r.accountNumber(), id)
+                .orElseThrow(() -> new SecurityException("Account not owned"));
+        if (!encoder.matches(r.transactionPassword(), account.getTransactionPasswordHash()))
+            throw new SecurityException("Transaction password is incorrect");
+    }
+
     private TokenAndRefresh newSession(Long customer, String family) {
         String id = UUID.randomUUID().toString(), raw = raw();
         sessions.save(new AuthSession(id, customer, hash(raw), family, LocalDateTime.now().plus(refresh.ttl())));

@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import paths, { rootPaths } from './path';
 import RequireAuth from 'components/common/RequireAuth';
+import PageEnter from 'components/common/PageEnter';
 import { DashboardProvider } from 'providers/DashboardProvider';
 
 /* ---------------- Lazy loads various components ------------------------- */
@@ -10,6 +11,8 @@ const MainLayout = lazy(() => import('layouts/main-layout'));
 const AuthLayout = lazy(() => import('layouts/auth-layout'));
 const Dashboard = lazy(() => import('pages/dashboard'));
 const TransactionsPage = lazy(() => import('pages/transactions'));
+const CardsPage = lazy(() => import('pages/cards'));
+const AccountsPage = lazy(() => import('pages/accounts'));
 const PublicHomePage = lazy(() => import('pages/public-home'));
 const Spinner = lazy(() => import('components/loading/Splash'));
 const LoadingProgress = lazy(() => import('components/loading/LoadingProgress'));
@@ -30,7 +33,14 @@ export const routes = [
       </Suspense>
     ),
     children: [
-      { index: true, element: <PublicHomePage /> },
+      {
+        index: true,
+        element: (
+          <PageEnter>
+            <PublicHomePage />
+          </PageEnter>
+        ),
+      },
       {
         element: <RequireAuth />,
         children: [
@@ -39,7 +49,9 @@ export const routes = [
               <DashboardProvider>
                 <MainLayout>
                   <Suspense fallback={<LoadingProgress />}>
-                    <Outlet />
+                    <PageEnter>
+                      <Outlet />
+                    </PageEnter>
                   </Suspense>
                 </MainLayout>
               </DashboardProvider>
@@ -47,6 +59,8 @@ export const routes = [
             children: [
               { path: paths.dashboard, element: <Dashboard /> },
               { path: paths.transactions, element: <TransactionsPage /> },
+              { path: paths.creditCards, element: <CardsPage /> },
+              { path: paths.accounts, element: <AccountsPage /> },
             ],
           },
         ],

@@ -67,6 +67,7 @@ CREATE TABLE card (
     card_type VARCHAR2(10) NOT NULL,
     cardholder_name VARCHAR2(150) NOT NULL,
     masked_pan VARCHAR2(24) NOT NULL,
+    unmasked_pan VARCHAR2(19) NOT NULL,
     expiry_month NUMBER(2) NOT NULL,
     expiry_year NUMBER(4) NOT NULL,
     cvv_hash VARCHAR2(255) NOT NULL,
@@ -75,6 +76,7 @@ CREATE TABLE card (
     updated_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
     CONSTRAINT pk_card PRIMARY KEY (card_id),
     CONSTRAINT uq_card_masked_pan UNIQUE (masked_pan),
+    CONSTRAINT uq_card_unmasked_pan UNIQUE (unmasked_pan),
     CONSTRAINT fk_card_account FOREIGN KEY (account_number) REFERENCES account(account_number),
     CONSTRAINT ck_card_type CHECK (card_type IN ('DEBIT', 'CREDIT')),
     CONSTRAINT ck_card_expiry_month CHECK (expiry_month BETWEEN 1 AND 12),
@@ -216,10 +218,10 @@ INSERT ALL
 SELECT 1 FROM dual;
 
 INSERT ALL
- INTO card (card_id, account_number, card_type, cardholder_name, masked_pan, expiry_month, expiry_year, cvv_hash, card_status) VALUES (701, 'PBS1000001', 'DEBIT', 'Aarav Sharma', '4111 **** **** 1001', 12, 2028, '$2a$10$demoCvvHash1', 'ACTIVE')
- INTO card (card_id, account_number, card_type, cardholder_name, masked_pan, expiry_month, expiry_year, cvv_hash, card_status) VALUES (702, 'PBS1000001', 'CREDIT', 'Aarav Sharma', '5555 **** **** 1002', 6, 2029, '$2a$10$demoCvvHash2', 'ACTIVE')
- INTO card (card_id, account_number, card_type, cardholder_name, masked_pan, expiry_month, expiry_year, cvv_hash, card_status) VALUES (703, 'PBS1000006', 'DEBIT', 'Aarav Sharma', '4111 **** **** 1006', 3, 2027, '$2a$10$demoCvvHash3', 'ACTIVE')
- INTO card (card_id, account_number, card_type, cardholder_name, masked_pan, expiry_month, expiry_year, cvv_hash, card_status) VALUES (704, 'PBS1000002', 'DEBIT', 'Diya Patel', '4111 **** **** 1002', 9, 2028, '$2a$10$demoCvvHash4', 'ACTIVE')
+ INTO card (card_id, account_number, card_type, cardholder_name, masked_pan, unmasked_pan, expiry_month, expiry_year, cvv_hash, card_status) VALUES (701, 'PBS1000001', 'DEBIT', 'Aarav Sharma', '453201******0366', '4532015112830366', 12, 2028, '$2a$10$demoCvvHash1', 'ACTIVE')
+ INTO card (card_id, account_number, card_type, cardholder_name, masked_pan, unmasked_pan, expiry_month, expiry_year, cvv_hash, card_status) VALUES (702, 'PBS1000001', 'CREDIT', 'Aarav Sharma', '523456******3451', '5234567890123451', 6, 2029, '$2a$10$demoCvvHash2', 'ACTIVE')
+ INTO card (card_id, account_number, card_type, cardholder_name, masked_pan, unmasked_pan, expiry_month, expiry_year, cvv_hash, card_status) VALUES (703, 'PBS1000006', 'DEBIT', 'Aarav Sharma', '453201******1006', '4532015112831006', 3, 2027, '$2a$10$demoCvvHash3', 'ACTIVE')
+ INTO card (card_id, account_number, card_type, cardholder_name, masked_pan, unmasked_pan, expiry_month, expiry_year, cvv_hash, card_status) VALUES (704, 'PBS1000002', 'DEBIT', 'Diya Patel', '453201******1002', '4532015112831002', 9, 2028, '$2a$10$demoCvvHash4', 'ACTIVE')
 SELECT 1 FROM dual;
 
 -- Paired immutable ledger entries. Customer 101 has activity from April through September 2026.

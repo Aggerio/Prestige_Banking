@@ -1,7 +1,6 @@
 import { SvgIconProps } from '@mui/material';
 import CreditCardIcon from 'components/icons/menu-icons/CreditCardIcon';
 import HomeIcon from 'components/icons/menu-icons/HomeIcon';
-import SettingsIcon from 'components/icons/menu-icons/SettingsIcon';
 import TransferIcon from 'components/icons/menu-icons/TransferIcon';
 import UserIcon from 'components/icons/menu-icons/UserIcon';
 
@@ -9,8 +8,7 @@ export enum linkEnum {
   Dashboard = 'dashboard',
   Transactions = 'transactions',
   Accounts = 'accounts',
-  Credit = 'credit-cards',
-  Setting = 'Setting',
+  Credit = 'Cards',
 }
 
 export interface MenuLinkType {
@@ -38,22 +36,15 @@ export const menuLinks: MenuLinkType[] = [
   {
     id: 3,
     title: linkEnum.Accounts,
-    link: '#!',
+    link: '/accounts',
     icon: UserIcon,
-    available: false,
+    available: true,
   },
   {
     id: 5,
     title: linkEnum.Credit,
-    link: '#!',
+    link: '/credit-cards',
     icon: CreditCardIcon,
-    available: false,
-  },
-  {
-    id: 8,
-    title: linkEnum.Setting,
-    link: '#!',
-    icon: SettingsIcon,
-    available: false,
+    available: true,
   },
 ];

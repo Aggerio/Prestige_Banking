@@ -4,7 +4,11 @@ import { Alert, Button, Grid, Stack, TextField } from '@mui/material';
 import { useDashboard } from 'providers/DashboardProvider';
 import { FormEvent, useState } from 'react';
 
-const QuickTransfer = () => {
+interface QuickTransferProps {
+  onSuccess?: () => void;
+}
+
+const QuickTransfer = ({ onSuccess }: QuickTransferProps) => {
   const { selectedAccount, transfer } = useDashboard();
   const [destinationAccountNumber, setDestinationAccountNumber] = useState('');
   const [destinationAccountHolderName, setDestinationAccountHolderName] = useState('');
@@ -40,6 +44,7 @@ const QuickTransfer = () => {
       });
       setAmount('');
       setTransactionPassword('');
+      onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Transfer failed.');
     } finally {

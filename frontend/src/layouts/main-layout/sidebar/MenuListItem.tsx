@@ -1,11 +1,12 @@
-import { Link, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { Link, ListItem, ListItemIcon, ListItemText, Tooltip, Typography } from '@mui/material';
 import { menuLinks, MenuLinkType } from 'layouts/main-layout/sidebar/MenuLinks';
 import { useLocation } from 'react-router-dom';
 interface MenuListProps {
   menuItem: MenuLinkType;
   onDrawerClose?: () => void;
+  collapsed?: boolean;
 }
-const MenuListItem = ({ menuItem, onDrawerClose }: MenuListProps) => {
+const MenuListItem = ({ menuItem, onDrawerClose, collapsed = false }: MenuListProps) => {
   const { icon: Icon } = menuItem;
   const itemIcon = Icon ? (
     <Icon sx={{ width: { xs: 20, xl: 24 }, height: { xs: 20, xl: 24 } }} />
@@ -16,19 +17,20 @@ const MenuListItem = ({ menuItem, onDrawerClose }: MenuListProps) => {
   const isActive =
     menuItem.title === menuLinks.find((item) => item.link === location.pathname)?.title;
 
-  return (
+  const content = (
     <ListItem
       key={menuItem.id}
       sx={{
         position: 'relative',
+        p: 0,
         '&::before': {
           content: '""',
           position: 'absolute',
           bgcolor: isActive ? 'primary.main' : 'transparent',
           top: 0,
           bottom: 0,
-          left: 0,
-          width: 6,
+          left: collapsed ? -12 : -16,
+          width: 3,
           borderTopRightRadius: 10,
           borderBottomRightRadius: 10,
           transition: 'background-color 0.5s ease',
@@ -39,21 +41,26 @@ const MenuListItem = ({ menuItem, onDrawerClose }: MenuListProps) => {
         href={menuItem.link}
         onClick={onDrawerClose}
         sx={{
+          minHeight: 56,
           py: 1.5,
-          px: 3,
+          px: collapsed ? 1.75 : 2.25,
           display: 'flex',
           alignItems: 'center',
-          gap: 3.125,
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          gap: collapsed ? 0 : 2.25,
           flex: 1,
           borderRadius: 2,
-          color: isActive ? 'primary.main' : menuItem.available ? 'grey[700]' : 'action.disabled',
-          transition: 'color 0.35s ease',
+          color: isActive ? '#FFFFFF' : menuItem.available ? '#9FB2AA' : 'action.disabled',
+          backgroundColor: isActive ? 'rgba(118,225,184,.12)' : 'transparent',
+          boxShadow: isActive ? 'inset 0 0 0 1px rgba(118,225,184,.08)' : 'none',
+          transition: 'color 220ms ease, background-color 220ms ease, transform 220ms ease',
           '&:hover, &:focus': {
-            backgroundColor: 'neutral.light',
-            boxShadow: 'shadows[10]',
-            color: !menuItem.available ? 'action.disabled' : 'primary.main',
+            backgroundColor: 'rgba(255,255,255,.07)',
+            boxShadow: 'none',
+            color: !menuItem.available ? 'action.disabled' : 'common.white',
+            transform: 'translateX(2px)',
             '& .MuiSvgIcon-root': {
-              color: !menuItem.available ? 'action.disabled' : 'primary.main',
+              color: !menuItem.available ? 'action.disabled' : 'common.white',
             },
           },
         }}
@@ -62,11 +69,7 @@ const MenuListItem = ({ menuItem, onDrawerClose }: MenuListProps) => {
           sx={{
             minWidth: 'auto',
 
-            color: isActive
-              ? 'primary.main'
-              : menuItem.available
-                ? 'neutral.dark'
-                : 'action.disabled',
+            color: isActive ? '#76E1B8' : menuItem.available ? '#9FB2AA' : 'action.disabled',
           }}
         >
           {itemIcon}
@@ -86,6 +89,14 @@ const MenuListItem = ({ menuItem, onDrawerClose }: MenuListProps) => {
         />
       </Link>
     </ListItem>
+  );
+
+  return collapsed ? (
+    <Tooltip title={menuItem.title} placement="right" arrow>
+      {content}
+    </Tooltip>
+  ) : (
+    content
   );
 };
 

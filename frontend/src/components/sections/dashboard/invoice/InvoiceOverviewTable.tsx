@@ -1,4 +1,4 @@
-import { Box, Card, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, Chip, Stack, Tab, Tabs, Typography } from '@mui/material';
 import {
   DataGrid,
   GridColDef,
@@ -10,9 +10,11 @@ import CustomPagination from 'components/sections/dashboard/invoice/CustomPagina
 import NoData from 'components/sections/dashboard/invoice/NoData';
 import RenderCellDescription from 'components/sections/dashboard/invoice/RenderCellDescription';
 import RenderCellDownload from 'components/sections/dashboard/invoice/RenderCellDownload';
-import { RowData } from 'data/invoice-data';
+import IconifyIcon from 'components/base/IconifyIcon';
+import type { RowData } from 'data/invoice-data';
 import { currencyFormat, dateFormatFromUTC } from 'helpers/utils';
 import { getTransactions, Transaction } from 'api/banking';
+import { apiError } from 'api/client';
 import { useBreakpoints } from 'providers/useBreakpoints';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useDashboard } from 'providers/DashboardProvider';
@@ -28,33 +30,61 @@ const columns: GridColDef[] = [
   },
   {
     field: 'transactionId',
-    headerName: 'Transaction ID',
+    headerName: 'Reference',
     flex: 1,
-    minWidth: 150,
+    minWidth: 130,
     hideable: false,
-    renderCell: (params) => <>#{params.value}</>,
+    renderCell: (params) => (
+      <Typography
+        sx={{
+          color: 'text.secondary',
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: '0.02em',
+        }}
+      >
+        {String(params.value).length > 16
+          ? `${String(params.value).slice(0, 7)}…${String(params.value).slice(-5)}`
+          : params.value}
+      </Typography>
+    ),
   },
   {
     field: 'type',
-    headerName: 'Type',
-    flex: 1,
-    minWidth: 100,
+    headerName: 'Direction',
+    minWidth: 118,
     hideable: false,
-  },
-  {
-    field: 'card',
-    headerName: 'Card',
-    minWidth: 100,
-    flex: 1,
-    hideable: false,
+    renderCell: (params) => {
+      const incoming = params.value === 'DEPOSIT';
+      return (
+        <Chip
+          label={incoming ? 'Incoming' : 'Outgoing'}
+          size="small"
+          sx={{
+            height: 25,
+            borderRadius: 1.5,
+            bgcolor: incoming ? 'success.lighter' : 'error.lighter',
+            color: incoming ? 'success.dark' : 'error.dark',
+            fontFamily: 'Space Grotesk, Manrope, sans-serif',
+            fontSize: 11,
+            fontWeight: 700,
+          }}
+        />
+      );
+    },
   },
   {
     field: 'date',
-    headerName: 'Date',
-    minWidth: 130,
+    headerName: 'Posted',
+    minWidth: 150,
     flex: 1,
     hideable: false,
-    renderCell: (params) => <>{dateFormatFromUTC(params.value)}</>,
+    renderCell: (params) => (
+      <Typography sx={{ color: 'text.secondary', fontSize: 13 }}>
+        {dateFormatFromUTC(params.value)}
+      </Typography>
+    ),
   },
   {
     field: 'amount',
@@ -67,7 +97,11 @@ const columns: GridColDef[] = [
       const symbol = params.row.description.revenue === 'down' ? '-' : '+';
 
       return (
-        <Typography variant="body2" color={color}>
+        <Typography
+          variant="body2"
+          color={color}
+          sx={{ fontFamily: 'Space Grotesk, Manrope, sans-serif', fontWeight: 700 }}
+        >
           {symbol} {currencyFormat(params.value)}
         </Typography>
       );
@@ -75,10 +109,9 @@ const columns: GridColDef[] = [
   },
   {
     field: 'download',
-    headerName: 'Download',
+    headerName: 'Receipt',
     sortable: false,
-    flex: 1,
-    minWidth: 150,
+    minWidth: 92,
     renderCell: (params) => <RenderCellDownload params={params} />,
   },
 ];
@@ -92,6 +125,9 @@ let rowHeight = 60; // default row height
 
 const InvoiceOverviewTable: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [generatingReceipts, setGeneratingReceipts] = useState(false);
+  const [receiptError, setReceiptError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [items, setItems] = useState<GridRowsProp<RowData>>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [value, setValue] = useState(0);
@@ -133,6 +169,43 @@ const InvoiceOverviewTable: React.FC = () => {
     amount: item.amount,
   });
 
+  const generateAllReceipts = async () => {
+    if (!selectedAccount) return;
+    setGeneratingReceipts(true);
+    setReceiptError(null);
+    try {
+      const firstPage = await getTransactions(selectedAccount, { page: 0, size: 100 });
+      const remainingPages = await Promise.all(
+        Array.from({ length: Math.max(firstPage.data.totalPages - 1, 0) }, (_, page) =>
+          getTransactions(selectedAccount, { page: page + 1, size: 100 }),
+        ),
+      );
+      const transactions = [
+        ...firstPage.data.items,
+        ...remainingPages.flatMap((response) => response.data.items),
+      ];
+      const escape = (value: unknown) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+      const rows = transactions.map((item) =>
+        [item.referenceNumber, item.movement, item.transactionAt, item.amount, item.remarks]
+          .map(escape)
+          .join(','),
+      );
+      const csv = ['Reference,Direction,Date,Amount (INR),Description', ...rows].join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `prestige-receipts-${selectedAccount}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      setReceiptError(apiError(error));
+    } finally {
+      setGeneratingReceipts(false);
+    }
+  };
+
   useEffect(() => {
     if (!selectedAccount) {
       setItems([]);
@@ -140,6 +213,7 @@ const InvoiceOverviewTable: React.FC = () => {
       return;
     }
     setLoading(true);
+    setLoadError(null);
     const movement = value === 1 ? 'DEPOSIT' : value === 2 ? 'WITHDRAWAL' : undefined;
     void getTransactions(selectedAccount, {
       page: paginationModel.page,
@@ -150,30 +224,63 @@ const InvoiceOverviewTable: React.FC = () => {
         setItems(response.data.items.map(mapTransaction));
         setTotalRows(response.data.totalElements);
       })
-      .catch(() => {
+      .catch((error) => {
         setItems([]);
         setTotalRows(0);
+        setLoadError(apiError(error));
       })
       .finally(() => setLoading(false));
   }, [selectedAccount, value, paginationModel]);
 
   return (
-    <Stack sx={{ overflow: 'auto', justifyContent: 'space-between' }}>
-      <Box sx={{ mb: 1.5, mt: 3 }}>
-        <Typography
-          sx={{
-            fontSize: {
-              xs: 'body2.fontSize',
-              md: 'h6.fontSize',
-              xl: 'h3.fontSize',
-            },
-            fontWeight: 600,
-          }}
+    <Stack sx={{ width: 1, minWidth: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
+      <Box
+        sx={{
+          mb: 1.25,
+          mt: 3,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'end',
+          gap: 2,
+        }}
+      >
+        <Box>
+          <Typography
+            sx={{
+              color: 'text.primary',
+              fontFamily: 'Space Grotesk, Manrope, sans-serif',
+              fontSize: { xs: 'h6.fontSize', md: 'h5.fontSize' },
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
+            }}
+          >
+            Recent activity
+          </Typography>
+          <Typography sx={{ color: 'text.secondary', fontSize: 13, mt: 0.5 }}>
+            Your latest incoming and outgoing transfers.
+          </Typography>
+        </Box>
+        <Button
+          variant="outlined"
+          size="small"
+          disabled={!selectedAccount || generatingReceipts}
+          onClick={() => void generateAllReceipts()}
+          startIcon={<IconifyIcon icon="solar:document-download-linear" />}
         >
-          Recent Invoice
-        </Typography>
+          {generatingReceipts ? 'Generating…' : 'Generate all receipts'}
+        </Button>
       </Box>
-      <Box sx={{ borderBottom: 1, borderColor: 'secondary.lighter', mb: 3.5 }}>
+      {receiptError && (
+        <Alert severity="error" onClose={() => setReceiptError(null)} sx={{ mb: 2 }}>
+          {receiptError}
+        </Alert>
+      )}
+      {loadError && (
+        <Alert severity="error" onClose={() => setLoadError(null)} sx={{ mb: 2 }}>
+          Unable to load transactions: {loadError}
+        </Alert>
+      )}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
         <Tabs value={value} onChange={handleChange} aria-label="transaction tabs">
           <Tab label="All Transactions" {...a11yProps(0)} />
           <Tab label="Income" {...a11yProps(1)} />
@@ -183,16 +290,19 @@ const InvoiceOverviewTable: React.FC = () => {
       <Card
         sx={{
           flexGrow: { md: 1 },
+          width: 1,
+          minWidth: 0,
+          minHeight: 380,
           display: { md: 'flex' },
           flexDirection: { md: 'column' },
           overflow: 'hidden',
-          borderRadius: 6.5,
+          borderRadius: 3,
           '&.MuiPaper-root': {
-            p: 1,
+            p: { xs: 0, md: 1 },
             border: 1,
-            borderColor: 'neutral.light',
+            borderColor: 'primary.lighter',
             bgcolor: { xs: 'transparent', sm: 'white' },
-            boxShadow: (theme) => `inset 0px -1px ${theme.palette.neutral.light}`, // color for row border
+            boxShadow: 'none',
           },
         }}
       >
@@ -211,7 +321,11 @@ const InvoiceOverviewTable: React.FC = () => {
           }}
           loading={loading}
           sx={{
-            px: { xs: 0, md: 3 },
+            width: 1,
+            minWidth: 0,
+            minHeight: 360,
+            border: 0,
+            px: { xs: 0, md: 1 },
             '& .MuiDataGrid-main': {
               minHeight: 300,
             },
@@ -219,14 +333,29 @@ const InvoiceOverviewTable: React.FC = () => {
               minHeight: 300,
               p: 0,
             },
+            '& .MuiDataGrid-columnHeaders': {
+              bgcolor: 'primary.lighter',
+              borderBottom: 0,
+            },
             '& .MuiDataGrid-columnHeader': {
-              fontSize: { xs: 13, lg: 16 },
+              color: 'primary.dark',
+              fontFamily: 'Space Grotesk, Manrope, sans-serif',
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: '0.07em',
+              textTransform: 'uppercase',
             },
             '& .MuiDataGrid-cell': {
-              fontSize: { xs: 13, lg: 16 },
+              borderBottomColor: 'primary.lighter',
+              fontSize: 14,
+              py: 0.5,
             },
-            '& .MuiTypography-root': {
-              fontSize: { xs: 13, lg: 16 },
+            '& .MuiDataGrid-row': {
+              transition: 'background-color 160ms ease',
+              '&:hover': { bgcolor: 'primary.lighter' },
+            },
+            '& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus': {
+              outline: 'none',
             },
           }}
         />

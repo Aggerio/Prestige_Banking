@@ -9,7 +9,7 @@ export type PublicPageKind = 'about' | 'investors' | 'offers' | 'contact';
 const pageCopy: Record<PublicPageKind, { eyebrow: string; title: string; description: string }> = {
   about: {
     eyebrow: 'ABOUT PRESTIGE',
-    title: 'Banking built around everyday life.',
+    title: 'About Prestige Banking System',
     description: 'Learn more about Prestige Banking and the principles behind our service.',
   },
   investors: {
@@ -34,6 +34,7 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const copy = pageCopy[kind];
+  const usesCardLayout = kind !== 'contact';
 
   useEffect(() => {
     let active = true;
@@ -78,12 +79,16 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
             component="h1"
             sx={{
               mt: 2,
-              maxWidth: 850,
+              maxWidth: kind === 'about' || kind === 'offers' ? 'none' : 850,
               fontFamily: 'Fraunces, serif',
-              fontSize: { xs: 48, sm: 64, md: 82 },
+              fontSize:
+                kind === 'about' || kind === 'offers'
+                  ? 'clamp(19px, 5.2vw, 76px)'
+                  : { xs: 48, sm: 64, md: 82 },
               fontWeight: 500,
               letterSpacing: '-.07em',
               lineHeight: 0.95,
+              whiteSpace: kind === 'about' || kind === 'offers' ? 'nowrap' : 'normal',
             }}
           >
             {copy.title}
@@ -112,17 +117,41 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
             </Typography>
           )}
 
-          <Stack gap={0} sx={{ borderTop: content.length ? '1px solid #B9C8C0' : 0 }}>
+          <Stack
+            gap={usesCardLayout ? 3 : 0}
+            sx={{
+              display: usesCardLayout ? 'grid' : 'flex',
+              gridTemplateColumns:
+                kind === 'offers'
+                  ? { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' }
+                  : kind === 'investors'
+                    ? { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' }
+                    : '1fr',
+              borderTop: !usesCardLayout && content.length ? '1px solid #B9C8C0' : 0,
+            }}
+          >
             {content.map((item, index) => (
               <Box
                 component="article"
                 key={item.contentId}
                 sx={{
                   display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: '90px minmax(220px, .8fr) 1.2fr' },
-                  gap: { xs: 1.5, md: 4 },
-                  py: { xs: 4, md: 5 },
-                  borderBottom: '1px solid #B9C8C0',
+                  gridTemplateColumns: usesCardLayout
+                    ? '1fr'
+                    : { xs: '1fr', md: '90px minmax(220px, .8fr) 1.2fr' },
+                  gap: usesCardLayout ? 2 : { xs: 1.5, md: 4 },
+                  minHeight: usesCardLayout ? 260 : 'auto',
+                  p: usesCardLayout ? { xs: 3, md: 4 } : 0,
+                  py: usesCardLayout ? undefined : { xs: 4, md: 5 },
+                  border: usesCardLayout ? '1px solid #CBD9D2' : 0,
+                  borderBottom: usesCardLayout ? undefined : '1px solid #B9C8C0',
+                  borderRadius: usesCardLayout ? 3 : 0,
+                  bgcolor: usesCardLayout ? '#F8FBF9' : 'transparent',
+                  boxShadow: usesCardLayout ? '0 18px 45px rgba(20,58,45,.08)' : 'none',
+                  transition: usesCardLayout ? 'transform .25s ease, box-shadow .25s ease' : 'none',
+                  '&:hover': usesCardLayout
+                    ? { transform: 'translateY(-5px)', boxShadow: '0 26px 55px rgba(20,58,45,.14)' }
+                    : undefined,
                 }}
               >
                 <Typography sx={{ color: '#178A68', font: '11px DM Mono' }}>
@@ -130,7 +159,12 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                 </Typography>
                 <Typography
                   component="h2"
-                  sx={{ fontFamily: 'Fraunces', fontSize: { xs: 30, md: 38 }, lineHeight: 1.05 }}
+                  sx={{
+                    fontFamily: 'Fraunces',
+                    fontSize: kind === 'about' ? 'clamp(20px, 3.3vw, 38px)' : { xs: 30, md: 38 },
+                    lineHeight: 1.05,
+                    whiteSpace: kind === 'about' ? 'nowrap' : 'normal',
+                  }}
                 >
                   {item.title}
                 </Typography>

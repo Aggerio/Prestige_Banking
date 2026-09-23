@@ -7,6 +7,7 @@ import {
   type PublicContent,
   type PublicHome,
 } from 'api/banking';
+import roboticCardHero from 'assets/prestige-robotic-card-green.png';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import Logo from 'components/common/Logo';
@@ -81,8 +82,11 @@ const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
     <Box
       sx={{
         mt: 7,
-        borderTop: '1px solid rgba(255,255,255,.17)',
-        borderBottom: '1px solid rgba(255,255,255,.17)',
+        overflow: 'hidden',
+        border: '1px solid rgba(155,230,201,.2)',
+        borderRadius: 4,
+        bgcolor: 'rgba(255,255,255,.035)',
+        boxShadow: '0 28px 70px rgba(0,0,0,.2)',
       }}
     >
       <Box
@@ -204,12 +208,92 @@ const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
   );
 };
 
+const InvestorCards = ({ investors }: { investors: PublicContent[] }) => (
+  <Box
+    sx={{
+      mt: 7,
+      display: 'grid',
+      gridTemplateColumns: {
+        xs: '1fr',
+        md: 'repeat(2, minmax(0, 1fr))',
+        xl: 'repeat(3, minmax(0, 1fr))',
+      },
+      gap: 2.5,
+    }}
+  >
+    {investors.map((item, index) => (
+      <Box
+        component="article"
+        key={item.contentId}
+        sx={{
+          minHeight: 300,
+          display: 'flex',
+          flexDirection: 'column',
+          p: { xs: 3, md: 3.5 },
+          border: '1px solid rgba(155,230,201,.2)',
+          borderRadius: 3,
+          bgcolor: 'rgba(255,255,255,.035)',
+          boxShadow: '0 18px 45px rgba(0,0,0,.16)',
+          transition: 'transform .25s ease, border-color .25s ease, background-color .25s ease',
+          '&:hover': {
+            transform: 'translateY(-5px)',
+            borderColor: 'rgba(155,230,201,.48)',
+            bgcolor: 'rgba(255,255,255,.055)',
+          },
+        }}
+      >
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Box
+            sx={{
+              width: 42,
+              height: 42,
+              display: 'grid',
+              placeItems: 'center',
+              borderRadius: '50%',
+              bgcolor: '#9BE6C9',
+              color: '#10251D',
+              fontSize: 12,
+              fontWeight: 800,
+            }}
+          >
+            {initialsFor(item.title)}
+          </Box>
+          <Typography sx={{ color: '#9BE6C9', font: '10px DM Mono', letterSpacing: '.1em' }}>
+            UPDATE / {String(index + 1).padStart(2, '0')}
+          </Typography>
+        </Stack>
+        <Typography
+          component="h3"
+          sx={{
+            mt: 4,
+            fontFamily: 'Fraunces',
+            fontSize: { xs: 28, md: 34 },
+            letterSpacing: '-.045em',
+            lineHeight: 1.08,
+          }}
+        >
+          {item.title}
+        </Typography>
+        <Typography sx={{ mt: 2, color: '#A9BBB2', lineHeight: 1.7 }}>
+          {item.contentBody}
+        </Typography>
+        <Typography variant="caption" sx={{ mt: 'auto', pt: 4, color: '#9BE6C9' }}>
+          {item.contactEmail || item.contactPhone || item.contentKey}
+        </Typography>
+      </Box>
+    ))}
+  </Box>
+);
+
 const HomePage = () => {
   const [home, setHome] = useState<PublicHome | null>(null);
   const [investors, setInvestors] = useState<PublicContent[]>([]);
   const [about, setAbout] = useState<PublicContent | null>(null);
   const [contact, setContact] = useState<PublicContent | null>(null);
   const [publicLoaded, setPublicLoaded] = useState(false);
+  const welcomeMessage = home?.welcomeMessage
+    .replace(/\s*Your trusted banking partner\.?/i, '')
+    .trim();
 
   useEffect(() => {
     let active = true;
@@ -270,6 +354,7 @@ const HomePage = () => {
           sx={{
             position: 'relative',
             minHeight: { md: 650 },
+            overflow: 'hidden',
             pt: { xs: 8, md: 13 },
             pb: { xs: 9, md: 4 },
           }}
@@ -292,14 +377,33 @@ const HomePage = () => {
           <Box
             sx={{
               position: 'absolute',
-              top: { xs: 58, md: 88 },
-              right: { xs: -80, md: '3%' },
-              width: { xs: 360, md: 630 },
-              height: { xs: 360, md: 570 },
-              opacity: { xs: 0.48, md: 1 },
+              top: { xs: 28, md: 12 },
+              right: { xs: -120, md: -40 },
+              bottom: { md: 20 },
+              width: { xs: 440, md: '59%' },
+              height: { xs: 440, md: 'auto' },
+              opacity: { xs: 0.32, md: 1 },
               pointerEvents: 'none',
+              '& > :not(.hero-artwork)': { display: 'none' },
             }}
           >
+            <Box
+              className="hero-artwork"
+              component="img"
+              src={roboticCardHero}
+              alt="Robotic precision arms securely holding a bank card"
+              sx={{
+                width: 1,
+                height: 1,
+                objectFit: 'cover',
+                objectPosition: 'center',
+                filter: 'drop-shadow(0 32px 48px rgba(0,0,0,.42))',
+                WebkitMaskImage:
+                  'linear-gradient(to right, transparent 0%, rgba(0,0,0,.85) 16%, #000 28%, #000 100%)',
+                maskImage:
+                  'linear-gradient(to right, transparent 0%, rgba(0,0,0,.85) 16%, #000 28%, #000 100%)',
+              }}
+            />
             <Box
               sx={{
                 position: 'absolute',
@@ -495,7 +599,7 @@ const HomePage = () => {
                 animation: 'heroEnter 850ms cubic-bezier(.2,.8,.2,1) 100ms both',
               }}
             >
-              {home?.welcomeMessage || (publicLoaded ? 'Welcome.' : 'Loading…')}
+              {welcomeMessage || (publicLoaded ? 'Welcome.' : 'Loading…')}
             </Typography>
             <Typography
               sx={{
@@ -606,69 +710,114 @@ const HomePage = () => {
         >
           <Container maxWidth="xl">
             <Reveal>
-              <Typography sx={{ font: '11px DM Mono', letterSpacing: '.14em', color: '#178A68' }}>
-                LIVE OFFERS / 02
-              </Typography>
-              <Stack
-                direction={{ xs: 'column', lg: 'row' }}
-                justifyContent="space-between"
-                gap={6}
-                mt={2}
+              <Box
+                sx={{
+                  p: { xs: 3, md: 5 },
+                  border: '1px solid #CBD9D2',
+                  borderRadius: 4,
+                  bgcolor: '#F8FBF9',
+                  boxShadow: '0 24px 60px rgba(20,58,45,.08)',
+                }}
               >
-                <Typography
-                  sx={{
-                    maxWidth: 660,
-                    fontFamily: 'Fraunces',
-                    fontSize: { xs: 42, md: 62 },
-                    lineHeight: 0.98,
-                    letterSpacing: '-.065em',
-                  }}
-                >
-                  {about?.title || (publicLoaded ? 'Latest banking information' : 'Loading…')}
+                <Typography sx={{ font: '11px DM Mono', letterSpacing: '.14em', color: '#178A68' }}>
+                  ABOUT US / 02
                 </Typography>
-                <Typography
-                  sx={{
-                    maxWidth: 360,
-                    alignSelf: { lg: 'end' },
-                    color: '#52665C',
-                    lineHeight: 1.7,
-                  }}
+                <Stack
+                  direction={{ xs: 'column', lg: 'row' }}
+                  justifyContent="space-between"
+                  gap={6}
+                  mt={2}
                 >
-                  {about?.contentBody ||
-                    (publicLoaded
-                      ? 'Published offers will appear here as they become available.'
-                      : 'Loading published content…')}
-                </Typography>
-              </Stack>
+                  <Typography
+                    sx={{
+                      maxWidth: 660,
+                      fontFamily: 'Fraunces',
+                      fontSize: 'clamp(20px, 4vw, 60px)',
+                      lineHeight: 0.98,
+                      letterSpacing: '-.065em',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {publicLoaded ? 'About Prestige Banking System' : 'Loading…'}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      maxWidth: 420,
+                      alignSelf: { lg: 'end' },
+                      color: '#52665C',
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {about?.contentBody ||
+                      (publicLoaded
+                        ? 'Published information about Prestige Banking is currently unavailable.'
+                        : 'Loading published content…')}
+                  </Typography>
+                </Stack>
+              </Box>
             </Reveal>
-            <Box sx={{ mt: { xs: 6, md: 9 }, borderTop: '1px solid #B9C8C0' }}>
+            <Typography
+              sx={{
+                mt: { xs: 6, md: 8 },
+                font: '11px DM Mono',
+                letterSpacing: '.14em',
+                color: '#178A68',
+              }}
+            >
+              CURRENT OFFERS
+            </Typography>
+            <Box
+              sx={{
+                mt: 3,
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, minmax(0, 1fr))',
+                  lg: 'repeat(3, minmax(0, 1fr))',
+                },
+                gap: 2.5,
+              }}
+            >
               {home?.offers.map((offer, index) => (
                 <Reveal key={offer.contentId} delay={index * 110}>
                   <Stack
-                    direction={{ xs: 'column', md: 'row' }}
-                    alignItems={{ md: 'center' }}
-                    gap={2}
                     sx={{
-                      py: { xs: 3, md: 4 },
-                      borderBottom: '1px solid #B9C8C0',
-                      transition: 'padding .28s ease, background-color .28s ease',
-                      '&:hover': { px: { md: 2 }, bgcolor: '#DCE8E1' },
+                      height: 1,
+                      minHeight: 300,
+                      p: { xs: 3, md: 3.5 },
+                      border: '1px solid #CBD9D2',
+                      borderRadius: 3,
+                      bgcolor: '#F8FBF9',
+                      boxShadow: '0 18px 45px rgba(20,58,45,.08)',
+                      transition: 'transform .25s ease, box-shadow .25s ease',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: '0 26px 55px rgba(20,58,45,.14)',
+                      },
                     }}
                   >
-                    <Typography sx={{ width: { md: 90 }, font: '11px DM Mono', color: '#178A68' }}>
-                      {String(index + 1).padStart(2, '0')}
-                    </Typography>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography sx={{ font: '11px DM Mono', color: '#178A68' }}>
+                        OFFER / {String(index + 1).padStart(2, '0')}
+                      </Typography>
+                      <IconifyIcon
+                        icon={index % 2 ? 'solar:wallet-money-bold' : 'solar:tag-price-bold'}
+                        width={28}
+                        color="#178A68"
+                      />
+                    </Stack>
                     <Typography
                       sx={{
-                        flex: 1,
                         fontFamily: 'Fraunces',
-                        fontSize: { xs: 29, md: 38 },
+                        fontSize: { xs: 29, md: 36 },
+                        lineHeight: 1.08,
                         letterSpacing: '-.05em',
+                        mt: 4,
                       }}
                     >
                       {offer.title}
                     </Typography>
-                    <Typography sx={{ maxWidth: 300, color: '#52665C', lineHeight: 1.6 }}>
+                    <Typography sx={{ mt: 2, mb: 4, color: '#52665C', lineHeight: 1.65 }}>
                       {offer.contentBody}
                     </Typography>
                     <Box
@@ -677,7 +826,7 @@ const HomePage = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: 0.75,
-                        width: { md: 155 },
+                        mt: 'auto',
                         color: '#178A68',
                         font: '9px DM Mono',
                         letterSpacing: '.06em',
@@ -694,16 +843,11 @@ const HomePage = () => {
                       />
                       {offer.contentKey}
                     </Box>
-                    <IconifyIcon
-                      icon={index % 2 ? 'solar:wallet-money-bold' : 'solar:tag-price-bold'}
-                      width={28}
-                      color="#178A68"
-                    />
                   </Stack>
                 </Reveal>
               ))}
               {home && !home.offers.length && (
-                <Typography sx={{ py: 4, color: '#52665C', borderBottom: '1px solid #B9C8C0' }}>
+                <Typography sx={{ py: 4, color: '#52665C' }}>
                   No active offers are currently published.
                 </Typography>
               )}
@@ -756,7 +900,11 @@ const HomePage = () => {
                   Published investor information is loaded directly from Prestige Banking.
                 </Typography>
               </Stack>
-              <TestimonialStage investors={investors} />
+              {investors.length === 1 ? (
+                <TestimonialStage investors={investors} />
+              ) : (
+                <InvestorCards investors={investors} />
+              )}
               {!investors.length && (
                 <Typography sx={{ mt: 5, color: '#9AADA3' }}>
                   No investor updates are currently published.

@@ -2,6 +2,7 @@ import { Box, Stack } from '@mui/material';
 import MainNavbar from 'layouts/main-layout/appbar/Appbar';
 import MobileSidebar from 'layouts/main-layout/sidebar/MobileSidebar';
 import Sidebar from 'layouts/main-layout/sidebar/Sidebar';
+import ChatbotWidget from 'components/common/ChatbotWidget';
 import { PropsWithChildren, useState } from 'react';
 
 const drawerWidth = { lg: 288, md: 288, sm: 280 };
@@ -67,6 +68,7 @@ const MainLayout = ({ children }: PropsWithChildren) => {
           </Stack>
         </Stack>
       </Box>
+      <ChatbotWidget />
     </>
   );
 };

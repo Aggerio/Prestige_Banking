@@ -814,10 +814,10 @@ INSERT INTO "CHATBOT_APP"."CHATBOT_CONVERSATION" ("CONVERSATION_ID", "CUSTOMER_I
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('2b3eb2f5-1355-4d37-a33a-c4b228670d27', 'f78adb11-83c2-404f-88b3-ce23559eba7b', 'USER', 'Hello', TO_TIMESTAMP_TZ('2026-09-23 12:12:55.593224 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('4f33845c-1f0a-409b-9ba4-8b8a5ab04339', 'f78adb11-83c2-404f-88b3-ce23559eba7b', 'ASSISTANT', 'Hello! How can I assist you today?', TO_TIMESTAMP_TZ('2026-09-23 12:12:55.593224 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('3045ccee-a125-4488-9a61-b5616875d0c0', 'f78adb11-83c2-404f-88b3-ce23559eba7b', 'USER', 'Making an internal transfer', TO_TIMESTAMP_TZ('2026-09-23 12:14:50.052627 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('72678d48-45a3-48d1-98f3-0668e3b4b389', 'f78adb11-83c2-404f-88b3-ce23559eba7b', 'ASSISTANT', 'To make an internal transfer you’ll need to be logged into your Prestige Banking account. Once signed?in, you can initiate the transfer by providing:
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('72678d48-45a3-48d1-98f3-0668e3b4b389', 'f78adb11-83c2-404f-88b3-ce23559eba7b', 'ASSISTANT', 'To make an internal transfer youï¿½ll need to be logged into your Prestige Banking account. Once signed?in, you can initiate the transfer by providing:
 
-1. **A unique Idempotency?Key** – this key ensures that if you accidentally resend the request, the system won’t create a duplicate transfer.  
-2. **A transfer request** – include the amount, the recipient’s account details (within the same bank), and any reference or note you’d like to attach.
+1. **A unique Idempotency?Key** ï¿½ this key ensures that if you accidentally resend the request, the system wonï¿½t create a duplicate transfer.  
+2. **A transfer request** ï¿½ include the amount, the recipientï¿½s account details (within the same bank), and any reference or note youï¿½d like to attach.
 
 The transfer API will process the request and update your account activity. If you encounter any issues or need confirmation of the transfer status, you can view it in the banking application under your recent transactions. If the transfer appears unexpected or you have concerns, please contact Prestige Banking support immediately.', TO_TIMESTAMP_TZ('2026-09-23 12:14:50.052627 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('7195680b-e554-4b9f-891d-e95f54f3e169', '66595150-a79e-4c61-8fc4-2378d6ccb992', 'USER', 'Account help', TO_TIMESTAMP_TZ('2026-09-23 12:19:22.669273 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
@@ -825,34 +825,34 @@ INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "R
 
 1. **Log in normally** using the banking app or website and use the standard refresh flow to access protected services.  
 2. **Never share** your login password, transaction password, OTP, card PIN, or full account number in chat.  
-3. If you’re still having trouble after logging in, use the **approved bank support channel** (e.g., the support link or phone number listed on the bank’s public “Contact Us” page).  
+3. If youï¿½re still having trouble after logging in, use the **approved bank support channel** (e.g., the support link or phone number listed on the bankï¿½s public ï¿½Contact Usï¿½ page).  
 
-If your issue involves a transfer, you can check its status in the app using the transfer’s reference number. For any unexpected transfer or further assistance, contact bank support immediately.', TO_TIMESTAMP_TZ('2026-09-23 12:19:22.669273 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+If your issue involves a transfer, you can check its status in the app using the transferï¿½s reference number. For any unexpected transfer or further assistance, contact bank support immediately.', TO_TIMESTAMP_TZ('2026-09-23 12:19:22.669273 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('d428ce7a-37e1-49eb-a60d-df0c44fc330a', '66595150-a79e-4c61-8fc4-2378d6ccb992', 'USER', 'Tell me more about Making an internal transfer.', TO_TIMESTAMP_TZ('2026-09-23 12:19:26.552771 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('d91273d7-073a-4522-a4a4-bd96a1b72d63', '66595150-a79e-4c61-8fc4-2378d6ccb992', 'ASSISTANT', 'Making an internal transfer with Prestige Banking involves the following key steps:
 
-1. **Authentication** – The customer must be signed in to the banking application.  
-2. **Idempotency?Key** – A unique idempotency key is generated for the transfer request. This key ensures that if the request is retried (for example, due to a network glitch), the same transfer is not created twice.  
-3. **Transfer Request** – The customer submits a transfer request that includes the amount, source account, and destination account.  
-4. **API Call** – The transfer request, along with the signed?in session and idempotency key, is sent to the transfer API.  
+1. **Authentication** ï¿½ The customer must be signed in to the banking application.  
+2. **Idempotency?Key** ï¿½ A unique idempotency key is generated for the transfer request. This key ensures that if the request is retried (for example, due to a network glitch), the same transfer is not created twice.  
+3. **Transfer Request** ï¿½ The customer submits a transfer request that includes the amount, source account, and destination account.  
+4. **API Call** ï¿½ The transfer request, along with the signed?in session and idempotency key, is sent to the transfer API.  
 
 The chatbot can walk you through this process and explain each step, but it cannot create, approve, or modify any transfer. Once the transfer is initiated, you can track its status using the reference number provided, but only the authenticated customer who owns the involved accounts can view that information.', TO_TIMESTAMP_TZ('2026-09-23 12:19:26.552771 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('5bea15ce-0ba0-4b2c-88c4-63d00c87d75e', '66595150-a79e-4c61-8fc4-2378d6ccb992', 'USER', 'Tell me more about Prestige Banking public information.', TO_TIMESTAMP_TZ('2026-09-23 12:19:54.581651 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('40748fab-6237-4e1a-ad4d-232d9f77dade', '66595150-a79e-4c61-8fc4-2378d6ccb992', 'ASSISTANT', 'Prestige Banking’s public information is available on its website and includes the home page, current active offers, an About?Us section, a Contact?Us page, and investor information. For the most up?to?date offers or contact details, you can view the public information page directly within the banking application.', TO_TIMESTAMP_TZ('2026-09-23 12:19:54.581651 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('40748fab-6237-4e1a-ad4d-232d9f77dade', '66595150-a79e-4c61-8fc4-2378d6ccb992', 'ASSISTANT', 'Prestige Bankingï¿½s public information is available on its website and includes the home page, current active offers, an About?Us section, a Contact?Us page, and investor information. For the most up?to?date offers or contact details, you can view the public information page directly within the banking application.', TO_TIMESTAMP_TZ('2026-09-23 12:19:54.581651 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('561b231d-8724-4b47-a81f-dbc93b5ff984', '40264986-41d7-419b-998f-4a8591070fd7', 'USER', 'Transfers', TO_TIMESTAMP_TZ('2026-09-23 12:20:09.013553 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('e16556d0-1b15-4389-9d68-f948191a56d5', 'cf87db96-441f-4573-90c5-6355a86b768d', 'USER', 'i am having login issues', TO_TIMESTAMP_TZ('2026-09-23 11:37:22.835987 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('a7be228c-55ac-4f29-ba8e-9594dad99fc1', 'cf87db96-441f-4573-90c5-6355a86b768d', 'ASSISTANT', 'I’m sorry you’re having trouble logging in. Please try the normal banking login and refresh flow again. If the problem persists, use the approved bank support channel to get help.', TO_TIMESTAMP_TZ('2026-09-23 11:37:22.835987 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('a7be228c-55ac-4f29-ba8e-9594dad99fc1', 'cf87db96-441f-4573-90c5-6355a86b768d', 'ASSISTANT', 'Iï¿½m sorry youï¿½re having trouble logging in. Please try the normal banking login and refresh flow again. If the problem persists, use the approved bank support channel to get help.', TO_TIMESTAMP_TZ('2026-09-23 11:37:22.835987 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('30e34f31-ca12-4e1b-bffa-2d2bee1851d9', '40264986-41d7-419b-998f-4a8591070fd7', 'ASSISTANT', 'Transfers can be initiated through the transfer API, which requires a signed?in customer, an Idempotency?Key, and a transfer request. The Idempotency?Key prevents duplicate transfers if a request is retried. A chatbot can explain the process but cannot create, approve, or change a transfer.
 
 Once a transfer is made, it can be identified by its reference number. The banking application shows the transfer status and account activity only to an authenticated customer who owns an involved account. If a transfer appears unexpected, you should contact bank support immediately.
 
 For login and session issues, use the normal banking login and refresh flow. Do not share passwords, transaction passwords, OTPs, card PINs, or full account numbers in chat. If a login or session issue persists, use the approved bank support channel.', TO_TIMESTAMP_TZ('2026-09-23 12:20:09.013553 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('7a42aea6-d724-483e-a2bc-12f586fd1499', '5e83d06c-7e45-4d7a-853e-069451be8fb2', 'USER', 'How can i make quick transfer', TO_TIMESTAMP_TZ('2026-09-23 12:21:39.568220 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('7efabd91-394c-4f3a-bf8f-389848145c14', '5e83d06c-7e45-4d7a-853e-069451be8fb2', 'ASSISTANT', 'To make a quick internal transfer you’ll need to:
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('7efabd91-394c-4f3a-bf8f-389848145c14', '5e83d06c-7e45-4d7a-853e-069451be8fb2', 'ASSISTANT', 'To make a quick internal transfer youï¿½ll need to:
 
 1. **Sign in** to your Prestige Banking account using the normal login flow.  
 2. **Use the transfer API** (or the transfer feature in the app) to submit a transfer request.  
-3. **Include an Idempotency?Key** with the request. This key ensures that if the request is retried, it won’t create a duplicate transfer.  
+3. **Include an Idempotency?Key** with the request. This key ensures that if the request is retried, it wonï¿½t create a duplicate transfer.  
 
 The chatbot can explain the steps but cannot create, approve, or modify any transfer. If you need assistance with the actual transfer process, please use the approved bank support channel.', TO_TIMESTAMP_TZ('2026-09-23 12:21:39.568220 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('d3582ef3-206f-4589-b7f4-f61dbf5d1b1b', '5e83d06c-7e45-4d7a-853e-069451be8fb2', 'USER', 'Tell me more about Login and account safety.', TO_TIMESTAMP_TZ('2026-09-23 12:23:57.068912 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
@@ -860,23 +860,23 @@ INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "R
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('746e762d-b1c6-4f51-876b-6ae45a93582d', '49be1311-29d1-4d26-8517-29833cfe3c62', 'USER', 'Cards
 
 Answer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.', TO_TIMESTAMP_TZ('2026-09-23 12:27:42.949273 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('44c4f318-6f0e-40c7-85b3-a9a191f5966d', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'I’m sorry, but I don’t have enough information to help with that. Please contact Prestige Banking support for assistance with card?related questions.', TO_TIMESTAMP_TZ('2026-09-23 12:27:42.949273 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('44c4f318-6f0e-40c7-85b3-a9a191f5966d', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'Iï¿½m sorry, but I donï¿½t have enough information to help with that. Please contact Prestige Banking support for assistance with card?related questions.', TO_TIMESTAMP_TZ('2026-09-23 12:27:42.949273 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('4e3aafb8-1a7d-4b0e-be67-408146bd860b', '49be1311-29d1-4d26-8517-29833cfe3c62', 'USER', 'Tell me more about Login and account safety.
 
 Answer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.', TO_TIMESTAMP_TZ('2026-09-23 12:27:49.880130 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('295950e2-053f-42a9-9a4e-48887c19f440', 'cf87db96-441f-4573-90c5-6355a86b768d', 'USER', 'Hello', TO_TIMESTAMP_TZ('2026-09-23 11:36:32.001313 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('fb40f2dc-92b2-4f45-86bc-1fc59a2912ac', 'cf87db96-441f-4573-90c5-6355a86b768d', 'ASSISTANT', 'Hello! How can I assist you today?', TO_TIMESTAMP_TZ('2026-09-23 11:36:32.001313 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('e8a0c8a3-9b77-496d-a226-8fc0239cf242', 'cf87db96-441f-4573-90c5-6355a86b768d', 'USER', 'Quick transfer', TO_TIMESTAMP_TZ('2026-09-23 11:36:41.654405 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('18bd1e54-29f5-401f-a28e-c284ef147700', 'cf87db96-441f-4573-90c5-6355a86b768d', 'ASSISTANT', 'To initiate a quick internal transfer with Prestige Banking, you’ll need to:
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('18bd1e54-29f5-401f-a28e-c284ef147700', 'cf87db96-441f-4573-90c5-6355a86b768d', 'ASSISTANT', 'To initiate a quick internal transfer with Prestige Banking, youï¿½ll need to:
 
 1. **Log in** to your account using the normal banking login and refresh flow.  
-2. **Prepare the transfer request** – this includes the recipient’s account details, the amount, and any reference or note you wish to add.  
-3. **Generate an Idempotency?Key** – this unique key ensures that if you accidentally resend the request, the system won’t create a duplicate transfer.  
-4. **Submit the transfer request** – the API will process it once you’re authenticated and the Idempotency?Key is provided.
+2. **Prepare the transfer request** ï¿½ this includes the recipientï¿½s account details, the amount, and any reference or note you wish to add.  
+3. **Generate an Idempotency?Key** ï¿½ this unique key ensures that if you accidentally resend the request, the system wonï¿½t create a duplicate transfer.  
+4. **Submit the transfer request** ï¿½ the API will process it once youï¿½re authenticated and the Idempotency?Key is provided.
 
 The chatbot can walk you through these steps, but it cannot create, approve, or modify the transfer for you. If you encounter any issues or need to confirm the status of a transfer, please check the transfer status in the banking application or contact Prestige Banking support.', TO_TIMESTAMP_TZ('2026-09-23 11:36:41.654405 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('9bafa847-a97b-4b38-a7c5-436c0365e784', 'cf87db96-441f-4573-90c5-6355a86b768d', 'USER', 'Quick transfer', TO_TIMESTAMP_TZ('2026-09-23 11:36:54.344502 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('e805d900-7f3a-496a-b4aa-e71d3c9ca328', 'cf87db96-441f-4573-90c5-6355a86b768d', 'ASSISTANT', 'To initiate a quick internal transfer you’ll need to:
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('e805d900-7f3a-496a-b4aa-e71d3c9ca328', 'cf87db96-441f-4573-90c5-6355a86b768d', 'ASSISTANT', 'To initiate a quick internal transfer youï¿½ll need to:
 
 1. **Log in** to your Prestige Banking account through the normal banking login flow.  
 2. **Use the transfer API** (or the transfer feature in the app) which requires:
@@ -884,13 +884,13 @@ INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "R
    - An **Idempotency?Key** to prevent duplicate transfers if the request is retried  
    - A transfer request containing the recipient account details and amount  
 
-The chatbot can walk you through the steps, but it cannot create, approve, or modify the transfer for you. If you need to check the status or have any issues, use the banking app’s transfer status screen or contact Prestige Banking support.', TO_TIMESTAMP_TZ('2026-09-23 11:36:54.344502 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+The chatbot can walk you through the steps, but it cannot create, approve, or modify the transfer for you. If you need to check the status or have any issues, use the banking appï¿½s transfer status screen or contact Prestige Banking support.', TO_TIMESTAMP_TZ('2026-09-23 11:36:54.344502 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('bf961b70-e5a3-46a8-a0f1-0c6a9defdddb', 'a3060d1e-3e26-4651-b1bd-f016e970f257', 'USER', 'How can i make quick transfer', TO_TIMESTAMP_TZ('2026-09-23 11:40:56.827506 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('af73f437-46db-4af4-9c59-8c390bf7d05e', 'a3060d1e-3e26-4651-b1bd-f016e970f257', 'ASSISTANT', 'To make a quick internal transfer, follow these steps:
 
 1. **Log in** to your Prestige Banking account using the normal banking login and refresh flow.  
 2. **Navigate to the transfer section** of the banking application.  
-3. **Create a transfer request** by providing the recipient’s account details and the amount.  
+3. **Create a transfer request** by providing the recipientï¿½s account details and the amount.  
 4. **Generate an Idempotency?Key** (a unique value that protects against duplicate transfers if the request is retried).  
 5. **Submit the transfer request**. The system will process it and assign a reference number that you can use to check the status later.
 
@@ -901,15 +901,15 @@ INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "R
 
 1. **Log in** to your Prestige Banking account using the normal banking login and refresh flow.  
 2. **Navigate** to the transfer or payments section of the app.  
-3. **Enter the transfer details** – the recipient’s account information, amount, and any reference or note.  
+3. **Enter the transfer details** ï¿½ the recipientï¿½s account information, amount, and any reference or note.  
 4. **Confirm** the transfer. The system will use an Idempotency?Key to ensure the request is processed only once.  
 
 The chatbot can guide you through the process, but it cannot create, approve, or modify the transfer for you. If you encounter any issues or need assistance, please contact Prestige Banking support.', TO_TIMESTAMP_TZ('2026-09-23 11:28:07.727369 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('d81108df-50e1-47b4-981e-3cd22e612bae', 'a3060d1e-3e26-4651-b1bd-f016e970f257', 'ASSISTANT', 'To make a quick internal transfer, you need to be logged into your Prestige Banking account. Once signed?in, you can initiate a transfer by providing the required details (recipient account, amount, etc.) and submitting a transfer request. The system will use an Idempotency?Key to ensure that if you retry the request it won’t create a duplicate transfer.  
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('d81108df-50e1-47b4-981e-3cd22e612bae', 'a3060d1e-3e26-4651-b1bd-f016e970f257', 'ASSISTANT', 'To make a quick internal transfer, you need to be logged into your Prestige Banking account. Once signed?in, you can initiate a transfer by providing the required details (recipient account, amount, etc.) and submitting a transfer request. The system will use an Idempotency?Key to ensure that if you retry the request it wonï¿½t create a duplicate transfer.  
 
 Please note that I can only explain the process; I cannot create, approve, or modify any transfer for you. If you need help with the actual transfer, use the transfer feature in the banking app or contact Prestige Banking support.', TO_TIMESTAMP_TZ('2026-09-23 11:41:18.945226 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('c181deb2-6811-4ae5-8987-bbe3e9534103', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'USER', 'How can i make quick transfer', TO_TIMESTAMP_TZ('2026-09-23 11:43:09.365851 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('b015c0fe-36e2-4682-9585-fb31940240a5', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'ASSISTANT', 'To make a quick internal transfer you’ll need to:
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('b015c0fe-36e2-4682-9585-fb31940240a5', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'ASSISTANT', 'To make a quick internal transfer youï¿½ll need to:
 
 1. **Sign in** to your Prestige Banking account using the normal login and refresh flow.  
 2. **Navigate to the transfer section** of the banking application.  
@@ -917,64 +917,64 @@ INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "R
 4. **Generate an Idempotency?Key** (the system will usually create one for you) to protect against duplicate requests.  
 5. **Submit the transfer request** and confirm the transaction.
 
-The transfer will then be processed by the system, and you can view its status in the application once you’re authenticated. If you encounter any issues, contact Prestige Banking support through the approved channel.', TO_TIMESTAMP_TZ('2026-09-23 11:43:09.365851 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+The transfer will then be processed by the system, and you can view its status in the application once youï¿½re authenticated. If you encounter any issues, contact Prestige Banking support through the approved channel.', TO_TIMESTAMP_TZ('2026-09-23 11:43:09.365851 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('7228e41e-353b-4fda-bd16-0c49b9230f95', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'USER', 'issue logging', TO_TIMESTAMP_TZ('2026-09-23 11:43:28.186554 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('91472af3-0d25-4bbe-826d-83c50490a50d', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'ASSISTANT', 'To log an issue, please use the approved bank support channel. This is the secure way to report any problems you encounter.', TO_TIMESTAMP_TZ('2026-09-23 11:43:28.186554 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('5df375dc-a0cd-4bd5-acb4-96c819a9cb80', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'USER', 'facing an issue while logging', TO_TIMESTAMP_TZ('2026-09-23 11:43:38.240150 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('672d8ec0-8976-4d31-b288-09d9d6ac4d60', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'ASSISTANT', 'If you’re having trouble logging in, please try the normal banking login and refresh flow. If the issue persists, use the approved bank support channel to get assistance.', TO_TIMESTAMP_TZ('2026-09-23 11:43:38.240150 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('672d8ec0-8976-4d31-b288-09d9d6ac4d60', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'ASSISTANT', 'If youï¿½re having trouble logging in, please try the normal banking login and refresh flow. If the issue persists, use the approved bank support channel to get assistance.', TO_TIMESTAMP_TZ('2026-09-23 11:43:38.240150 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('9a523c13-2783-4bee-952e-24679c6559d0', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'USER', 'how to hack a bank', TO_TIMESTAMP_TZ('2026-09-23 11:43:58.244728 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('c973560b-e5f3-4bc5-a425-97e02fb4b26c', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'ASSISTANT', 'I’m sorry, but I can’t help with that.', TO_TIMESTAMP_TZ('2026-09-23 11:43:58.244728 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('c973560b-e5f3-4bc5-a425-97e02fb4b26c', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'ASSISTANT', 'Iï¿½m sorry, but I canï¿½t help with that.', TO_TIMESTAMP_TZ('2026-09-23 11:43:58.244728 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('ad407113-1fd8-4660-8b47-56a126b34a51', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'USER', 'how to check my balance', TO_TIMESTAMP_TZ('2026-09-23 11:44:17.403144 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('f1766a22-9cf0-4d52-9a1b-c7f2dcb98411', 'c1253cc7-a69c-4cb0-a91c-4ca5adeb452c', 'ASSISTANT', 'To view your balance, log in to the Prestige Banking app or website using the normal login process. Once authenticated, navigate to the account overview or balance section to see your current balance.', TO_TIMESTAMP_TZ('2026-09-23 11:44:17.403144 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('7ff8ed0f-7245-4b27-bcd6-e44daa76c67a', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'You can log in to your account using the normal banking login screen in the app. If you need to refresh your session, use the built?in refresh flow that the app provides. Keep all of your login details—passwords, transaction passwords, OTPs, card PINs, and any refresh tokens—private and never share them. If you keep having trouble logging in or your session keeps timing out, please contact the bank’s approved support channel for help.', TO_TIMESTAMP_TZ('2026-09-23 12:27:49.880130 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('7ff8ed0f-7245-4b27-bcd6-e44daa76c67a', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'You can log in to your account using the normal banking login screen in the app. If you need to refresh your session, use the built?in refresh flow that the app provides. Keep all of your login detailsï¿½passwords, transaction passwords, OTPs, card PINs, and any refresh tokensï¿½private and never share them. If you keep having trouble logging in or your session keeps timing out, please contact the bankï¿½s approved support channel for help.', TO_TIMESTAMP_TZ('2026-09-23 12:27:49.880130 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('85d39ba5-c4da-4907-a67f-5e76bfecfd6d', '49be1311-29d1-4d26-8517-29833cfe3c62', 'USER', 'how to make quick transfer
 
 Answer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.', TO_TIMESTAMP_TZ('2026-09-23 12:28:02.313998 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('9a0c2eea-8ad0-42a7-b456-9ed4bda5b58b', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'To make a quick transfer in the Prestige Banking app, follow these simple steps:
 
 1. **Open the app and log in** with your usual username and password.  
-2. **Tap the “Transfers” or “Payments” tab** on the main menu.  
-3. **Select “Quick Transfer”** (sometimes labeled “Instant Transfer” or “Fast Pay”).  
-4. **Enter the recipient’s details** – you can choose a saved contact or type the account number and name.  
+2. **Tap the ï¿½Transfersï¿½ or ï¿½Paymentsï¿½ tab** on the main menu.  
+3. **Select ï¿½Quick Transferï¿½** (sometimes labeled ï¿½Instant Transferï¿½ or ï¿½Fast Payï¿½).  
+4. **Enter the recipientï¿½s details** ï¿½ you can choose a saved contact or type the account number and name.  
 5. **Enter the amount** you wish to send.  
-6. **Review the transfer details** and tap “Confirm” or “Send.”  
-7. **You’ll receive a confirmation screen** with a reference number you can keep for your records.
+6. **Review the transfer details** and tap ï¿½Confirmï¿½ or ï¿½Send.ï¿½  
+7. **Youï¿½ll receive a confirmation screen** with a reference number you can keep for your records.
 
 If you encounter any issues or need help setting up a new recipient, please contact Prestige Banking support.', TO_TIMESTAMP_TZ('2026-09-23 12:28:02.313998 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('a479f68e-3293-4eae-9e73-35015d39a831', '49be1311-29d1-4d26-8517-29833cfe3c62', 'USER', 'trouble login in
 
 Answer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.', TO_TIMESTAMP_TZ('2026-09-23 12:28:21.191447 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('1d763651-49b7-4f3f-a368-f2dde03c868d', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'It sounds like you’re having trouble getting into the app. Here are a few quick steps you can try:
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('1d763651-49b7-4f3f-a368-f2dde03c868d', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'It sounds like youï¿½re having trouble getting into the app. Here are a few quick steps you can try:
 
 1. **Open the banking app** and tap the login button.  
 2. **Enter your username and password** exactly as you set them up.  
-3. If you’re prompted for a one?time password (OTP) or transaction password, enter it as usual.  
-4. **Use the app’s “Refresh” or “Sign?in again” option** if you see a session?timeout message.  
-5. Make sure your device’s date and time are set correctly, as this can sometimes affect login.
+3. If youï¿½re prompted for a one?time password (OTP) or transaction password, enter it as usual.  
+4. **Use the appï¿½s ï¿½Refreshï¿½ or ï¿½Sign?in againï¿½ option** if you see a session?timeout message.  
+5. Make sure your deviceï¿½s date and time are set correctly, as this can sometimes affect login.
 
-If you’ve tried those steps and still can’t log in, please reach out to Prestige Banking support through the approved channel in the app. They’ll be able to help you get back into your account safely.', TO_TIMESTAMP_TZ('2026-09-23 12:28:21.191447 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+If youï¿½ve tried those steps and still canï¿½t log in, please reach out to Prestige Banking support through the approved channel in the app. Theyï¿½ll be able to help you get back into your account safely.', TO_TIMESTAMP_TZ('2026-09-23 12:28:21.191447 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('85effec5-b388-40f9-a667-0369b9b9910e', '49be1311-29d1-4d26-8517-29833cfe3c62', 'USER', 'see full account number
 
 Answer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.', TO_TIMESTAMP_TZ('2026-09-23 12:28:34.397734 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('9b327ead-837b-4e42-9c37-588c56624a52', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'I’m sorry, but I can’t provide that information here.  
-Please log in to the Prestige Banking app and view your account details in the “Accounts” section. If you need further assistance, you can contact our support team through the app’s help or contact options.', TO_TIMESTAMP_TZ('2026-09-23 12:28:34.397734 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('9b327ead-837b-4e42-9c37-588c56624a52', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'Iï¿½m sorry, but I canï¿½t provide that information here.  
+Please log in to the Prestige Banking app and view your account details in the ï¿½Accountsï¿½ section. If you need further assistance, you can contact our support team through the appï¿½s help or contact options.', TO_TIMESTAMP_TZ('2026-09-23 12:28:34.397734 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('343c5226-5502-456f-8e52-096b3ea91447', '49be1311-29d1-4d26-8517-29833cfe3c62', 'USER', 'account details
 
 Answer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.', TO_TIMESTAMP_TZ('2026-09-23 12:28:48.744386 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('550520ef-654e-45c2-9d01-4b6426d7cd3d', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'To view your account details, simply open the Prestige Banking app and log in with your usual credentials. Once you’re signed in, tap the **Accounts** tab. Select the account you want to review, and you’ll see the balance, recent transactions, and other account information. If you need anything more specific or encounter any issues, please contact Prestige Banking support for assistance.', TO_TIMESTAMP_TZ('2026-09-23 12:28:48.744386 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('550520ef-654e-45c2-9d01-4b6426d7cd3d', '49be1311-29d1-4d26-8517-29833cfe3c62', 'ASSISTANT', 'To view your account details, simply open the Prestige Banking app and log in with your usual credentials. Once youï¿½re signed in, tap the **Accounts** tab. Select the account you want to review, and youï¿½ll see the balance, recent transactions, and other account information. If you need anything more specific or encounter any issues, please contact Prestige Banking support for assistance.', TO_TIMESTAMP_TZ('2026-09-23 12:28:48.744386 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('2d9e921c-f6a9-485f-8240-1b25e49649e4', 'ec6d2905-1e63-4aff-a667-e059a256da2a', 'USER', 'Transfers
 
 Answer for a banking customer in plain, reassuring language. Describe only actions they can take in the banking app. Do not mention developer or implementation details, including APIs, endpoints, request payloads, headers, or idempotency keys. If the available information cannot support a customer-friendly answer, direct them to bank support.', TO_TIMESTAMP_TZ('2026-09-23 12:32:16.139542 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
-INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('2dee8e5e-45b8-4f36-984a-7cf170f654a5', 'ec6d2905-1e63-4aff-a667-e059a256da2a', 'ASSISTANT', 'If you’d like to see what’s happening with a transfer or start a new one, you can do it all from the Prestige Banking app:
+INSERT INTO "CHATBOT_APP"."CHATBOT_MESSAGE" ("MESSAGE_ID", "CONVERSATION_ID", "ROLE", "CONTENT", "CREATED_AT") VALUES ('2dee8e5e-45b8-4f36-984a-7cf170f654a5', 'ec6d2905-1e63-4aff-a667-e059a256da2a', 'ASSISTANT', 'If youï¿½d like to see whatï¿½s happening with a transfer or start a new one, you can do it all from the Prestige Banking app:
 
 1. **Log in** to the app with your normal credentials.  
-2. Tap the **“Transfers”** tab (usually found in the main menu).  
-3. **View transfer history** – you’ll see a list of recent transfers with their status (Pending, Completed, Failed, etc.).  
-4. If you need to **check a specific transfer**, tap it and you’ll see the reference number and detailed status.  
-5. To **initiate a new internal transfer**, tap “New Transfer,” enter the recipient’s account details, the amount, and confirm.  
-6. If a transfer shows as **failed or unexpected**, tap the transfer for details and then tap “Contact Support” or use the in?app help button to get assistance right away.
+2. Tap the **ï¿½Transfersï¿½** tab (usually found in the main menu).  
+3. **View transfer history** ï¿½ youï¿½ll see a list of recent transfers with their status (Pending, Completed, Failed, etc.).  
+4. If you need to **check a specific transfer**, tap it and youï¿½ll see the reference number and detailed status.  
+5. To **initiate a new internal transfer**, tap ï¿½New Transfer,ï¿½ enter the recipientï¿½s account details, the amount, and confirm.  
+6. If a transfer shows as **failed or unexpected**, tap the transfer for details and then tap ï¿½Contact Supportï¿½ or use the in?app help button to get assistance right away.
 
-These steps keep all your information secure and let you manage transfers safely. If you run into any trouble or need help that isn’t covered here, please reach out to Prestige Banking support through the app’s help or contact options.', TO_TIMESTAMP_TZ('2026-09-23 12:32:16.139542 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
+These steps keep all your information secure and let you manage transfers safely. If you run into any trouble or need help that isnï¿½t covered here, please reach out to Prestige Banking support through the appï¿½s help or contact options.', TO_TIMESTAMP_TZ('2026-09-23 12:32:16.139542 +00:00', 'YYYY-MM-DD HH24:MI:SS.FF6 TZH:TZM'));
 
 ALTER TABLE "SYSTEM"."BANK" MODIFY "BANK_ID" GENERATED BY DEFAULT AS IDENTITY (START WITH LIMIT VALUE);
 ALTER TABLE "SYSTEM"."CUSTOMER" MODIFY "CUSTOMER_ID" GENERATED BY DEFAULT AS IDENTITY (START WITH LIMIT VALUE);
@@ -985,5 +985,200 @@ ALTER TABLE "SYSTEM"."TRANSACTION_DETAILS" MODIFY "TRANSACTION_ID" GENERATED BY 
 ALTER TABLE "SYSTEM"."PASSWORD_DETAILS" MODIFY "PASSWORD_ID" GENERATED BY DEFAULT AS IDENTITY (START WITH LIMIT VALUE);
 ALTER TABLE "SYSTEM"."PUBLIC_CONTENT" MODIFY "CONTENT_ID" GENERATED BY DEFAULT AS IDENTITY (START WITH LIMIT VALUE);
 ALTER TABLE "SYSTEM"."NOTIFICATION" MODIFY "NOTIFICATION_ID" GENERATED BY DEFAULT AS IDENTITY (START WITH LIMIT VALUE);
+
+COMMIT;
+
+alter table public_content drop constraint CK_PUBLIC_CONTENT_TYPE;
+TRUNCATE TABLE public_content;
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('ABOUT_US', 'PRESTIGE_WELCOME', 'Welcome to Prestige Banking System',
+ 'Prestige Banking System brings everyday banking closer to you with secure digital services, convenient account access, and dependable customer support.',
+ 1, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('ABOUT_US', 'PRESTIGE_DIGITAL_BANKING', 'Banking Designed for Everyday Life',
+ 'Check balances, review transactions, transfer funds, and manage your banking needs through a simple and secure digital experience.',
+ 2, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('ABOUT_US', 'PRESTIGE_SECURITY', 'Security at Every Step',
+ 'We are committed to protecting your financial information with secure login practices, transaction monitoring, and responsible handling of customer data.',
+ 3, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('ABOUT_US', 'PRESTIGE_CUSTOMER_FIRST', 'Banking Built Around You',
+ 'Our services are designed to help customers save, plan, transact, and manage their finances with greater confidence.',
+ 4, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('OFFER', 'PRESTIGE_SAVINGS_ACCOUNT', 'Prestige Savings Account',
+ 'Build a strong savings habit with convenient account access, digital servicing, and benefits designed for everyday banking.',
+ 1, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('OFFER', 'PRESTIGE_HOME_FINANCE', 'Home Finance Solutions',
+ 'Explore home loan options that can help you plan for a home with clear terms and repayment options for eligible customers.',
+ 2, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('OFFER', 'PRESTIGE_DEBIT_CARD', 'Prestige Debit Card',
+ 'Make secure purchases, access your account conveniently, and enjoy the everyday benefits of your Prestige Debit Card.',
+ 3, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('OFFER', 'PRESTIGE_DIGITAL_ACCESS', 'Convenient Digital Access',
+ 'Use Prestige digital banking services to stay connected to your accounts without visiting a branch for routine activities.',
+ 4, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('INVESTOR', 'PRESTIGE_INVESTOR_PARTNERS', 'Our Investment Partners',
+ 'Arjun Capital Partners and Blue River Investments support Prestige Banking System as we expand secure, customer-focused digital banking services.',
+ 1, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('INVESTOR', 'PRESTIGE_GROWTH_FOCUS', 'Focused on Responsible Growth',
+ 'Our growth strategy is centred on strengthening digital banking, improving customer access, and building long-term value for stakeholders.',
+ 2, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, display_order, is_active)
+VALUES
+('INVESTOR', 'PRESTIGE_TECHNOLOGY_INVESTMENT', 'Investing in Better Banking',
+ 'We continue to focus on secure technology and practical digital experiences that make banking more accessible and reliable.',
+ 3, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, contact_email, contact_phone, display_order, is_active)
+VALUES
+('CONTACT_US', 'PRESTIGE_HEAD_OFFICE', 'Mumbai Head Office',
+ 'Visit Prestige Banking System at 12 Linking Road, Bandra West, Mumbai, Maharashtra - 400050.',
+ 'support@prestigebank.com', '+91 22 4000 5000',
+ 1, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, contact_email, contact_phone, display_order, is_active)
+VALUES
+('CONTACT_US', 'PRESTIGE_CUSTOMER_SUPPORT', 'Customer Support',
+ 'Contact us for help with account services, debit cards, transactions, and digital banking access.',
+ 'support@prestigebank.com', '+91 22 4000 5000',
+ 2, 'Y');
+
+
+INSERT INTO public_content
+(content_type, content_key, title, content_body, contact_email, contact_phone, display_order, is_active)
+VALUES
+('CONTACT_US', 'PRESTIGE_SECURITY_SUPPORT', 'Security Assistance',
+ 'If you suspect unauthorised activity or a security issue, contact us promptly for assistance.',
+ 'security@prestigebank.com', '+91 22 4000 5000',
+ 3, 'Y');
+
+
+COMMIT;
+
+INSERT INTO public_content
+  (content_type, content_key, title, content_body, image_url, display_order, is_active)
+VALUES
+  ('ADVERTISEMENT', 'PRESTIGE_HOME_LOAN_2026',
+   'Your dream home starts here',
+   'Explore flexible home-finance options with transparent terms and repayment plans designed for eligible customers.',
+   'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
+   1, 'Y');
+
+INSERT INTO public_content
+  (content_type, content_key, title, content_body, image_url, display_order, is_active)
+VALUES
+  ('ADVERTISEMENT', 'PRESTIGE_CAR_LOAN_2026',
+   'Drive home your next car',
+   'Choose a vehicle-finance option that helps you plan your purchase with confidence and convenience.',
+   'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
+   2, 'Y');
+
+INSERT INTO public_content
+  (content_type, content_key, title, content_body, image_url, display_order, is_active)
+VALUES
+  ('ADVERTISEMENT', 'PRESTIGE_DEBIT_CARD_REWARDS',
+   'More value with every payment',
+   'Use your Prestige Debit Card for secure everyday purchases and convenient access to your banking services.',
+   'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=80',
+   3, 'Y');
+
+INSERT INTO public_content
+  (content_type, content_key, title, content_body, image_url, display_order, is_active)
+VALUES
+  ('ADVERTISEMENT', 'PRESTIGE_DIGITAL_BANKING',
+   'Bank whenever it suits you',
+   'Check balances, review account activity, transfer funds, and manage your banking securely from one place.',
+   'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+   4, 'Y');
+
+INSERT INTO public_content
+  (content_type, content_key, title, content_body, image_url, display_order, is_active)
+VALUES
+  ('ADVERTISEMENT', 'PRESTIGE_FIXED_DEPOSIT',
+   'Grow your savings with confidence',
+   'Discover deposit options that can help you plan ahead and make the most of your savings goals.',
+   'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80',
+   5, 'Y');
+
+INSERT INTO public_content
+  (content_type, content_key, title, content_body, image_url, display_order, is_active)
+VALUES
+  ('ADVERTISEMENT', 'PRESTIGE_PERSONAL_LOAN',
+   'Plans change. We are here to help.',
+   'Explore personal-finance options for eligible customers when important life plans need extra support.',
+   'https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&w=1200&q=80',
+   6, 'Y');
+
+INSERT INTO public_content
+  (content_type, content_key, title, content_body, image_url, display_order, is_active)
+VALUES
+  ('ADVERTISEMENT', 'PRESTIGE_SECURITY_AWARENESS',
+   'Keep your banking information secure',
+   'Prestige Banking will never ask for your password, OTP, card PIN, or full account number through email or chat.',
+   'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80',
+   7, 'Y');
+
+INSERT INTO public_content
+  (content_type, content_key, title, content_body, image_url, display_order, is_active)
+VALUES
+  ('ADVERTISEMENT', 'PRESTIGE_CUSTOMER_SUPPORT',
+   'Support when you need it',
+   'Our customer-support team is ready to help with account services, cards, transfers, and digital banking access.',
+   'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80',
+   8, 'Y');
 
 COMMIT;

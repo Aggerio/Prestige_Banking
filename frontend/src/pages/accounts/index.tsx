@@ -7,10 +7,7 @@ const AccountsPage = () => {
   const { customer, accounts } = useDashboard();
   return (
     <Box sx={{ py: { xs: 2.5, md: 3.5 } }}>
-      <Typography sx={{ font: '10px DM Mono', letterSpacing: '.13em', color: 'primary.main' }}>
-        PERSONAL PROFILE / SECURITY
-      </Typography>
-      <Typography variant="h2" sx={{ fontFamily: 'Space Grotesk', letterSpacing: '-.06em', mt: 1 }}>
+      <Typography variant="h2" sx={{ fontFamily: 'Space Grotesk', letterSpacing: '-.06em' }}>
         Account details
       </Typography>
       <Typography variant="body2" color="text.secondary" mt={1} mb={4}>

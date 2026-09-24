@@ -8,6 +8,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { streamChat } from 'api/chat';
 import IconifyIcon from 'components/base/IconifyIcon';
@@ -34,6 +35,8 @@ const customerFriendlyQuestion = (question: string) =>
   `${question.slice(0, 2_000 - customerLanguageInstruction.length)}${customerLanguageInstruction}`;
 
 const ChatbotWidget = () => {
+  const theme = useTheme();
+  const darkMode = theme.palette.mode === 'dark';
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>(starterMessages);
@@ -143,9 +146,10 @@ const ChatbotWidget = () => {
             flexDirection: 'column',
             overflow: 'hidden',
             borderRadius: 3,
-            bgcolor: '#F8FAF9',
-            border: '1px solid rgba(19,74,56,.14)',
-            boxShadow: '0 24px 70px rgba(6,35,27,.24)',
+            bgcolor: 'background.paper',
+            border: '1px solid',
+            borderColor: 'divider',
+            boxShadow: darkMode ? '0 24px 70px rgba(0,0,0,.52)' : '0 24px 70px rgba(6,35,27,.24)',
             animation: 'chatPanelEnter 240ms cubic-bezier(.2,.8,.2,1) both',
             '@keyframes chatPanelEnter': {
               from: { opacity: 0, transform: 'translate3d(0,16px,0) scale(.97)' },
@@ -200,7 +204,16 @@ const ChatbotWidget = () => {
               </Button>
             </Stack>
           </Stack>
-          <Stack gap={1.5} sx={{ flex: 1, overflowY: 'auto', px: 2, py: 2.25, bgcolor: '#F1F5F3' }}>
+          <Stack
+            gap={1.5}
+            sx={{
+              flex: 1,
+              overflowY: 'auto',
+              px: 2,
+              py: 2.25,
+              bgcolor: 'background.default',
+            }}
+          >
             <Typography variant="caption" textAlign="center" sx={{ color: 'text.secondary' }}>
               Chat history is stored only in this page session.
             </Typography>
@@ -214,10 +227,16 @@ const ChatbotWidget = () => {
                   py: 1.25,
                   borderRadius:
                     message.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                  color: message.sender === 'user' ? '#F5FAF7' : '#263A32',
-                  bgcolor: message.sender === 'user' ? '#176D50' : '#FFFFFF',
-                  border: message.sender === 'user' ? 0 : '1px solid #DDE7E2',
-                  boxShadow: message.sender === 'user' ? 'none' : '0 5px 18px rgba(18,57,44,.06)',
+                  color: message.sender === 'user' ? '#F5FAF7' : 'text.primary',
+                  bgcolor: message.sender === 'user' ? '#176D50' : 'background.paper',
+                  border: message.sender === 'user' ? 0 : '1px solid',
+                  borderColor: message.sender === 'user' ? 'transparent' : 'divider',
+                  boxShadow:
+                    message.sender === 'user'
+                      ? 'none'
+                      : darkMode
+                        ? '0 5px 18px rgba(0,0,0,.22)'
+                        : '0 5px 18px rgba(18,57,44,.06)',
                 }}
               >
                 <Typography variant="body2" sx={{ lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
@@ -255,14 +274,29 @@ const ChatbotWidget = () => {
                     clickable
                     disabled={isStreaming}
                     onClick={() => void sendMessage(prompt)}
-                    sx={{ bgcolor: '#E2EEE8', color: '#245A46', fontWeight: 600 }}
+                    sx={{
+                      bgcolor: darkMode ? '#173D2F' : '#E2EEE8',
+                      color: darkMode ? '#BDEFD8' : '#245A46',
+                      border: '1px solid',
+                      borderColor: darkMode ? 'rgba(155,230,201,.18)' : 'transparent',
+                      fontWeight: 600,
+                    }}
                   />
                 ))}
               </Stack>
             )}
             <div ref={messagesEndRef} />
           </Stack>
-          <Box component="form" onSubmit={submitMessage} sx={{ p: 1.5, bgcolor: '#FFFFFF' }}>
+          <Box
+            component="form"
+            onSubmit={submitMessage}
+            sx={{
+              p: 1.5,
+              bgcolor: 'background.paper',
+              borderTop: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
             <TextField
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
@@ -287,8 +321,14 @@ const ChatbotWidget = () => {
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2.5,
-                  bgcolor: '#F5F8F6',
-                  '& fieldset': { borderColor: '#D8E4DE' },
+                  color: 'text.primary',
+                  bgcolor: darkMode ? '#0B1813' : '#F5F8F6',
+                  '& fieldset': { borderColor: 'divider' },
+                  '&:hover fieldset': { borderColor: 'primary.main' },
+                },
+                '& .MuiInputBase-input::placeholder': {
+                  color: 'text.secondary',
+                  opacity: 1,
                 },
               }}
             />

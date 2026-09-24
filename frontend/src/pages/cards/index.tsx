@@ -102,11 +102,8 @@ const CardsPage = () => {
 
   return (
     <Box sx={{ py: { xs: 2.5, md: 3.5 } }}>
-      <Typography sx={{ font: '10px DM Mono', letterSpacing: '.13em', color: 'primary.main' }}>
-        YOUR MONEY / CARDS
-      </Typography>
-      <Typography variant="h2" sx={{ fontFamily: 'Space Grotesk', letterSpacing: '-.06em', mt: 1 }}>
-        Cards
+      <Typography variant="h2" sx={{ fontFamily: 'Space Grotesk', letterSpacing: '-.06em' }}>
+        Card details
       </Typography>
       <Stack
         direction={{ xs: 'column', md: 'row' }}
@@ -139,7 +136,7 @@ const CardsPage = () => {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <MenuItem value="ALL">All statuses</MenuItem>
+              <MenuItem value="ALL">All status</MenuItem>
               <MenuItem value="ACTIVE">Active</MenuItem>
               <MenuItem value="INACTIVE">Inactive</MenuItem>
               <MenuItem value="LOCKED">Locked</MenuItem>

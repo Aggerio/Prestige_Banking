@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
   {
     field: 'description',
     headerName: 'Description',
-    width: 230,
+    width: 280,
     hideable: false,
     renderCell: (params) => <RenderCellDescription params={params} />,
     valueGetter: (params: GridValidRowModel) => params.title,
@@ -64,8 +64,10 @@ const columns: GridColDef[] = [
           sx={{
             height: 25,
             borderRadius: 1.5,
-            bgcolor: incoming ? 'success.lighter' : 'error.lighter',
-            color: incoming ? 'success.dark' : 'error.dark',
+            bgcolor: incoming ? '#E4F5EE' : '#FCEAEC',
+            color: incoming ? '#147A5A' : '#B7374C',
+            border: '1px solid',
+            borderColor: incoming ? '#C7EBDD' : '#F4CCD2',
             fontFamily: 'Space Grotesk, Manrope, sans-serif',
             fontSize: 11,
             fontWeight: 700,
@@ -301,7 +303,7 @@ const InvoiceOverviewTable: React.FC = () => {
             p: { xs: 0, md: 1 },
             border: 1,
             borderColor: 'primary.lighter',
-            bgcolor: { xs: 'transparent', sm: 'white' },
+            bgcolor: { xs: 'transparent', sm: 'background.paper' },
             boxShadow: 'none',
           },
         }}
@@ -345,6 +347,10 @@ const InvoiceOverviewTable: React.FC = () => {
               letterSpacing: '0.07em',
               textTransform: 'uppercase',
             },
+            '& .MuiDataGrid-columnHeader[data-field="description"], & .MuiDataGrid-cell[data-field="description"]':
+              {
+                pl: { xs: 1.5, md: 2 },
+              },
             '& .MuiDataGrid-cell': {
               borderBottomColor: 'primary.lighter',
               fontSize: 14,

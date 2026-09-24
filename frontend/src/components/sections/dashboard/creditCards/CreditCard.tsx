@@ -88,7 +88,7 @@ const CreditCard = ({ theme = 'white', cardData, actions }: CreditCardProps) => 
       >
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
           <Box>
-            <Typography sx={{ font: '600 10px DM Mono', letterSpacing: '.16em', color: '#FFFFFF' }}>
+            <Typography sx={{ font: '600 10px DM Mono', letterSpacing: '.16em', color: textColor }}>
               PRESTIGE BANKING
             </Typography>
             <Typography sx={{ mt: 0.5, fontSize: 12, fontWeight: 700 }}>{cardType}</Typography>

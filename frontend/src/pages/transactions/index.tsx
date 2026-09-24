@@ -37,9 +37,6 @@ const TransactionsPage = () => {
         alignItems={{ sm: 'end' }}
       >
         <Stack gap={0.75}>
-          <Typography sx={{ font: '10px DM Mono', letterSpacing: '.13em', color: 'primary.main' }}>
-            MONEY MOVEMENT / RECORD
-          </Typography>
           <Typography variant="h2" sx={{ fontFamily: 'Space Grotesk', letterSpacing: '-.06em' }}>
             Transactions
           </Typography>

@@ -2,6 +2,7 @@ import { Box, Container, Stack, Typography } from '@mui/material';
 import { getAboutUs, getContactUs, getInvestors, getOffers, type PublicContent } from 'api/banking';
 import PublicHeader from 'components/common/PublicHeader';
 import PublicFooter from 'components/common/PublicFooter';
+import IconifyIcon from 'components/base/IconifyIcon';
 import { useEffect, useState } from 'react';
 
 export type PublicPageKind = 'about' | 'investors' | 'offers' | 'contact';
@@ -88,23 +89,20 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
             component="h1"
             sx={{
               mt: 2,
-              maxWidth: kind === 'about' || kind === 'offers' ? 'none' : 850,
+              maxWidth: 900,
               fontFamily: 'Fraunces, serif',
-              fontSize:
-                kind === 'about' || kind === 'offers'
-                  ? 'clamp(19px, 5.2vw, 76px)'
-                  : { xs: 48, sm: 64, md: 82 },
+              fontSize: { xs: 44, sm: 60, md: 76 },
               fontWeight: 500,
               letterSpacing: '-.07em',
-              lineHeight: 0.95,
-              whiteSpace: kind === 'about' || kind === 'offers' ? 'nowrap' : 'normal',
+              lineHeight: 1,
+              whiteSpace: 'normal',
               color: '#0A2F21',
             }}
           >
             {copy.title}
           </Typography>
           <Typography
-            sx={{ mt: 3, maxWidth: 620, color: '#456B5A', fontSize: 18, lineHeight: 1.7 }}
+            sx={{ mt: 2.5, maxWidth: 620, color: '#456B5A', fontSize: 18, lineHeight: 1.7 }}
           >
             {copy.description}
           </Typography>
@@ -113,94 +111,102 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
 
       <Box sx={{ flex: 1, bgcolor: '#F8FCF9', color: '#14231C', minHeight: 260 }}>
         <Container maxWidth="xl" sx={{ py: { xs: 4, md: 5 } }}>
-          {loading && (
+          {kind !== 'about' && loading && (
             <Typography sx={{ color: '#52665C' }}>Loading published information…</Typography>
           )}
-          {failed && (
+          {kind !== 'about' && failed && (
             <Typography sx={{ color: '#52665C' }}>
               This information is temporarily unavailable. Please try again later.
             </Typography>
           )}
-          {!loading && !failed && !content.length && (
+          {kind !== 'about' && !loading && !failed && !content.length && (
             <Typography sx={{ color: '#52665C' }}>
               No information is currently published.
             </Typography>
           )}
 
-          <Stack
-            gap={usesCardLayout ? 3 : 0}
-            sx={{
-              display: usesCardLayout ? 'grid' : 'flex',
-              gridTemplateColumns:
-                kind === 'offers'
-                  ? { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' }
-                  : kind === 'investors'
-                    ? { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' }
-                    : '1fr',
-              borderTop: !usesCardLayout && content.length ? '1px solid #B9C8C0' : 0,
-            }}
-          >
-            {content.map((item) => (
-              <Box
-                component="article"
-                className={usesGlass ? 'glass-card' : undefined}
-                key={item.contentId}
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: usesCardLayout
-                    ? '1fr'
-                    : { xs: '1fr', md: 'minmax(220px, .8fr) 1.2fr' },
-                  gap: usesCardLayout ? 2 : { xs: 1.5, md: 4 },
-                  minHeight: usesCardLayout ? 260 : 'auto',
-                  p: usesCardLayout ? { xs: 3, md: 4 } : 0,
-                  py: usesCardLayout ? undefined : { xs: 4, md: 5 },
-                  border: usesCardLayout ? '1px solid #CBD9D2' : 0,
-                  borderBottom: usesCardLayout ? undefined : '1px solid #B9C8C0',
-                  borderRadius: usesCardLayout ? 3 : 0,
-                  bgcolor: usesCardLayout
-                    ? usesGlass
-                      ? 'rgba(255,255,255,.72)'
-                      : '#FFFFFF'
-                    : 'transparent',
-                  boxShadow: usesCardLayout ? '0 18px 45px rgba(20,58,45,.08)' : 'none',
-                  backdropFilter: usesGlass ? 'blur(16px) saturate(140%)' : 'none',
-                  transition: usesCardLayout ? 'transform .25s ease, box-shadow .25s ease' : 'none',
-                  '&:hover': usesCardLayout
+          {kind !== 'about' && (
+            <Stack
+              gap={usesCardLayout ? 3 : 0}
+              sx={{
+                display: usesCardLayout ? 'grid' : 'flex',
+                gridTemplateColumns:
+                  kind === 'offers'
                     ? {
-                        transform: 'translateY(-5px)',
-                        bgcolor: usesGlass ? 'rgba(255,255,255,.92)' : '#FFFFFF',
-                        boxShadow: '0 26px 55px rgba(20,58,45,.14)',
+                        xs: '1fr',
+                        sm: 'repeat(2, minmax(0, 1fr))',
+                        lg: 'repeat(3, minmax(0, 1fr))',
                       }
-                    : undefined,
-                }}
-              >
-                <Typography
-                  component="h2"
+                    : kind === 'investors'
+                      ? { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' }
+                      : '1fr',
+                borderTop: !usesCardLayout && content.length ? '1px solid #B9C8C0' : 0,
+              }}
+            >
+              {content.map((item) => (
+                <Box
+                  component="article"
+                  className={usesGlass ? 'glass-card' : undefined}
+                  key={item.contentId}
                   sx={{
-                    fontFamily: 'Fraunces',
-                    fontSize: kind === 'about' ? 'clamp(20px, 3.3vw, 38px)' : { xs: 30, md: 38 },
-                    lineHeight: 1.05,
-                    whiteSpace: kind === 'about' ? 'nowrap' : 'normal',
+                    display: 'grid',
+                    gridTemplateColumns: usesCardLayout
+                      ? '1fr'
+                      : { xs: '1fr', md: 'minmax(220px, .8fr) 1.2fr' },
+                    gap: usesCardLayout ? 2 : { xs: 1.5, md: 4 },
+                    minHeight: usesCardLayout ? 260 : 'auto',
+                    p: usesCardLayout ? { xs: 3, md: 4 } : 0,
+                    py: usesCardLayout ? undefined : { xs: 4, md: 5 },
+                    border: usesCardLayout ? '1px solid #CBD9D2' : 0,
+                    borderBottom: usesCardLayout ? undefined : '1px solid #B9C8C0',
+                    borderRadius: usesCardLayout ? 3 : 0,
+                    bgcolor: usesCardLayout
+                      ? usesGlass
+                        ? 'rgba(255,255,255,.72)'
+                        : '#FFFFFF'
+                      : 'transparent',
+                    boxShadow: usesCardLayout ? '0 18px 45px rgba(20,58,45,.08)' : 'none',
+                    backdropFilter: usesGlass ? 'blur(16px) saturate(140%)' : 'none',
+                    transition: usesCardLayout
+                      ? 'transform .25s ease, box-shadow .25s ease'
+                      : 'none',
+                    '&:hover': usesCardLayout
+                      ? {
+                          transform: 'translateY(-5px)',
+                          bgcolor: usesGlass ? 'rgba(255,255,255,.92)' : '#FFFFFF',
+                          boxShadow: '0 26px 55px rgba(20,58,45,.14)',
+                        }
+                      : undefined,
                   }}
                 >
-                  {item.title}
-                </Typography>
-                <Stack gap={2}>
-                  <Typography sx={{ color: '#52665C', lineHeight: 1.75 }}>
-                    {item.contentBody}
+                  <Typography
+                    component="h2"
+                    sx={{
+                      fontFamily: 'Fraunces',
+                      fontSize: { xs: 30, md: 38 },
+                      lineHeight: 1.05,
+                      whiteSpace: 'normal',
+                    }}
+                  >
+                    {item.title}
                   </Typography>
-                  {(item.contactEmail || item.contactPhone) && (
-                    <Typography sx={{ color: '#178A68', fontWeight: 600 }}>
-                      {[item.contactEmail, item.contactPhone].filter(Boolean).join(' · ')}
+                  <Stack gap={2}>
+                    <Typography sx={{ color: '#52665C', lineHeight: 1.75 }}>
+                      {item.contentBody}
                     </Typography>
-                  )}
-                </Stack>
-              </Box>
-            ))}
-          </Stack>
+                    {(item.contactEmail || item.contactPhone) && (
+                      <Typography sx={{ color: '#178A68', fontWeight: 600 }}>
+                        {[item.contactEmail, item.contactPhone].filter(Boolean).join(' · ')}
+                      </Typography>
+                    )}
+                  </Stack>
+                </Box>
+              ))}
+            </Stack>
+          )}
 
           {kind === 'about' && (
-            <Stack gap={{ xs: 6, md: 9 }} mt={{ xs: 6, md: 9 }}>
+            <Stack gap={{ xs: 4, md: 5 }} mt={{ xs: 4, md: 5 }}>
               <Box
                 sx={{
                   display: 'grid',
@@ -221,8 +227,7 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                   <Box
                     key={title}
                     sx={{
-                      p: { xs: 3, md: 4.5 },
-                      minHeight: 260,
+                      p: { xs: 3, md: 3.5 },
                       borderRadius: 4,
                       border: '1px solid #C8E2D4',
                       bgcolor: index === 0 ? '#0F4D37' : '#E7F5EC',
@@ -230,14 +235,8 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                     }}
                   >
                     <Typography
-                      sx={{ font: '11px DM Mono', letterSpacing: '.14em', opacity: 0.72 }}
-                    >
-                      0{index + 1} / OUR FOUNDATION
-                    </Typography>
-                    <Typography
                       component="h2"
                       sx={{
-                        mt: 4,
                         fontFamily: 'Fraunces',
                         fontSize: { xs: 34, md: 45 },
                         lineHeight: 1,
@@ -245,7 +244,7 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                     >
                       {title}
                     </Typography>
-                    <Typography sx={{ mt: 2.5, maxWidth: 570, lineHeight: 1.8, opacity: 0.84 }}>
+                    <Typography sx={{ mt: 1.5, maxWidth: 570, lineHeight: 1.7, opacity: 0.84 }}>
                       {body}
                     </Typography>
                   </Box>
@@ -261,7 +260,7 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                   sx={{
                     mt: 1.5,
                     fontFamily: 'Fraunces',
-                    fontSize: { xs: 39, md: 58 },
+                    fontSize: { xs: 36, md: 48 },
                     letterSpacing: '-.05em',
                   }}
                 >
@@ -269,47 +268,77 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                 </Typography>
                 <Box
                   sx={{
-                    mt: 4,
+                    mt: 2.5,
                     display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
-                    borderTop: '1px solid #BDD4C8',
+                    gridTemplateColumns: {
+                      xs: '1fr',
+                      sm: 'repeat(2, minmax(0, 1fr))',
+                      lg: 'repeat(4, minmax(0, 1fr))',
+                    },
+                    gap: 2,
                   }}
                 >
                   {[
                     [
-                      '01',
+                      'solar:user-heart-bold-duotone',
                       'Customer first',
                       'We start with customer needs and remove unnecessary complexity from every interaction.',
                     ],
                     [
-                      '02',
+                      'solar:shield-check-bold-duotone',
                       'Secure by design',
                       'Protection, privacy and careful review are part of the experience from the beginning.',
                     ],
                     [
-                      '03',
+                      'solar:document-text-bold-duotone',
                       'Clear and transparent',
                       'Straightforward information helps customers understand their choices and stay in control.',
                     ],
                     [
-                      '04',
+                      'solar:chart-2-bold-duotone',
                       'Built for progress',
                       'Flexible services adapt as goals, families and businesses grow over time.',
                     ],
-                  ].map(([number, title, body]) => (
+                  ].map(([icon, title, body], index) => (
                     <Box
                       key={title}
                       sx={{
-                        py: 3.5,
-                        pr: { sm: 3 },
-                        mr: { sm: 3 },
-                        borderBottom: '1px solid #BDD4C8',
+                        p: 3,
+                        minHeight: 230,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        border: '1px solid #C8DDD2',
+                        borderRadius: 3,
+                        bgcolor: '#FFFFFF',
+                        boxShadow: '0 10px 28px rgba(20,58,45,.06)',
+                        transition:
+                          'transform .22s ease, border-color .22s ease, box-shadow .22s ease',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          borderColor: '#79B99A',
+                          boxShadow: '0 16px 34px rgba(20,58,45,.11)',
+                        },
                       }}
                     >
-                      <Typography sx={{ color: '#178A68', font: '10px DM Mono' }}>
-                        {number}
-                      </Typography>
-                      <Typography sx={{ mt: 2, fontWeight: 800, fontSize: 18 }}>{title}</Typography>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Box
+                          sx={{
+                            width: 46,
+                            height: 46,
+                            display: 'grid',
+                            placeItems: 'center',
+                            borderRadius: 2.25,
+                            bgcolor: '#E3F4EA',
+                            color: '#137451',
+                          }}
+                        >
+                          <IconifyIcon icon={icon} width={24} />
+                        </Box>
+                        <Typography sx={{ color: '#8EAA9D', font: '10px DM Mono' }}>
+                          0{index + 1}
+                        </Typography>
+                      </Stack>
+                      <Typography sx={{ mt: 3, fontWeight: 800, fontSize: 18 }}>{title}</Typography>
                       <Typography
                         sx={{ mt: 1.25, color: '#52665C', fontSize: 14, lineHeight: 1.7 }}
                       >
@@ -322,13 +351,13 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
 
               <Box
                 sx={{
-                  p: { xs: 3, md: 5 },
+                  p: { xs: 3, md: 4 },
                   borderRadius: 4,
                   bgcolor: '#FFFFFF',
                   border: '1px solid #CBD9D2',
                   display: 'grid',
                   gridTemplateColumns: { xs: '1fr', md: '.8fr 1.2fr' },
-                  gap: { xs: 3, md: 8 },
+                  gap: { xs: 3, md: 5 },
                 }}
               >
                 <Box>
@@ -349,7 +378,7 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                     Here for the moments that matter.
                   </Typography>
                 </Box>
-                <Stack gap={3}>
+                <Stack gap={2}>
                   {[
                     [
                       'Everyday confidence',
@@ -367,7 +396,7 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                     <Box
                       key={title}
                       sx={{
-                        pb: 3,
+                        pb: 2,
                         borderBottom: '1px solid #DCE9E2',
                         '&:last-child': { pb: 0, borderBottom: 0 },
                       }}

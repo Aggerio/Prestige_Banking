@@ -21,6 +21,32 @@ html[data-theme='dark'] .MuiAppBar-root {
   backdrop-filter: blur(18px);
 }
 
+html[data-theme='dark'] .MuiInputBase-input,
+html[data-theme='dark'] .MuiSelect-select,
+html[data-theme='dark'] textarea {
+  color: #f2f8f4;
+  -webkit-text-fill-color: #f2f8f4;
+}
+
+html[data-theme='dark'] .MuiInputBase-input::placeholder,
+html[data-theme='dark'] textarea::placeholder {
+  color: #93a89e;
+  opacity: 1;
+}
+
+html[data-theme='dark'] .MuiInputLabel-root,
+html[data-theme='dark'] .MuiFormHelperText-root {
+  color: #a8bab1;
+}
+
+html[data-theme='dark'] .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(220, 240, 230, 0.22);
+}
+
+html[data-theme='dark'] .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(105, 214, 170, 0.7);
+}
+
 .glass-card {
   position: relative;
   overflow: hidden;

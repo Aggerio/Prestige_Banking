@@ -8,7 +8,7 @@ import {
   type PublicContent,
   type PublicHome,
 } from 'api/banking';
-import roboticCardHero from 'assets/prestige-robotic-card-green.png';
+import bronzeGrabber from 'assets/prestige-bronze-grabber-v2.png';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import PublicHeader from 'components/common/PublicHeader';
@@ -103,6 +103,131 @@ const initialsFor = (title: string) =>
     .map((part) => part[0])
     .join('')
     .toUpperCase();
+
+const RoboticCardAssembly = ({ bankName, className }: { bankName: string; className?: string }) => (
+  <Box
+    className={className}
+    aria-label="Robotic grabbers presenting a Prestige bank card"
+    role="img"
+    sx={{
+      position: 'relative',
+      width: 1,
+      height: 1,
+      isolation: 'isolate',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        width: '72%',
+        aspectRatio: '1',
+        left: '14%',
+        top: '7%',
+        borderRadius: '50%',
+        border: '1px solid rgba(23,138,104,.18)',
+        boxShadow: '0 0 0 42px rgba(98,185,141,.06), 0 0 80px rgba(98,185,141,.16)',
+      },
+    }}
+  >
+    <Box
+      sx={{
+        position: 'absolute',
+        left: '50%',
+        bottom: '15%',
+        width: { xs: 250, md: 370 },
+        height: { xs: 150, md: 218 },
+        p: { xs: 2, md: 2.75 },
+        zIndex: 3,
+        overflow: 'hidden',
+        color: '#F0F7F3',
+        borderRadius: { xs: 2.5, md: 3.5 },
+        border: '1px solid rgba(183,226,204,.7)',
+        background:
+          'radial-gradient(circle at 82% 18%, rgba(132,217,174,.22), transparent 26%), linear-gradient(135deg, #287456, #0D3B2A 72%)',
+        boxShadow: '0 32px 70px rgba(20,92,61,.32)',
+        transform: 'translate(-50%, 0)',
+        animation: 'cardRise 1600ms cubic-bezier(.22,1,.36,1) 120ms both',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          inset: '-45% auto -45% -35%',
+          width: '24%',
+          bgcolor: 'rgba(222,255,238,.17)',
+          transform: 'skewX(-18deg)',
+          animation: 'oneShotSheen 700ms ease-out 1750ms both',
+        },
+      }}
+    >
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography sx={{ font: '600 10px DM Mono', letterSpacing: '.13em', color: '#C7EFDA' }}>
+          {bankName}
+        </Typography>
+        <IconifyIcon icon="solar:chip-bold" width={28} color="#B5D9C7" />
+      </Stack>
+      <Typography
+        sx={{
+          mt: { xs: 2.8, md: 4.3 },
+          fontFamily: 'Space Grotesk',
+          fontSize: { xs: 22, md: 31 },
+          letterSpacing: '.12em',
+        }}
+      >
+        •••• ••••
+      </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="end" mt={{ xs: 2, md: 3 }}>
+        <Box>
+          <Typography sx={{ font: '8px DM Mono', color: '#8FB7A5' }}>CARD HOLDER</Typography>
+          <Typography sx={{ mt: 0.4, fontSize: 12, letterSpacing: '.08em' }}>
+            PRESTIGE MEMBER
+          </Typography>
+        </Box>
+        <Typography sx={{ fontFamily: 'Fraunces', fontSize: { xs: 16, md: 19 } }}>
+          PRESTIGE
+        </Typography>
+      </Stack>
+    </Box>
+
+    {(['left', 'right'] as const).map((side) => (
+      <Box
+        key={side}
+        component="img"
+        src={bronzeGrabber}
+        alt=""
+        aria-hidden="true"
+        sx={{
+          position: 'absolute',
+          zIndex: 4,
+          top: { xs: '-4%', md: '-13%' },
+          left: '50%',
+          width: { xs: '78%', md: '60%' },
+          height: 'auto',
+          transform: 'translateX(-50%)',
+          filter: 'drop-shadow(0 24px 30px rgba(68,34,12,.24))',
+          clipPath: side === 'left' ? 'inset(0 50% 0 0)' : 'inset(0 0 0 50%)',
+          transformOrigin: side === 'left' ? '50% 24%' : '50% 24%',
+          animation: `${side === 'left' ? 'leftGrabber' : 'rightGrabber'} 1600ms cubic-bezier(.22,1,.36,1) 120ms both`,
+        }}
+      />
+    ))}
+
+    <Stack
+      direction="row"
+      alignItems="center"
+      gap={1}
+      sx={{
+        position: 'absolute',
+        left: '50%',
+        bottom: '6%',
+        transform: 'translateX(-50%)',
+        color: '#126F55',
+        animation: 'assemblyStatus 420ms ease-out 1750ms both',
+      }}
+    >
+      <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#178A68' }} />
+      <Typography sx={{ font: '600 9px DM Mono', letterSpacing: '.15em' }}>
+        SECURELY PRESENTED
+      </Typography>
+    </Stack>
+  </Box>
+);
 
 const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
   const [active, setActive] = useState(0);
@@ -390,6 +515,26 @@ const HomePage = () => {
             from: { opacity: 0, transform: 'translate3d(40px,28px,0) scale(.88)' },
             to: { opacity: 1, transform: 'none' },
           },
+          '@keyframes cardRise': {
+            from: { transform: 'translate(-50%, 380px) scale(.96)' },
+            to: { transform: 'translate(-50%, 0) scale(1)' },
+          },
+          '@keyframes leftGrabber': {
+            from: { transform: 'translateX(calc(-50% - 100px))' },
+            to: { transform: 'translateX(-50%)' },
+          },
+          '@keyframes rightGrabber': {
+            from: { transform: 'translateX(calc(-50% + 100px))' },
+            to: { transform: 'translateX(-50%)' },
+          },
+          '@keyframes assemblyStatus': {
+            from: { opacity: 0, transform: 'translate(-50%, 8px)' },
+            to: { opacity: 1, transform: 'translate(-50%, 0)' },
+          },
+          '@keyframes oneShotSheen': {
+            from: { transform: 'translateX(0) skewX(-18deg)' },
+            to: { transform: 'translateX(650%) skewX(-18deg)' },
+          },
           '@keyframes cardSheen': {
             '0%,25%': { transform: 'translateX(-145%) skewX(-19deg)' },
             '55%,100%': { transform: 'translateX(260%) skewX(-19deg)' },
@@ -440,22 +585,9 @@ const HomePage = () => {
               '& > :not(.hero-artwork)': { display: 'none' },
             }}
           >
-            <Box
+            <RoboticCardAssembly
               className="hero-artwork"
-              component="img"
-              src={roboticCardHero}
-              alt="Robotic precision arms securely holding a bank card"
-              sx={{
-                width: 1,
-                height: 1,
-                objectFit: 'cover',
-                objectPosition: 'center',
-                filter: 'drop-shadow(0 32px 48px rgba(20,92,61,.22))',
-                WebkitMaskImage:
-                  'linear-gradient(to right, transparent 0%, rgba(0,0,0,.85) 16%, #000 28%, #000 100%)',
-                maskImage:
-                  'linear-gradient(to right, transparent 0%, rgba(0,0,0,.85) 16%, #000 28%, #000 100%)',
-              }}
+              bankName={home?.bankName || (publicLoaded ? 'PRESTIGE BANKING' : 'PRESTIGE')}
             />
             <Box
               sx={{
@@ -633,9 +765,11 @@ const HomePage = () => {
           <Box sx={{ position: 'relative', maxWidth: 740 }}>
             <Typography
               sx={{
-                color: '#9BE6C9',
-                font: '11px DM Mono',
-                letterSpacing: '.15em',
+                color: '#126F55',
+                fontFamily: 'Manrope, sans-serif',
+                fontSize: { xs: 15, md: 18 },
+                fontWeight: 800,
+                letterSpacing: '.08em',
                 animation: 'heroEnter 700ms cubic-bezier(.2,.8,.2,1) both',
               }}
             >

@@ -29,9 +29,9 @@ const Logo = ({ light = false, size = 'default' }: LogoProps) => {
       <Typography
         sx={{
           fontFamily: 'Fraunces, Georgia, serif',
-          fontSize: large ? { xs: 20, xl: 22 } : { xs: 17, xl: 19 },
-          fontWeight: 500,
-          letterSpacing: '-0.04em',
+          fontSize: large ? { xs: 21, xl: 24 } : { xs: 19, xl: 21 },
+          fontWeight: 700,
+          letterSpacing: '-0.025em',
           lineHeight: 1.02,
           color: light ? 'common.white' : 'inherit',
           whiteSpace: 'nowrap',

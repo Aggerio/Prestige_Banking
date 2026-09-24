@@ -1,6 +1,6 @@
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import Logo from 'components/common/Logo';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const publicLinks = [
   { label: 'Home', to: '/' },
@@ -10,92 +10,125 @@ const publicLinks = [
   { label: 'Contact Us', to: '/contact-us' },
 ];
 
-const PublicHeader = () => (
-  <Container maxWidth="xl">
-    <Stack
-      component="header"
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-      flexWrap="wrap"
-      gap={{ xs: 2, md: 3 }}
-      py={2.75}
-      sx={{ pr: 1, overflow: 'visible' }}
-    >
-      <Box
-        component={RouterLink}
-        to="/"
-        aria-label="Prestige Banking home"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          color: 'common.white',
-          textDecoration: 'none',
-        }}
-      >
-        <Logo light />
-      </Box>
+const PublicHeader = () => {
+  const navigate = useNavigate();
+  const navigateWithTransition = (to: string) => {
+    const transitionDocument = document as Document & {
+      startViewTransition?: (callback: () => void) => unknown;
+    };
 
-      <Stack
-        component="nav"
-        aria-label="Public navigation"
-        direction="row"
-        alignItems="center"
-        justifyContent={{ xs: 'flex-start', md: 'center' }}
-        gap={{ xs: 0.5, sm: 1, lg: 2 }}
-        sx={{
-          order: { xs: 3, md: 2 },
-          width: { xs: 1, md: 'auto' },
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-          '&::-webkit-scrollbar': { display: 'none' },
-        }}
-      >
-        {publicLinks.map((item) => (
-          <Button
-            key={item.to}
-            component={RouterLink}
-            to={item.to}
-            color="inherit"
+    if (transitionDocument.startViewTransition) {
+      transitionDocument.startViewTransition(() => navigate(to));
+      return;
+    }
+    navigate(to);
+  };
+
+  return (
+    <Box
+      component="header"
+      sx={{
+        position: 'sticky',
+        top: 0,
+        zIndex: (theme) => theme.zIndex.appBar,
+        bgcolor: '#0F4D37',
+        borderBottom: '1px solid #2C7657',
+        boxShadow: '0 5px 18px rgba(11, 62, 42, .16)',
+      }}
+    >
+      <Container maxWidth="xl">
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          flexWrap="wrap"
+          gap={{ xs: 2, md: 3 }}
+          py={{ xs: 1.5, md: 1.75 }}
+          sx={{ pr: 1, overflow: 'visible' }}
+        >
+          <Box
+            component="button"
+            type="button"
+            onClick={() => navigateWithTransition('/')}
+            aria-label="Prestige Banking home"
             sx={{
-              flexShrink: 0,
-              minWidth: 0,
-              px: { xs: 1, sm: 1.5 },
-              color: '#AABBB2',
-              fontWeight: 500,
-              '&:hover': { color: '#EAF5EF', bgcolor: 'rgba(155,230,201,.06)' },
+              display: 'flex',
+              alignItems: 'center',
+              color: 'common.white',
+              textDecoration: 'none',
+              border: 0,
+              bgcolor: 'transparent',
+              cursor: 'pointer',
+              p: 0,
             }}
           >
-            {item.label}
-          </Button>
-        ))}
-      </Stack>
+            <Logo light />
+          </Box>
 
-      <Stack
-        direction="row"
-        gap={{ xs: 1, sm: 3 }}
-        alignItems="center"
-        sx={{ order: { xs: 2, md: 3 }, flexShrink: 0 }}
-      >
-        <Typography variant="body2" sx={{ display: { xs: 'none', xl: 'block' }, color: '#8FA299' }}>
-          Personal banking
-        </Typography>
-        <Button
-          component={RouterLink}
-          to="/authentication/login"
-          variant="outlined"
-          sx={{
-            color: '#B8D4C7',
-            borderColor: '#456156',
-            flexShrink: 0,
-            '&:hover': { borderColor: '#A8E6CB', bgcolor: 'rgba(155,230,201,.06)' },
-          }}
-        >
-          Sign in
-        </Button>
-      </Stack>
-    </Stack>
-  </Container>
-);
+          <Stack
+            component="nav"
+            aria-label="Public navigation"
+            direction="row"
+            alignItems="center"
+            justifyContent={{ xs: 'flex-start', md: 'center' }}
+            gap={{ xs: 0.5, sm: 1, lg: 2 }}
+            sx={{
+              order: { xs: 3, md: 2 },
+              width: { xs: 1, md: 'auto' },
+              overflowX: 'auto',
+              scrollbarWidth: 'none',
+              '&::-webkit-scrollbar': { display: 'none' },
+            }}
+          >
+            {publicLinks.map((item) => (
+              <Button
+                key={item.to}
+                onClick={() => navigateWithTransition(item.to)}
+                color="inherit"
+                sx={{
+                  flexShrink: 0,
+                  minWidth: 0,
+                  px: { xs: 1, sm: 1.5 },
+                  color: '#E3F5EB',
+                  fontWeight: 500,
+                  '&:hover': { color: '#fff', bgcolor: 'rgba(255,255,255,.14)' },
+                }}
+              >
+                {item.label}
+              </Button>
+            ))}
+          </Stack>
+
+          <Stack
+            direction="row"
+            gap={{ xs: 1, sm: 3 }}
+            alignItems="center"
+            sx={{ order: { xs: 2, md: 3 }, flexShrink: 0 }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ display: { xs: 'none', xl: 'block' }, color: '#CAE8D8' }}
+            >
+              Personal banking
+            </Typography>
+            <Button
+              component={RouterLink}
+              to="/authentication/login"
+              variant="outlined"
+              sx={{
+                color: '#fff',
+                borderColor: 'rgba(220,255,236,.58)',
+                flexShrink: 0,
+                '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,.14)' },
+              }}
+            >
+              Sign in
+            </Button>
+          </Stack>
+        </Stack>
+      </Container>
+    </Box>
+  );
+};
 
 export default PublicHeader;

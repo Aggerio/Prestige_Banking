@@ -184,7 +184,13 @@ const AuthLayout = () => (
         </Typography>
       </Box>
     </Box>
-    <Stack sx={{ flex: 1, p: { xs: 3, sm: 5, md: 7 }, minWidth: 0 }}>
+    <Stack
+      sx={{
+        flex: 1,
+        p: { xs: 3, sm: 5, md: 7 },
+        minWidth: 0,
+      }}
+    >
       <Link href="/" sx={{ display: { md: 'none' }, color: 'common.white', mb: 7 }}>
         <Logo light />
       </Link>

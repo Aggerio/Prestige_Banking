@@ -43,10 +43,38 @@ export const routes = [
           </PageEnter>
         ),
       },
-      { path: paths.aboutUs, element: <PublicInfoPage kind="about" /> },
-      { path: paths.investors, element: <PublicInfoPage kind="investors" /> },
-      { path: paths.offers, element: <PublicInfoPage kind="offers" /> },
-      { path: paths.contactUs, element: <PublicInfoPage kind="contact" /> },
+      {
+        path: paths.aboutUs,
+        element: (
+          <PageEnter>
+            <PublicInfoPage kind="about" />
+          </PageEnter>
+        ),
+      },
+      {
+        path: paths.investors,
+        element: (
+          <PageEnter>
+            <PublicInfoPage kind="investors" />
+          </PageEnter>
+        ),
+      },
+      {
+        path: paths.offers,
+        element: (
+          <PageEnter>
+            <PublicInfoPage kind="offers" />
+          </PageEnter>
+        ),
+      },
+      {
+        path: paths.contactUs,
+        element: (
+          <PageEnter>
+            <PublicInfoPage kind="contact" />
+          </PageEnter>
+        ),
+      },
       {
         element: <RequireAuth />,
         children: [

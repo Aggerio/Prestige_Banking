@@ -10,11 +10,14 @@ import {
 import roboticCardHero from 'assets/prestige-robotic-card-green.png';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import Logo from 'components/common/Logo';
 import PublicHeader from 'components/common/PublicHeader';
+import PublicFooter from 'components/common/PublicFooter';
 import { Link as RouterLink } from 'react-router-dom';
-
-const rule = { borderColor: 'rgba(205, 227, 216, .17)', borderStyle: 'solid' };
+import { A11y, Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const Reveal = ({ children, delay = 0 }: { children: ReactNode; delay?: number }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -83,10 +86,11 @@ const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
       sx={{
         mt: 7,
         overflow: 'hidden',
-        border: '1px solid rgba(155,230,201,.2)',
+        position: 'relative',
+        border: '1px solid rgba(255,255,255,.62)',
         borderRadius: 4,
-        bgcolor: 'rgba(255,255,255,.035)',
-        boxShadow: '0 28px 70px rgba(0,0,0,.2)',
+        bgcolor: '#F8FCF9',
+        boxShadow: '0 16px 36px rgba(20,92,61,.1)',
       }}
     >
       <Box
@@ -100,7 +104,7 @@ const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
           sx={{
             py: { xs: 4, md: 6 },
             pr: { md: 7 },
-            borderRight: { md: '1px solid rgba(255,255,255,.17)' },
+            borderRight: { md: '1px solid #C9E5D6' },
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -117,7 +121,7 @@ const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
               '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
             }}
           >
-            <Typography sx={{ color: '#9BE6C9', font: '12px DM Mono' }}>“</Typography>
+            <Typography sx={{ color: '#178A68', font: '12px DM Mono' }}>“</Typography>
             <Typography
               sx={{
                 fontFamily: 'Fraunces',
@@ -143,14 +147,14 @@ const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
           >
             <Box
               sx={{
-                width: 35,
-                height: 35,
+                width: 54,
+                height: 54,
                 display: 'grid',
                 placeItems: 'center',
                 borderRadius: '50%',
-                bgcolor: '#9BE6C9',
-                color: '#10251D',
-                fontSize: 11,
+                bgcolor: '#DDF4E7',
+                color: '#126F55',
+                fontSize: 16,
                 fontWeight: 800,
               }}
             >
@@ -158,7 +162,7 @@ const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
             </Box>
             <Box>
               <Typography fontWeight={700}>{item.title}</Typography>
-              <Typography variant="caption" sx={{ color: '#8FA299' }}>
+              <Typography variant="caption" sx={{ color: '#527363' }}>
                 {item.contactEmail || item.contactPhone || item.contentKey}
               </Typography>
             </Box>
@@ -192,14 +196,14 @@ const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
                     p: 0,
                     width: index === active ? 42 : 16,
                     height: 2,
-                    bgcolor: index === active ? '#9BE6C9' : 'rgba(155,230,201,.28)',
+                    bgcolor: index === active ? '#178A68' : '#B8DCC9',
                     transition: 'width 360ms ease, background-color 360ms ease',
                   }}
                 />
               ))}
             </Stack>
-            <Typography sx={{ color: '#9BE6C9', font: '10px DM Mono', letterSpacing: '.1em' }}>
-              0{active + 1} / 0{investors.length}
+            <Typography sx={{ color: '#178A68', font: '10px DM Mono', letterSpacing: '.1em' }}>
+              PARTNERSHIP SPOTLIGHT
             </Typography>
           </Stack>
         </Stack>
@@ -221,7 +225,7 @@ const InvestorCards = ({ investors }: { investors: PublicContent[] }) => (
       gap: 2.5,
     }}
   >
-    {investors.map((item, index) => (
+    {investors.map((item) => (
       <Box
         component="article"
         key={item.contentId}
@@ -230,36 +234,37 @@ const InvestorCards = ({ investors }: { investors: PublicContent[] }) => (
           display: 'flex',
           flexDirection: 'column',
           p: { xs: 3, md: 3.5 },
-          border: '1px solid rgba(155,230,201,.2)',
+          position: 'relative',
+          border: '1px solid #C9E5D6',
           borderRadius: 3,
-          bgcolor: 'rgba(255,255,255,.035)',
-          boxShadow: '0 18px 45px rgba(0,0,0,.16)',
+          bgcolor: '#F8FCF9',
+          boxShadow: '0 16px 36px rgba(20,92,61,.09)',
           transition: 'transform .25s ease, border-color .25s ease, background-color .25s ease',
           '&:hover': {
             transform: 'translateY(-5px)',
-            borderColor: 'rgba(155,230,201,.48)',
-            bgcolor: 'rgba(255,255,255,.055)',
+            borderColor: '#7DBE9D',
+            bgcolor: 'rgba(255,255,255,.9)',
           },
         }}
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Box
             sx={{
-              width: 42,
-              height: 42,
+              width: 70,
+              height: 70,
               display: 'grid',
               placeItems: 'center',
               borderRadius: '50%',
-              bgcolor: '#9BE6C9',
-              color: '#10251D',
-              fontSize: 12,
+              bgcolor: '#DDF4E7',
+              color: '#126F55',
+              fontSize: 21,
               fontWeight: 800,
             }}
           >
             {initialsFor(item.title)}
           </Box>
-          <Typography sx={{ color: '#9BE6C9', font: '10px DM Mono', letterSpacing: '.1em' }}>
-            UPDATE / {String(index + 1).padStart(2, '0')}
+          <Typography sx={{ color: '#178A68', font: '10px DM Mono', letterSpacing: '.1em' }}>
+            PARTNERSHIP SPOTLIGHT
           </Typography>
         </Stack>
         <Typography
@@ -274,10 +279,10 @@ const InvestorCards = ({ investors }: { investors: PublicContent[] }) => (
         >
           {item.title}
         </Typography>
-        <Typography sx={{ mt: 2, color: '#A9BBB2', lineHeight: 1.7 }}>
+        <Typography sx={{ mt: 2, color: '#527363', lineHeight: 1.7 }}>
           {item.contentBody}
         </Typography>
-        <Typography variant="caption" sx={{ mt: 'auto', pt: 4, color: '#9BE6C9' }}>
+        <Typography variant="caption" sx={{ mt: 'auto', pt: 4, color: '#178A68' }}>
           {item.contactEmail || item.contactPhone || item.contentKey}
         </Typography>
       </Box>
@@ -313,7 +318,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <Box sx={{ minHeight: '100vh', overflow: 'hidden', bgcolor: '#0B1110', color: '#EEF5F1' }}>
+    <Box sx={{ minHeight: '100vh', overflow: 'clip', bgcolor: '#F7FCF9', color: '#123C2D' }}>
       <Box
         sx={{
           '@keyframes drift': {
@@ -365,7 +370,7 @@ const HomePage = () => {
               width: 620,
               height: 620,
               borderRadius: '50%',
-              bgcolor: '#1A5B45',
+              bgcolor: '#62B98D',
               opacity: 0.22,
               filter: 'blur(130px)',
               top: 70,
@@ -397,7 +402,7 @@ const HomePage = () => {
                 height: 1,
                 objectFit: 'cover',
                 objectPosition: 'center',
-                filter: 'drop-shadow(0 32px 48px rgba(0,0,0,.42))',
+                filter: 'drop-shadow(0 32px 48px rgba(20,92,61,.22))',
                 WebkitMaskImage:
                   'linear-gradient(to right, transparent 0%, rgba(0,0,0,.85) 16%, #000 28%, #000 100%)',
                 maskImage:
@@ -455,9 +460,9 @@ const HomePage = () => {
                 height: { xs: 150, md: 216 },
                 p: { xs: 2, md: 2.75 },
                 color: '#F0F7F3',
-                background: 'linear-gradient(135deg, #2D493F, #14241F 65%)',
-                border: '1px solid rgba(183,226,204,.35)',
-                boxShadow: '20px 31px 55px rgba(0,0,0,.35)',
+                background: 'linear-gradient(135deg, #287456, #124631 65%)',
+                border: '1px solid rgba(183,226,204,.55)',
+                boxShadow: '20px 31px 55px rgba(20,92,61,.25)',
                 transform: 'rotate(-8deg)',
                 animation: 'drift 6s ease-in-out infinite',
                 overflow: 'hidden',
@@ -535,9 +540,10 @@ const HomePage = () => {
                 alignItems: 'center',
                 gap: 0.8,
                 p: 1.1,
-                bgcolor: 'rgba(18,35,29,.9)',
-                border: '1px solid rgba(155,230,201,.32)',
-                boxShadow: '0 12px 26px rgba(0,0,0,.2)',
+                bgcolor: 'rgba(255,255,255,.94)',
+                color: '#123C2D',
+                border: '1px solid rgba(23,138,104,.25)',
+                boxShadow: '0 12px 26px rgba(20,92,61,.15)',
                 animation: 'receipt 5.6s ease-in-out 1s infinite',
               }}
             >
@@ -604,7 +610,7 @@ const HomePage = () => {
             <Typography
               sx={{
                 maxWidth: 465,
-                color: '#9DAEA6',
+                color: '#456B5A',
                 mt: 3,
                 fontSize: { xs: 16, md: 19 },
                 lineHeight: 1.65,
@@ -628,7 +634,7 @@ const HomePage = () => {
                 size="large"
                 variant="contained"
                 endIcon={<IconifyIcon icon="solar:arrow-right-up-linear" />}
-                sx={{ bgcolor: '#9BE6C9', color: '#10251D', '&:hover': { bgcolor: '#C2F1DC' } }}
+                sx={{ bgcolor: '#178A68', color: '#fff', '&:hover': { bgcolor: '#126F55' } }}
               >
                 Access your account
               </Button>
@@ -636,7 +642,7 @@ const HomePage = () => {
                 href="#security"
                 size="large"
                 variant="text"
-                sx={{ color: '#C6D8CF', justifyContent: 'flex-start' }}
+                sx={{ color: '#126F55', justifyContent: 'flex-start' }}
               >
                 Explore the experience{' '}
                 <IconifyIcon icon="solar:arrow-down-linear" width={18} style={{ marginLeft: 9 }} />
@@ -644,7 +650,10 @@ const HomePage = () => {
             </Stack>
           </Box>
         </Container>
-        <Box id="security" sx={{ borderTop: 1, borderBottom: 1, ...rule, bgcolor: '#101A16' }}>
+        <Box
+          id="security"
+          sx={{ borderTop: 1, borderBottom: 1, borderColor: '#C9E5D6', bgcolor: '#EAF7F0' }}
+        >
           <Container maxWidth="xl">
             <Reveal>
               <Stack
@@ -652,7 +661,7 @@ const HomePage = () => {
                 divider={
                   <Box
                     sx={{
-                      borderColor: 'rgba(205,227,216,.14)',
+                      borderColor: '#C9E5D6',
                       borderRight: { md: 1 },
                       borderBottom: { xs: 1, md: 0 },
                     }}
@@ -661,7 +670,7 @@ const HomePage = () => {
               >
                 <Box sx={{ py: 4, pr: { md: 6 }, flex: 1 }}>
                   <Typography
-                    sx={{ font: '10px DM Mono', letterSpacing: '.13em', color: '#9BE6C9' }}
+                    sx={{ font: '10px DM Mono', letterSpacing: '.13em', color: '#178A68' }}
                   >
                     SECURITY STAYS IN THE PICTURE
                   </Typography>
@@ -689,12 +698,12 @@ const HomePage = () => {
                   ],
                 ].map(([i, t, d]) => (
                   <Stack key={t} direction="row" gap={1.5} sx={{ py: 4, px: { md: 5 }, flex: 1 }}>
-                    <IconifyIcon icon={i} width={22} color="#9BE6C9" />
+                    <IconifyIcon icon={i} width={22} color="#178A68" />
                     <Box>
                       <Typography fontWeight={700}>{t}</Typography>
                       <Typography
                         variant="body2"
-                        sx={{ color: '#91A39A', mt: 0.5, lineHeight: 1.55 }}
+                        sx={{ color: '#527363', mt: 0.5, lineHeight: 1.55 }}
                       >
                         {d}
                       </Typography>
@@ -706,27 +715,27 @@ const HomePage = () => {
           </Container>
         </Box>
         <Box
-          sx={{ bgcolor: '#E9F0EC', color: '#14231C', py: { xs: 8, md: 13 }, overflow: 'hidden' }}
+          sx={{ bgcolor: '#E9F0EC', color: '#14231C', py: { xs: 6, md: 8 }, overflow: 'hidden' }}
         >
           <Container maxWidth="xl">
             <Reveal>
               <Box
                 sx={{
-                  p: { xs: 3, md: 5 },
+                  p: { xs: 2.5, md: 3.5 },
                   border: '1px solid #CBD9D2',
                   borderRadius: 4,
                   bgcolor: '#F8FBF9',
-                  boxShadow: '0 24px 60px rgba(20,58,45,.08)',
+                  boxShadow: '0 14px 32px rgba(20,92,61,.08)',
                 }}
               >
                 <Typography sx={{ font: '11px DM Mono', letterSpacing: '.14em', color: '#178A68' }}>
-                  ABOUT US / 02
+                  ABOUT US
                 </Typography>
                 <Stack
                   direction={{ xs: 'column', lg: 'row' }}
                   justifyContent="space-between"
-                  gap={6}
-                  mt={2}
+                  gap={{ xs: 2.5, lg: 4 }}
+                  mt={1.5}
                 >
                   <Typography
                     sx={{
@@ -736,6 +745,7 @@ const HomePage = () => {
                       lineHeight: 0.98,
                       letterSpacing: '-.065em',
                       whiteSpace: 'nowrap',
+                      color: '#0A2F21',
                     }}
                   >
                     {publicLoaded ? 'About Prestige Banking System' : 'Loading…'}
@@ -758,7 +768,7 @@ const HomePage = () => {
             </Reveal>
             <Typography
               sx={{
-                mt: { xs: 6, md: 8 },
+                mt: { xs: 4, md: 5 },
                 font: '11px DM Mono',
                 letterSpacing: '.14em',
                 color: '#178A68',
@@ -766,96 +776,146 @@ const HomePage = () => {
             >
               CURRENT OFFERS
             </Typography>
-            <Box
-              sx={{
-                mt: 3,
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: '1fr',
-                  sm: 'repeat(2, minmax(0, 1fr))',
-                  lg: 'repeat(3, minmax(0, 1fr))',
-                },
-                gap: 2.5,
-              }}
-            >
-              {home?.offers.map((offer, index) => (
-                <Reveal key={offer.contentId} delay={index * 110}>
-                  <Stack
-                    sx={{
-                      height: 1,
-                      minHeight: 300,
-                      p: { xs: 3, md: 3.5 },
-                      border: '1px solid #CBD9D2',
-                      borderRadius: 3,
-                      bgcolor: '#F8FBF9',
-                      boxShadow: '0 18px 45px rgba(20,58,45,.08)',
-                      transition: 'transform .25s ease, box-shadow .25s ease',
-                      '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: '0 26px 55px rgba(20,58,45,.14)',
-                      },
+            {home?.offers.length ? (
+              <Reveal>
+                <Box
+                  className="offer-swiper"
+                  sx={{
+                    mt: 3,
+                    px: { xs: 0, md: 6 },
+                    pb: 4,
+                    '& .swiper': { overflow: 'visible' },
+                    '& .swiper-wrapper': { transitionTimingFunction: 'linear !important' },
+                    '& .swiper-slide': { height: 'auto' },
+                    '& .swiper-button-prev, & .swiper-button-next': {
+                      width: 42,
+                      height: 42,
+                      top: '48%',
+                      borderRadius: '50%',
+                      bgcolor: 'rgba(255,255,255,.84)',
+                      color: '#137451',
+                      border: '1px solid #B7DCC8',
+                      boxShadow: '0 10px 24px rgba(20,92,61,.16)',
+                      backdropFilter: 'blur(12px)',
+                      '&::after': { fontSize: 16, fontWeight: 800 },
+                      '&:hover': { bgcolor: '#137451', color: '#fff' },
+                    },
+                    '& .swiper-button-prev': { left: { md: 0 } },
+                    '& .swiper-button-next': { right: { md: 0 } },
+                    '& .swiper-pagination': { bottom: -2 },
+                    '& .swiper-pagination-bullet': {
+                      width: 7,
+                      height: 7,
+                      bgcolor: '#8BC5A6',
+                      opacity: 1,
+                    },
+                    '& .swiper-pagination-bullet-active': {
+                      width: 24,
+                      borderRadius: 4,
+                      bgcolor: '#178A68',
+                    },
+                  }}
+                >
+                  <Swiper
+                    modules={[Autoplay, Navigation, Pagination, A11y]}
+                    navigation
+                    pagination={{ clickable: true }}
+                    loop={home.offers.length > 1}
+                    speed={6500}
+                    autoplay={{ delay: 0, disableOnInteraction: false, pauseOnMouseEnter: false }}
+                    spaceBetween={20}
+                    slidesPerView={1.08}
+                    breakpoints={{
+                      600: { slidesPerView: 2, spaceBetween: 20 },
+                      1200: { slidesPerView: 3, spaceBetween: 24 },
                     }}
+                    a11y={{ enabled: true }}
                   >
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Typography sx={{ font: '11px DM Mono', color: '#178A68' }}>
-                        OFFER / {String(index + 1).padStart(2, '0')}
-                      </Typography>
-                      <IconifyIcon
-                        icon={index % 2 ? 'solar:wallet-money-bold' : 'solar:tag-price-bold'}
-                        width={28}
-                        color="#178A68"
-                      />
-                    </Stack>
-                    <Typography
-                      sx={{
-                        fontFamily: 'Fraunces',
-                        fontSize: { xs: 29, md: 36 },
-                        lineHeight: 1.08,
-                        letterSpacing: '-.05em',
-                        mt: 4,
-                      }}
-                    >
-                      {offer.title}
-                    </Typography>
-                    <Typography sx={{ mt: 2, mb: 4, color: '#52665C', lineHeight: 1.65 }}>
-                      {offer.contentBody}
-                    </Typography>
-                    <Box
-                      className="reveal-pop"
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 0.75,
-                        mt: 'auto',
-                        color: '#178A68',
-                        font: '9px DM Mono',
-                        letterSpacing: '.06em',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 7,
-                          height: 7,
-                          borderRadius: '50%',
-                          bgcolor: '#178A68',
-                          boxShadow: '0 0 0 5px #178A6815',
-                        }}
-                      />
-                      {offer.contentKey}
-                    </Box>
-                  </Stack>
-                </Reveal>
-              ))}
-              {home && !home.offers.length && (
+                    {home.offers.map((offer, index) => (
+                      <SwiperSlide key={offer.contentId}>
+                        <Stack
+                          className="glass-card"
+                          sx={{
+                            height: '100%',
+                            minHeight: 248,
+                            p: { xs: 2.5, md: 3 },
+                            border: '1px solid rgba(255,255,255,.68)',
+                            borderRadius: 3,
+                            bgcolor: 'rgba(255,255,255,.42)',
+                            boxShadow:
+                              '0 16px 38px rgba(20,92,61,.1), inset 0 1px 0 rgba(255,255,255,.72), inset 0 0 22px 6px rgba(255,255,255,.16)',
+                            backdropFilter: 'blur(20px) saturate(150%)',
+                            transition: 'transform .25s ease, box-shadow .25s ease',
+                            '&:hover': {
+                              transform: 'translateY(-5px)',
+                              boxShadow: '0 26px 55px rgba(20,58,45,.14)',
+                            },
+                          }}
+                        >
+                          <Stack direction="row" justifyContent="space-between" alignItems="center">
+                            <Typography sx={{ font: '11px DM Mono', color: '#178A68' }}>
+                              FEATURED OFFER
+                            </Typography>
+                            <IconifyIcon
+                              icon={index % 2 ? 'solar:wallet-money-bold' : 'solar:tag-price-bold'}
+                              width={28}
+                              color="#178A68"
+                            />
+                          </Stack>
+                          <Typography
+                            sx={{
+                              fontFamily: 'Fraunces',
+                              fontSize: { xs: 29, md: 36 },
+                              lineHeight: 1.08,
+                              letterSpacing: '-.05em',
+                              mt: 2.5,
+                            }}
+                          >
+                            {offer.title}
+                          </Typography>
+                          <Typography sx={{ mt: 1.5, mb: 2, color: '#52665C', lineHeight: 1.6 }}>
+                            {offer.contentBody}
+                          </Typography>
+                          <Box
+                            className="reveal-pop"
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.75,
+                              mt: 'auto',
+                              color: '#178A68',
+                              font: '9px DM Mono',
+                              letterSpacing: '.06em',
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                width: 7,
+                                height: 7,
+                                borderRadius: '50%',
+                                bgcolor: '#178A68',
+                                boxShadow: '0 0 0 5px #178A6815',
+                              }}
+                            />
+                            {offer.contentKey}
+                          </Box>
+                        </Stack>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </Box>
+              </Reveal>
+            ) : (
+              publicLoaded && (
                 <Typography sx={{ py: 4, color: '#52665C' }}>
                   No active offers are currently published.
                 </Typography>
-              )}
-            </Box>
+              )
+            )}
           </Container>
         </Box>
         <Box
-          sx={{ bgcolor: '#14231D', color: '#EEF5F1', py: { xs: 8, md: 12 }, position: 'relative' }}
+          sx={{ bgcolor: '#E1F3E9', color: '#123C2D', py: { xs: 8, md: 12 }, position: 'relative' }}
         >
           <Box
             sx={{
@@ -863,7 +923,7 @@ const HomePage = () => {
               width: 420,
               height: 420,
               borderRadius: '50%',
-              bgcolor: '#24694F',
+              bgcolor: '#62B98D',
               opacity: 0.23,
               filter: 'blur(110px)',
               right: '-12%',
@@ -880,7 +940,7 @@ const HomePage = () => {
               >
                 <Box>
                   <Typography
-                    sx={{ font: '11px DM Mono', letterSpacing: '.14em', color: '#9BE6C9' }}
+                    sx={{ font: '11px DM Mono', letterSpacing: '.14em', color: '#178A68' }}
                   >
                     INVESTOR RELATIONS
                   </Typography>
@@ -896,7 +956,7 @@ const HomePage = () => {
                     Investor information and updates.
                   </Typography>
                 </Box>
-                <Typography sx={{ maxWidth: 320, color: '#9AADA3', lineHeight: 1.65 }}>
+                <Typography sx={{ maxWidth: 320, color: '#456B5A', lineHeight: 1.65 }}>
                   Published investor information is loaded directly from Prestige Banking.
                 </Typography>
               </Stack>
@@ -906,18 +966,18 @@ const HomePage = () => {
                 <InvestorCards investors={investors} />
               )}
               {!investors.length && (
-                <Typography sx={{ mt: 5, color: '#9AADA3' }}>
+                <Typography sx={{ mt: 5, color: '#456B5A' }}>
                   No investor updates are currently published.
                 </Typography>
               )}
             </Reveal>
           </Container>
         </Box>
-        <Box id="contact" sx={{ bgcolor: '#0B1110', color: '#EFF5F1', py: { xs: 9, md: 13 } }}>
+        <Box id="contact" sx={{ bgcolor: '#F8FCF9', color: '#123C2D', py: { xs: 9, md: 13 } }}>
           <Container maxWidth="xl">
             <Reveal>
               <Stack alignItems="center" textAlign="center">
-                <Typography sx={{ color: '#9BE6C9', font: '11px DM Mono', letterSpacing: '.14em' }}>
+                <Typography sx={{ color: '#178A68', font: '11px DM Mono', letterSpacing: '.14em' }}>
                   CONTACT PRESTIGE
                 </Typography>
                 <Typography
@@ -936,12 +996,12 @@ const HomePage = () => {
                       : 'Contact information is loading.')}
                 </Typography>
                 {contact?.contentBody && (
-                  <Typography sx={{ mt: 2, maxWidth: 620, color: '#9AADA3', lineHeight: 1.7 }}>
+                  <Typography sx={{ mt: 2, maxWidth: 620, color: '#456B5A', lineHeight: 1.7 }}>
                     {contact.contentBody}
                   </Typography>
                 )}
                 {(contact?.contactEmail || contact?.contactPhone) && (
-                  <Typography sx={{ mt: 1.5, color: '#9BE6C9' }}>
+                  <Typography sx={{ mt: 1.5, color: '#178A68' }}>
                     {[contact.contactEmail, contact.contactPhone].filter(Boolean).join(' · ')}
                   </Typography>
                 )}
@@ -953,38 +1013,18 @@ const HomePage = () => {
                   endIcon={<IconifyIcon icon="solar:arrow-right-up-linear" />}
                   sx={{
                     mt: 4,
-                    bgcolor: '#9BE6C9',
-                    color: '#10251D',
-                    '&:hover': { bgcolor: '#C2F1DC' },
+                    bgcolor: '#178A68',
+                    color: '#fff',
+                    '&:hover': { bgcolor: '#126F55' },
                   }}
                 >
                   Access your account
                 </Button>
               </Stack>
             </Reveal>
-            <Stack
-              component="footer"
-              direction={{ xs: 'column', md: 'row' }}
-              justifyContent="space-between"
-              gap={2}
-              sx={{
-                mt: { xs: 9, md: 13 },
-                pt: 3,
-                borderTop: '1px solid rgba(255,255,255,.12)',
-                color: '#81938A',
-              }}
-            >
-              <Stack direction="row" color="common.white">
-                <Logo light />
-              </Stack>
-              <Stack direction="row" gap={2}>
-                <Typography variant="caption">Privacy</Typography>
-                <Typography variant="caption">Security</Typography>
-                <Typography variant="caption">Support</Typography>
-              </Stack>
-            </Stack>
           </Container>
         </Box>
+        <PublicFooter />
       </Box>
     </Box>
   );

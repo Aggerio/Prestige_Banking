@@ -15,14 +15,15 @@ const PageEnter = ({ children }: PropsWithChildren) => {
           ? undefined
           : {
               '@keyframes pageEnter': {
-                from: { opacity: 0, transform: 'translate3d(0, 18px, 0)' },
+                from: { opacity: 0, transform: 'translate3d(0, 22px, 0)', filter: 'blur(5px)' },
                 to: { opacity: 1, transform: 'translate3d(0, 0, 0)' },
               },
               '& > *': {
-                animation: 'pageEnter 460ms cubic-bezier(.2,.8,.2,1) both',
+                animation: 'pageEnter 520ms cubic-bezier(.22,1,.36,1) both',
+                willChange: 'opacity, transform, filter',
               },
               '& > * > *': {
-                animation: 'pageEnter 560ms cubic-bezier(.2,.8,.2,1) both',
+                animation: 'pageEnter 620ms cubic-bezier(.22,1,.36,1) both',
               },
               '& > * > :nth-child(1)': { animationDelay: '70ms' },
               '& > * > :nth-child(2)': { animationDelay: '140ms' },

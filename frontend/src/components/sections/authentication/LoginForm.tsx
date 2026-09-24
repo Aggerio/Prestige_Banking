@@ -75,7 +75,7 @@ const LoginForm = () => {
         type="submit"
         variant="contained"
         color="primary"
-        disabled={submitting || !customerId || !password}
+        disabled={submitting}
       >
         Login
       </Button>

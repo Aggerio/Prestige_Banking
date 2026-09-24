@@ -1,6 +1,7 @@
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { getAboutUs, getContactUs, getInvestors, getOffers, type PublicContent } from 'api/banking';
 import PublicHeader from 'components/common/PublicHeader';
+import PublicFooter from 'components/common/PublicFooter';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -35,6 +36,7 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
   const [failed, setFailed] = useState(false);
   const copy = pageCopy[kind];
   const usesCardLayout = kind !== 'contact';
+  const usesGlass = kind === 'offers';
 
   useEffect(() => {
     let active = true;
@@ -67,12 +69,20 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
   }, [kind]);
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#0B1110', color: '#EEF5F1' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        bgcolor: '#F5FAF7',
+        color: '#123C2D',
+      }}
+    >
       <PublicHeader />
 
-      <Box sx={{ borderTop: '1px solid rgba(205,227,216,.12)' }}>
-        <Container maxWidth="xl" sx={{ py: { xs: 8, md: 12 } }}>
-          <Typography sx={{ color: '#9BE6C9', font: '11px DM Mono', letterSpacing: '.15em' }}>
+      <Box sx={{ bgcolor: '#E7F5EC', borderBottom: '1px solid #C8E2D4' }}>
+        <Container maxWidth="xl" sx={{ py: { xs: 5, md: 6.5 } }}>
+          <Typography sx={{ color: '#178A68', font: '11px DM Mono', letterSpacing: '.15em' }}>
             {copy.eyebrow}
           </Typography>
           <Typography
@@ -89,20 +99,21 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
               letterSpacing: '-.07em',
               lineHeight: 0.95,
               whiteSpace: kind === 'about' || kind === 'offers' ? 'nowrap' : 'normal',
+              color: '#0A2F21',
             }}
           >
             {copy.title}
           </Typography>
           <Typography
-            sx={{ mt: 3, maxWidth: 620, color: '#9DAEA6', fontSize: 18, lineHeight: 1.7 }}
+            sx={{ mt: 3, maxWidth: 620, color: '#456B5A', fontSize: 18, lineHeight: 1.7 }}
           >
             {copy.description}
           </Typography>
         </Container>
       </Box>
 
-      <Box sx={{ bgcolor: '#E9F0EC', color: '#14231C', minHeight: 360 }}>
-        <Container maxWidth="xl" sx={{ py: { xs: 7, md: 10 } }}>
+      <Box sx={{ flex: 1, bgcolor: '#F8FCF9', color: '#14231C', minHeight: 260 }}>
+        <Container maxWidth="xl" sx={{ py: { xs: 4, md: 5 } }}>
           {loading && (
             <Typography sx={{ color: '#52665C' }}>Loading published information…</Typography>
           )}
@@ -130,15 +141,16 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
               borderTop: !usesCardLayout && content.length ? '1px solid #B9C8C0' : 0,
             }}
           >
-            {content.map((item, index) => (
+            {content.map((item) => (
               <Box
                 component="article"
+                className={usesGlass ? 'glass-card' : undefined}
                 key={item.contentId}
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: usesCardLayout
                     ? '1fr'
-                    : { xs: '1fr', md: '90px minmax(220px, .8fr) 1.2fr' },
+                    : { xs: '1fr', md: 'minmax(220px, .8fr) 1.2fr' },
                   gap: usesCardLayout ? 2 : { xs: 1.5, md: 4 },
                   minHeight: usesCardLayout ? 260 : 'auto',
                   p: usesCardLayout ? { xs: 3, md: 4 } : 0,
@@ -146,17 +158,23 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                   border: usesCardLayout ? '1px solid #CBD9D2' : 0,
                   borderBottom: usesCardLayout ? undefined : '1px solid #B9C8C0',
                   borderRadius: usesCardLayout ? 3 : 0,
-                  bgcolor: usesCardLayout ? '#F8FBF9' : 'transparent',
+                  bgcolor: usesCardLayout
+                    ? usesGlass
+                      ? 'rgba(255,255,255,.72)'
+                      : '#FFFFFF'
+                    : 'transparent',
                   boxShadow: usesCardLayout ? '0 18px 45px rgba(20,58,45,.08)' : 'none',
+                  backdropFilter: usesGlass ? 'blur(16px) saturate(140%)' : 'none',
                   transition: usesCardLayout ? 'transform .25s ease, box-shadow .25s ease' : 'none',
                   '&:hover': usesCardLayout
-                    ? { transform: 'translateY(-5px)', boxShadow: '0 26px 55px rgba(20,58,45,.14)' }
+                    ? {
+                        transform: 'translateY(-5px)',
+                        bgcolor: usesGlass ? 'rgba(255,255,255,.92)' : '#FFFFFF',
+                        boxShadow: '0 26px 55px rgba(20,58,45,.14)',
+                      }
                     : undefined,
                 }}
               >
-                <Typography sx={{ color: '#178A68', font: '11px DM Mono' }}>
-                  {String(index + 1).padStart(2, '0')}
-                </Typography>
                 <Typography
                   component="h2"
                   sx={{
@@ -182,6 +200,43 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
             ))}
           </Stack>
 
+          {kind === 'about' && !loading && !failed && (
+            <Box
+              sx={{
+                mt: 3,
+                pt: 3,
+                borderTop: '1px solid #D6E6DD',
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+                gap: { xs: 2.5, md: 4 },
+              }}
+            >
+              {[
+                [
+                  'Customer first',
+                  'Clear digital banking tools and practical support for everyday decisions.',
+                ],
+                [
+                  'Secure by design',
+                  'Thoughtful safeguards that help protect every meaningful banking moment.',
+                ],
+                [
+                  'Built for progress',
+                  'Flexible services that grow with your goals, today and tomorrow.',
+                ],
+              ].map(([title, body]) => (
+                <Box key={title}>
+                  <Typography sx={{ color: '#137451', fontWeight: 800, mb: 0.75 }}>
+                    {title}
+                  </Typography>
+                  <Typography sx={{ color: '#52665C', fontSize: 14, lineHeight: 1.65 }}>
+                    {body}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          )}
+
           <Button
             component={RouterLink}
             to="/authentication/login"
@@ -193,6 +248,7 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
           </Button>
         </Container>
       </Box>
+      <PublicFooter />
     </Box>
   );
 };

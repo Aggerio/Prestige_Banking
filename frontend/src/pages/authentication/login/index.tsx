@@ -2,7 +2,15 @@ import { Box, Stack, Typography } from '@mui/material';
 import LoginForm from 'components/sections/authentication/LoginForm';
 
 const LoginPage = () => (
-  <Box sx={{ width: 1 }}>
+  <Box
+    className="glass-card auth-glass-card"
+    sx={{
+      width: 1,
+      p: { xs: 3, sm: 4 },
+      color: '#F4FCF7',
+      boxShadow: '0 18px 50px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.16)',
+    }}
+  >
     <Typography sx={{ color: '#9BE6C9', font: '11px DM Mono', letterSpacing: '.13em' }}>
       SECURE ACCESS
     </Typography>
@@ -18,7 +26,7 @@ const LoginPage = () => (
     >
       Welcome back.
     </Typography>
-    <Typography sx={{ color: '#91A29A', mt: 2, mb: 5, lineHeight: 1.65 }}>
+    <Typography sx={{ color: '#91A29A', mt: 2, mb: 4, lineHeight: 1.65 }}>
       Sign in with your customer ID and password to access your command desk.
     </Typography>
     <Box
@@ -26,8 +34,9 @@ const LoginPage = () => (
         '& .MuiInputLabel-root': { color: '#91A29A' },
         '& .MuiOutlinedInput-root': {
           color: '#EEF5F1',
-          bgcolor: '#14201D',
-          '& fieldset': { borderColor: '#3A5147' },
+          bgcolor: 'rgba(9,35,25,.58)',
+          backdropFilter: 'blur(12px)',
+          '& fieldset': { borderColor: 'rgba(191,233,210,.3)' },
           '&:hover fieldset': { borderColor: '#6C8B7C' },
         },
         '& .MuiOutlinedInput-input': {

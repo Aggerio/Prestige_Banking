@@ -25,7 +25,7 @@ Do not run `DBMS_VECTOR.LOAD_ONNX_MODEL` or `VECTOR_EMBEDDING`; Oracle on Window
 Keep the downloaded model at `C:\oracle-vector-models\all_MiniLM_L12_v2.onnx`, then populate vectors once:
 
 ```powershell
-$env:DB_URL = 'jdbc:oracle:thin:@localhost:1521:free'
+$env:DB_URL = 'jdbc:oracle:thin:@localhost:1521/freepdb1'
 $env:DB_USERNAME = 'chatbot_app'
 $env:DB_PASSWORD = 'your-password'
 $env:GROQ_API_KEY = 'your-groq-key'

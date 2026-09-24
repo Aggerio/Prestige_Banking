@@ -1,11 +1,12 @@
 import { login as loginRequest, logout as logoutRequest } from 'api/banking';
 import { apiError, setAccessToken } from 'api/client';
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
+import { createContext, PropsWithChildren, useCallback, useContext, useState } from 'react';
 import { refreshAccessToken } from 'api/client';
 
 type AuthContextValue = {
   authenticated: boolean;
   initializing: boolean;
+  restoreSession: () => Promise<void>;
   login: (customerId: number, password: string) => Promise<void>;
   logout: () => Promise<void>;
   error: string | null;
@@ -14,13 +15,18 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [authenticated, setAuthenticated] = useState(false);
-  const [initializing, setInitializing] = useState(true);
+  const [initializing, setInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    void refreshAccessToken()
-      .then((accessToken) => setAuthenticated(Boolean(accessToken)))
-      .finally(() => setInitializing(false));
+  const restoreSession = useCallback(async () => {
+    setInitializing(true);
+    try {
+      const accessToken = await refreshAccessToken();
+      setAuthenticated(Boolean(accessToken));
+    } finally {
+      setInitializing(false);
+    }
   }, []);
+
   const login = async (customerId: number, password: string) => {
     try {
       const response = await loginRequest(customerId, password);
@@ -41,7 +47,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   };
   return (
-    <AuthContext.Provider value={{ authenticated, initializing, login, logout, error }}>
+    <AuthContext.Provider
+      value={{ authenticated, initializing, restoreSession, login, logout, error }}
+    >
       {children}
     </AuthContext.Provider>
   );

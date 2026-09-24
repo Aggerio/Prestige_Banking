@@ -67,7 +67,7 @@ export type Analytics = {
 };
 export type PublicContent = {
   contentId: number;
-  contentType: 'OFFER' | 'INVESTOR' | 'ABOUT_US' | 'CONTACT_US';
+  contentType: 'OFFER' | 'INVESTOR' | 'ABOUT_US' | 'CONTACT_US' | 'ADVERTISEMENT';
   contentKey: string;
   title: string;
   contentBody: string;
@@ -100,6 +100,7 @@ export const getTransfer = (referenceNumber: string) =>
   client.get<TransferDetails>(`/api/v1/transfers/${encodeURIComponent(referenceNumber)}`);
 export const getPublicHome = () => client.get<PublicHome>('/api/v1/public/home');
 export const getOffers = () => client.get<PublicContent[]>('/api/v1/public/offers');
+export const getAdvertisements = () => client.get<PublicContent[]>('/api/v1/public/advertisements');
 export const getInvestors = () => client.get<PublicContent[]>('/api/v1/public/investors');
 export const getAboutUs = () => client.get<PublicContent>('/api/v1/public/about-us');
 export const getContactUs = () => client.get<PublicContent>('/api/v1/public/contact-us');

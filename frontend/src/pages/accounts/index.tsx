@@ -20,10 +20,9 @@ const AccountsPage = () => {
             <Grid container spacing={2} mt={1}>
               {[
                 ['Customer name', customer?.customerName || '—'],
-                ['Customer ID', customer?.customerId || '—'],
                 ['Account status', customer?.status || '—'],
               ].map(([label, value]) => (
-                <Grid item xs={12} sm={4} key={label}>
+                <Grid item xs={12} sm={6} key={label}>
                   <Typography variant="caption" color="text.secondary">
                     {label}
                   </Typography>

@@ -143,7 +143,7 @@ const ProfileDropdown = () => {
                 {customer?.customerName || '—'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Customer ID {customer?.customerId || '—'} · {customer?.status || '—'}
+                {customer?.status || 'Customer'}
               </Typography>
             </Box>
           </Stack>

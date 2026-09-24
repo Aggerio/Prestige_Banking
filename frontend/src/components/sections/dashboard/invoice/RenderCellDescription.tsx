@@ -10,7 +10,7 @@ type ParamsProps = {
 
 const RenderCellDescription = ({ params }: ParamsProps) => {
   return (
-    <Stack direction="row" alignItems="center" gap={1.25} sx={{ pl: 0.5, py: 1, width: 1 }}>
+    <Stack direction="row" alignItems="center" gap={1.5} sx={{ py: 1, width: 1, minWidth: 0 }}>
       {params.row.description.revenue === 'down' ? (
         <Image src={DataGriIncrementArrow} alt="expense" sx={{ width: 28, height: 28 }} />
       ) : (
@@ -22,6 +22,9 @@ const RenderCellDescription = ({ params }: ParamsProps) => {
           fontFamily: 'Space Grotesk, Manrope, sans-serif',
           fontSize: 14,
           fontWeight: 600,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
         }}
       >
         {params.row.description.title}

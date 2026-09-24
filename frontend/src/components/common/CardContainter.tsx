@@ -23,7 +23,7 @@ const CardContainer = ({ title, children }: CardContainerProps) => {
           {title}
         </Typography>
       </Box>
-      <Card sx={{ backgroundColor: 'common.white', width: 1, flex: 1 }}>
+      <Card sx={{ backgroundColor: 'background.paper', width: 1, flex: 1 }}>
         <CardContent
           sx={{
             display: 'flex',

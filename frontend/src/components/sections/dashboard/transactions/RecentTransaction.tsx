@@ -67,7 +67,7 @@ const RecentTransactions = () => {
                     <Typography
                       className="title"
                       sx={{
-                        color: 'primary.darker',
+                        color: 'text.primary',
                         fontSize: { xs: 'subtitle1.fontSize', md: 'body2.fontSize' },
                       }}
                     >
@@ -76,7 +76,7 @@ const RecentTransactions = () => {
                     <Typography
                       className="date"
                       sx={{
-                        color: 'primary.light',
+                        color: 'text.secondary',
                         fontSize: {
                           xs: 'caption.fontSize',
                           sm: 'caption.fontSize',

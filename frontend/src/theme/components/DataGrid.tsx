@@ -48,7 +48,7 @@ const DataGridComponent: Components<Omit<Theme, 'components'>>['MuiDataGrid'] = 
     main: ({ theme }) => ({
       background: alpha(theme.palette.background.paper, 0.2),
       [theme.breakpoints.up('md')]: {
-        background: theme.palette.common.white,
+        background: theme.palette.background.paper,
       },
       paddingTop: theme.spacing(0.5),
       paddingBottom: theme.spacing(0.5),
@@ -63,9 +63,9 @@ const DataGridComponent: Components<Omit<Theme, 'components'>>['MuiDataGrid'] = 
       padding: theme.spacing(0),
       fontWeight: '800 !important',
       color: theme.palette.primary.light,
-      backgroundColor: theme.palette.common.white,
+      backgroundColor: theme.palette.background.paper,
       [theme.breakpoints.up('md')]: {
-        backgroundColor: theme.palette.common.white,
+        backgroundColor: theme.palette.background.paper,
       },
       '&--sorted': { color: theme.palette.primary.dark },
 

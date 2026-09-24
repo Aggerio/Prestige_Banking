@@ -29,7 +29,7 @@ const LiveNotificationToast = () => {
         sx={{
           width: 340,
           cursor: 'pointer',
-          bgcolor: 'common.white',
+          bgcolor: 'background.paper',
           borderRadius: 2.5,
           boxShadow: 8,
           p: 2,

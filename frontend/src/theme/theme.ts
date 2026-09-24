@@ -49,6 +49,20 @@ export const createAppTheme = (mode: PaletteMode) =>
         background: { default: '#07100D', paper: '#10201A' },
         text: { primary: '#F2F8F4', secondary: '#A8BAB1', disabled: '#71847B' },
         divider: 'rgba(220,240,230,.14)',
+        primary: {
+          lighter: '#173D2F',
+          light: '#69D6AA',
+          main: '#35B986',
+          dark: '#A9E8CB',
+          darker: '#D8F5E7',
+          contrastText: '#06140F',
+        },
+        neutral: {
+          light: '#19382D',
+          main: '#A8BAB1',
+          dark: '#D8E5DE',
+          contrastText: '#F2F8F4',
+        },
         action: {
           ...palette.action,
           active: '#C6D8CF',

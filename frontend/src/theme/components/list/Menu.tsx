@@ -11,7 +11,7 @@ const MenuComponent: Components<Omit<Theme, 'components'>>['MuiMenu'] = {
       borderRadius: theme.spacing(1.5),
       marginTop: theme.spacing(1),
       color: theme.palette.text.secondary,
-      backgroundColor: theme.palette.common.white,
+      backgroundColor: theme.palette.background.paper,
       boxShadow: theme.shadows[6],
     }),
   },

@@ -1,18 +1,10 @@
-import {
-  Box,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  Stack,
-  Toolbar,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Divider, Drawer, IconButton, List, Toolbar, Tooltip } from '@mui/material';
 import Logo from 'components/common/Logo';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { menuLinks } from 'layouts/main-layout/sidebar/MenuLinks';
 import MenuListItem from 'layouts/main-layout/sidebar/MenuListItem';
+import { useAuth } from 'providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 interface SidebarProps {
   drawerWidth: {
@@ -24,6 +16,8 @@ interface SidebarProps {
   onToggle: () => void;
 }
 const Sidebar = ({ drawerWidth, collapsed, onToggle }: SidebarProps) => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const width = collapsed ? 92 : drawerWidth.lg;
   return (
     <Drawer
@@ -69,12 +63,11 @@ const Sidebar = ({ drawerWidth, collapsed, onToggle }: SidebarProps) => {
               color: '#8EE7C2',
               border: '1px solid rgba(142,231,194,.24)',
               bgcolor: 'rgba(255,255,255,.05)',
-              transition: 'transform 320ms cubic-bezier(.2,.8,.2,1), background-color 200ms ease',
-              transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'background-color 200ms ease',
               '&:hover': { bgcolor: 'rgba(142,231,194,.14)' },
             }}
           >
-            <IconifyIcon icon="solar:alt-arrow-left-linear" width={19} />
+            <IconifyIcon icon="mingcute:menu-line" width={21} />
           </IconButton>
         </Tooltip>
       </Toolbar>
@@ -82,26 +75,13 @@ const Sidebar = ({ drawerWidth, collapsed, onToggle }: SidebarProps) => {
       <Divider sx={{ borderColor: 'rgba(255,255,255,.08)', mx: collapsed ? 1.75 : 2.75 }} />
 
       <SimpleBar style={{ maxHeight: 'calc(100vh - 178px)' }}>
-        {!collapsed && (
-          <Typography
-            sx={{
-              px: 3.5,
-              pt: 3.5,
-              pb: 1.75,
-              color: 'rgba(214,231,223,.48)',
-              font: '600 10px DM Mono',
-              letterSpacing: '.16em',
-            }}
-          >
-            MAIN MENU
-          </Typography>
-        )}
         <List
           sx={{
             display: 'flex',
             flexDirection: 'column',
             gap: 1,
             px: collapsed ? 1.5 : 2,
+            pt: 3,
             ...(collapsed && {
               '& .MuiListItemText-root': { display: 'none' },
               '& .MuiListItem-root a': { justifyContent: 'center', px: 1 },
@@ -114,28 +94,29 @@ const Sidebar = ({ drawerWidth, collapsed, onToggle }: SidebarProps) => {
         </List>
       </SimpleBar>
 
-      {!collapsed && (
-        <Stack
+      <Box sx={{ mt: 'auto', mx: collapsed ? 1.5 : 2.5, mb: 2.5 }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          color="error"
+          aria-label="Logout"
+          startIcon={!collapsed ? <IconifyIcon icon="solar:logout-2-linear" /> : undefined}
+          onClick={() => void logout().finally(() => navigate('/authentication/login'))}
           sx={{
-            mt: 'auto',
-            mx: 2.5,
-            mb: 2.5,
-            p: 2.25,
-            borderRadius: 3,
-            bgcolor: 'rgba(142,231,194,.07)',
+            minWidth: 0,
+            minHeight: 44,
+            px: collapsed ? 1 : 2,
+            borderColor: 'rgba(255,112,126,.45)',
+            color: '#FF9AA5',
+            '&:hover': {
+              borderColor: '#FF9AA5',
+              bgcolor: 'rgba(255,112,126,.1)',
+            },
           }}
         >
-          <Box sx={{ width: 28, height: 3, borderRadius: 2, bgcolor: '#76E1B8', mb: 1.25 }} />
-          <Typography sx={{ color: 'common.white', fontSize: 12, fontWeight: 700 }}>
-            Secure banking
-          </Typography>
-          <Typography
-            sx={{ mt: 0.5, color: 'rgba(214,231,223,.58)', fontSize: 10, lineHeight: 1.5 }}
-          >
-            Your session is protected.
-          </Typography>
-        </Stack>
-      )}
+          {collapsed ? <IconifyIcon icon="solar:logout-2-linear" width={20} /> : 'Logout'}
+        </Button>
+      </Box>
     </Drawer>
   );
 };

@@ -48,6 +48,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler({CustomerNotFoundException.class, AccountNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleDomainNotFound(RuntimeException exception) {
+        // Keep domain-specific exceptions consistent with the rest of the API error format.
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                exception.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatus(ResponseStatusException exception) {
         ErrorResponse response = new ErrorResponse(

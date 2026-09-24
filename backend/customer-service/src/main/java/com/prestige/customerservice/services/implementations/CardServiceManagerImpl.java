@@ -33,8 +33,10 @@ public class CardServiceManagerImpl implements CardServiceManager {
     public List<CardQuery> getMyCards(Long customerId, String accountNumber) {
         List<Card> result;
         if (accountNumber == null || accountNumber.isBlank()) {
+            // Without a filter, return cards from all accounts owned by this customer.
             result = cards.findAllByAccount_Customer_CustomerIdOrderByCardIdAsc(customerId);
         } else {
+            // Check ownership before querying by account number to prevent cross-customer access.
             boolean owned = accounts.findAllByCustomer_CustomerIdOrderByAccountCreatedAtAsc(customerId).stream()
                     .anyMatch(account -> account.getAccountNumber().equals(accountNumber));
             if (!owned) {
@@ -75,6 +77,7 @@ public class CardServiceManagerImpl implements CardServiceManager {
         Card card = cards.findByCardIdAndAccount_Customer_CustomerId(cardId, customerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found"));
         if (!passwordEncoder.matches(request.transactionPassword(), card.getAccount().getTransactionPasswordHash())) {
+            // Transaction passwords protect card-management operations separately from login.
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid transaction password");
         }
         return new CardNumberQuery(card.getUnmaskedPan());

@@ -7,8 +7,8 @@ import com.prestige.customerservice.dao.repositories.CustomerRepository;
 import com.prestige.customerservice.dtos.AddressQuery;
 import com.prestige.customerservice.dtos.BankQuery;
 import com.prestige.customerservice.dtos.CustomerQuery;
+import com.prestige.customerservice.exception.CustomerNotFoundException;
 import com.prestige.customerservice.services.abstractions.CustomerServiceManager;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +35,7 @@ public class CustomerServiceManagerImpl
 
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Customer not found"));
+                        new CustomerNotFoundException("Customer not found: " + customerId));
 
         CustomerQuery customerQuery = new CustomerQuery();
 
@@ -45,6 +45,7 @@ public class CustomerServiceManagerImpl
         customerQuery.setStatus(customer.getStatus().name());
 
         if (customer.getBank() != null) {
+            // Bank details are optional, so omit them rather than returning an empty object.
 
             BankQuery bankQuery = new BankQuery();
 
@@ -60,6 +61,7 @@ public class CustomerServiceManagerImpl
                 addressRepository.findByCustomer_CustomerId(customerId);
 
         if (!addresses.isEmpty()) {
+            // A customer can have multiple addresses; the API currently exposes the first one.
 
             Address address = addresses.getFirst();
 

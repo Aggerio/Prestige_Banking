@@ -27,6 +27,23 @@ const promotionImages = [
   'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80',
 ];
 
+const promotionImageFor = (contentKey: string, fallbackIndex: number) => {
+  if (contentKey.includes('HOME_FINANCE') || contentKey.includes('HOME_LOAN')) {
+    return promotionImages[0];
+  }
+  if (contentKey.includes('DEBIT_CARD') || contentKey.includes('CARD')) {
+    return promotionImages[1];
+  }
+  if (contentKey.includes('DIGITAL')) {
+    return promotionImages[2];
+  }
+  if (contentKey.includes('SAVINGS') || contentKey.includes('DEPOSIT')) {
+    return promotionImages[3];
+  }
+
+  return promotionImages[fallbackIndex % promotionImages.length];
+};
+
 const shuffle = <T,>(items: T[]) => {
   const shuffled = [...items];
 
@@ -846,7 +863,11 @@ const HomePage = () => {
                           <Box
                             component="article"
                             sx={{
-                              minHeight: { xs: 360, sm: 310 },
+                              maxWidth: 820,
+                              minHeight: { xs: 330, sm: 250 },
+                              mx: 'auto',
+                              display: 'grid',
+                              gridTemplateColumns: { xs: '1fr', sm: '250px minmax(0, 1fr)' },
                               overflow: 'hidden',
                               border: '1px solid #C9E5D6',
                               borderRadius: 3,
@@ -856,18 +877,19 @@ const HomePage = () => {
                           >
                             <Box
                               component="img"
-                              src={item.imageUrl || promotionImages[index % promotionImages.length]}
+                              src={item.imageUrl || promotionImageFor(item.contentKey, index)}
                               alt=""
                               sx={{
                                 width: '100%',
-                                height: { xs: 140, sm: 130 },
+                                height: { xs: 140, sm: '100%' },
+                                minHeight: { sm: 250 },
                                 display: 'block',
                                 objectFit: 'cover',
                               }}
                             />
                             <Stack
-                              sx={{ p: 2.5, minHeight: 168 }}
-                              justifyContent="space-between"
+                              sx={{ p: { xs: 2.5, sm: 3 }, minHeight: 190 }}
+                              justifyContent="center"
                               gap={1}
                             >
                               <Typography

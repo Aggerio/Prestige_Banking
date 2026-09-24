@@ -119,6 +119,12 @@ export const changeLoginPassword = (payload: {
   newPassword: string;
   confirmPassword: string;
 }) => client.put('/api/v1/auth/passwords/login', payload);
+export const changeTransactionPassword = (payload: {
+  accountNumber: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}) => client.put('/api/v1/auth/passwords/transaction', payload);
 export const verifyTransactionPassword = (payload: {
   accountNumber: string;
   transactionPassword: string;

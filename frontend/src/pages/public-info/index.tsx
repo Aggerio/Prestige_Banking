@@ -175,18 +175,18 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
                     : undefined,
                 }}
               >
-                <Typography
-                  component="h2"
-                  sx={{
-                    fontFamily: 'Fraunces',
-                    fontSize: kind === 'about' ? 'clamp(20px, 3.3vw, 38px)' : { xs: 30, md: 38 },
-                    lineHeight: 1.05,
-                    whiteSpace: kind === 'about' ? 'nowrap' : 'normal',
-                  }}
-                >
-                  {item.title}
-                </Typography>
                 <Stack gap={2}>
+                  <Typography
+                    component="h2"
+                    sx={{
+                      fontFamily: 'Fraunces',
+                      fontSize: kind === 'about' ? 'clamp(20px, 3.3vw, 38px)' : { xs: 30, md: 38 },
+                      lineHeight: 1.05,
+                      whiteSpace: kind === 'about' ? 'nowrap' : 'normal',
+                    }}
+                  >
+                    {item.title}
+                  </Typography>
                   <Typography sx={{ color: '#52665C', lineHeight: 1.75 }}>
                     {item.contentBody}
                   </Typography>

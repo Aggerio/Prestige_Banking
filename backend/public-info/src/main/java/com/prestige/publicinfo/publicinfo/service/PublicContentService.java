@@ -58,6 +58,10 @@ public class PublicContentService {
         return findActiveContentByType(PublicContentType.OFFER);
     }
 
+    public List<PublicContentResponse> getAdvertisements() {
+        return findActiveContentByType(PublicContentType.ADVERTISEMENT);
+    }
+
     private PublicContent findFirstActiveContent(PublicContentType contentType) {
         return publicContentRepository
                 .findFirstActiveContentByType(contentType, LocalDateTime.now())

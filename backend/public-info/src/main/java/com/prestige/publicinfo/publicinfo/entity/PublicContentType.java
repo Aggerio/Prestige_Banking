@@ -4,5 +4,6 @@ public enum PublicContentType {
     ABOUT_US,
     CONTACT_US,
     INVESTOR,
-    OFFER
+    OFFER,
+    ADVERTISEMENT
 }

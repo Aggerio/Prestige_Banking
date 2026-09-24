@@ -1,6 +1,7 @@
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import {
   getAboutUs,
+  getAdvertisements,
   getContactUs,
   getInvestors,
   getPublicHome,
@@ -9,7 +10,7 @@ import {
 } from 'api/banking';
 import roboticCardHero from 'assets/prestige-robotic-card-green.png';
 import IconifyIcon from 'components/base/IconifyIcon';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import PublicHeader from 'components/common/PublicHeader';
 import PublicFooter from 'components/common/PublicFooter';
 import { Link as RouterLink } from 'react-router-dom';
@@ -18,6 +19,24 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+
+const promotionImages = [
+  'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80',
+];
+
+const shuffle = <T,>(items: T[]) => {
+  const shuffled = [...items];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+
+  return shuffled;
+};
 
 const Reveal = ({ children, delay = 0 }: { children: ReactNode; delay?: number }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -292,6 +311,7 @@ const InvestorCards = ({ investors }: { investors: PublicContent[] }) => (
 
 const HomePage = () => {
   const [home, setHome] = useState<PublicHome | null>(null);
+  const [advertisements, setAdvertisements] = useState<PublicContent[]>([]);
   const [investors, setInvestors] = useState<PublicContent[]>([]);
   const [about, setAbout] = useState<PublicContent | null>(null);
   const [contact, setContact] = useState<PublicContent | null>(null);
@@ -302,20 +322,31 @@ const HomePage = () => {
 
   useEffect(() => {
     let active = true;
-    void Promise.allSettled([getPublicHome(), getInvestors(), getAboutUs(), getContactUs()]).then(
-      ([homeResult, investorResult, aboutResult, contactResult]) => {
-        if (!active) return;
-        if (homeResult.status === 'fulfilled') setHome(homeResult.value.data);
-        if (investorResult.status === 'fulfilled') setInvestors(investorResult.value.data);
-        if (aboutResult.status === 'fulfilled') setAbout(aboutResult.value.data);
-        if (contactResult.status === 'fulfilled') setContact(contactResult.value.data);
-        setPublicLoaded(true);
-      },
-    );
+    void Promise.allSettled([
+      getPublicHome(),
+      getAdvertisements(),
+      getInvestors(),
+      getAboutUs(),
+      getContactUs(),
+    ]).then(([homeResult, advertisementResult, investorResult, aboutResult, contactResult]) => {
+      if (!active) return;
+      if (homeResult.status === 'fulfilled') setHome(homeResult.value.data);
+      if (advertisementResult.status === 'fulfilled')
+        setAdvertisements(advertisementResult.value.data);
+      if (investorResult.status === 'fulfilled') setInvestors(investorResult.value.data);
+      if (aboutResult.status === 'fulfilled') setAbout(aboutResult.value.data);
+      if (contactResult.status === 'fulfilled') setContact(contactResult.value.data);
+      setPublicLoaded(true);
+    });
     return () => {
       active = false;
     };
   }, []);
+
+  const promotions = useMemo(
+    () => shuffle([...advertisements, ...(home?.offers ?? [])]),
+    [advertisements, home?.offers],
+  );
 
   return (
     <Box sx={{ minHeight: '100vh', overflow: 'clip', bgcolor: '#F7FCF9', color: '#123C2D' }}>
@@ -766,6 +797,108 @@ const HomePage = () => {
                 </Stack>
               </Box>
             </Reveal>
+            {promotions.length > 0 && (
+              <Reveal>
+                <Box sx={{ mt: { xs: 6, md: 8 } }}>
+                  <Typography
+                    sx={{ font: '11px DM Mono', letterSpacing: '.14em', color: '#178A68' }}
+                  >
+                    PRODUCTS AND PROMOTIONS
+                  </Typography>
+                  <Typography
+                    sx={{
+                      mt: 1.25,
+                      fontFamily: 'Fraunces',
+                      fontSize: { xs: 30, md: 42 },
+                      letterSpacing: '-.05em',
+                    }}
+                  >
+                    What is new at Prestige.
+                  </Typography>
+                  <Box
+                    sx={{
+                      mt: 3,
+                      pb: 4,
+                      '& .swiper-slide': { height: 'auto' },
+                      '& .swiper-pagination': { bottom: -2 },
+                      '& .swiper-pagination-bullet-active': {
+                        width: 24,
+                        borderRadius: 4,
+                        bgcolor: '#178A68',
+                      },
+                    }}
+                  >
+                    <Swiper
+                      modules={[Autoplay, Pagination, A11y]}
+                      pagination={{ clickable: true }}
+                      loop={promotions.length > 1}
+                      speed={700}
+                      autoplay={{
+                        delay: 4000,
+                        disableOnInteraction: false,
+                        pauseOnMouseEnter: false,
+                      }}
+                      slidesPerView={1}
+                      a11y={{ enabled: true }}
+                    >
+                      {promotions.map((item, index) => (
+                        <SwiperSlide key={`${item.contentType}-${item.contentId}`}>
+                          <Box
+                            component="article"
+                            sx={{
+                              minHeight: { xs: 360, sm: 310 },
+                              overflow: 'hidden',
+                              border: '1px solid #C9E5D6',
+                              borderRadius: 3,
+                              bgcolor: '#fff',
+                              boxShadow: '0 16px 36px rgba(20,92,61,.1)',
+                            }}
+                          >
+                            <Box
+                              component="img"
+                              src={item.imageUrl || promotionImages[index % promotionImages.length]}
+                              alt=""
+                              sx={{
+                                width: '100%',
+                                height: { xs: 140, sm: 130 },
+                                display: 'block',
+                                objectFit: 'cover',
+                              }}
+                            />
+                            <Stack
+                              sx={{ p: 2.5, minHeight: 168 }}
+                              justifyContent="space-between"
+                              gap={1}
+                            >
+                              <Typography
+                                sx={{
+                                  color: '#178A68',
+                                  font: '10px DM Mono',
+                                  letterSpacing: '.1em',
+                                }}
+                              >
+                                {item.contentType === 'ADVERTISEMENT'
+                                  ? 'ADVERTISEMENT'
+                                  : 'FEATURED OFFER'}
+                              </Typography>
+                              <Typography
+                                component="h2"
+                                sx={{ fontFamily: 'Fraunces', fontSize: 25, lineHeight: 1.1 }}
+                              >
+                                {item.title}
+                              </Typography>
+                              <Typography sx={{ color: '#52665C', fontSize: 14, lineHeight: 1.55 }}>
+                                {item.contentBody}
+                              </Typography>
+                            </Stack>
+                          </Box>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </Box>
+                </Box>
+              </Reveal>
+            )}
             <Typography
               sx={{
                 mt: { xs: 4, md: 5 },

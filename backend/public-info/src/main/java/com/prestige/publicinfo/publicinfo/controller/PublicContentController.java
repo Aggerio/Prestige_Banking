@@ -64,5 +64,13 @@ public class PublicContentController {
     public ResponseEntity<List<PublicContentResponse>> getOffers() {
         return ResponseEntity.ok(publicContentService.getOffers());
     }
-}
 
+    /*
+     * Advertisements page:
+     * returns active advertisements ordered by displayOrder.
+     */
+    @GetMapping("/advertisements")
+    public ResponseEntity<List<PublicContentResponse>> getAdvertisements() {
+        return ResponseEntity.ok(publicContentService.getAdvertisements());
+    }
+}

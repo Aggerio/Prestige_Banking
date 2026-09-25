@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'providers/AuthProvider';
 
 const LoginForm = () => {
+  // Credentials stay in local state until the customer submits the form.
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login, error } = useAuth();
@@ -16,13 +17,15 @@ const LoginForm = () => {
   const upSM = up('sm');
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    // Do not send an incomplete sign-in request.
     if (!customerId || !password) return;
     setSubmitting(true);
     try {
       await login(Number(customerId), password);
+      // Send authenticated customers to their banking workspace.
       navigate('/dashboard');
     } catch {
-      /* provider supplies message */
+      // AuthProvider owns the server error message rendered below the fields.
     } finally {
       setSubmitting(false);
     }

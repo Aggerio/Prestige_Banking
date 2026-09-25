@@ -20,6 +20,7 @@ const paths = {
   investments: `${rootPaths.pagesRoot}investments`,
   loans: `${rootPaths.pagesRoot}loans`,
   accounts: `${rootPaths.pagesRoot}accounts`,
+  notifications: `${rootPaths.pagesRoot}notifications`,
   login: `${rootPaths.authRoot}/login`,
   signup: `${rootPaths.authRoot}/sign-up`,
   forgetPassword: `${rootPaths.authRoot}/forget-password`,

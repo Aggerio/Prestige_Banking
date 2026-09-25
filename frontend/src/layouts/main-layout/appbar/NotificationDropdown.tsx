@@ -23,7 +23,7 @@ interface NotificationDropdownProps {
   open: null | HTMLElement;
 }
 const NotificationDropdown = ({ open, onClose }: NotificationDropdownProps) => {
-  const { items, unreadCount, hasMore, loadMore, markRead } = useNotifications();
+  const { items, unreadCount, markRead } = useNotifications();
   const navigate = useNavigate();
   const openNotification = (id: number, reference: string, isRead: boolean) => {
     if (!isRead) void markRead(id);
@@ -41,21 +41,31 @@ const NotificationDropdown = ({ open, onClose }: NotificationDropdownProps) => {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         slotProps={{
           paper: {
-            sx: { mt: 1.5, ml: 0.75, width: 300, bgcolor: 'background.paper', borderRadius: '3%' },
+            sx: {
+              mt: 1.5,
+              width: { xs: 'calc(100vw - 32px)', sm: 400 },
+              maxWidth: 400,
+              bgcolor: 'background.paper',
+              borderRadius: 3,
+              overflow: 'hidden',
+              boxShadow: '0 20px 50px rgba(20,58,45,.18)',
+            },
           },
         }}
       >
         <Stack direction="row" sx={{ alignItems: 'center', py: 2, px: 2.5 }}>
           <Stack gap={1} sx={{ flexGrow: 1 }}>
-            <Typography variant="subtitle1">All Notifications</Typography>
+            <Typography variant="subtitle1" fontWeight={800}>
+              Notifications
+            </Typography>
             <Typography variant="body1" sx={{ color: 'text.secondary' }}>
               You have {unreadCount} unread {unreadCount === 1 ? 'message' : 'messages'}
             </Typography>
           </Stack>
         </Stack>
         <Divider sx={{ borderStyle: 'dashed' }} />
-        <List disablePadding dense>
-          <SimpleBar style={{ height: '100%', maxHeight: 350 }}>
+        <SimpleBar style={{ maxHeight: 360 }}>
+          <List disablePadding dense>
             {items.map((notification) => (
               <ListItemButton
                 key={notification.id}
@@ -67,12 +77,10 @@ const NotificationDropdown = ({ open, onClose }: NotificationDropdownProps) => {
                   )
                 }
                 sx={{
-                  py: 1.5,
+                  py: 1.25,
                   px: 2.5,
                   mt: '1px',
-                  ...(!notification.readAt && {
-                    bgcolor: 'background.paper',
-                  }),
+                  bgcolor: notification.readAt ? 'transparent' : 'rgba(23,138,104,.06)',
                 }}
               >
                 <ListItemAvatar>
@@ -120,24 +128,27 @@ const NotificationDropdown = ({ open, onClose }: NotificationDropdownProps) => {
                 />
               </ListItemButton>
             ))}
-          </SimpleBar>
-        </List>
-        {unreadCount > 0 && (
-          <>
-            <Divider sx={{ borderStyle: 'dashed' }} />
-            <Box sx={{ p: 1 }}>
-              <Button
-                fullWidth
-                disableRipple
-                color="primary"
-                disabled={!hasMore}
-                onClick={() => void loadMore()}
-              >
-                View all
-              </Button>
-            </Box>
-          </>
-        )}
+            {!items.length && (
+              <Box sx={{ py: 5, px: 2.5, textAlign: 'center' }}>
+                <Typography color="text.secondary">You are all caught up.</Typography>
+              </Box>
+            )}
+          </List>
+        </SimpleBar>
+        <Divider sx={{ borderStyle: 'dashed' }} />
+        <Box sx={{ p: 1 }}>
+          <Button
+            fullWidth
+            disableRipple
+            color="primary"
+            onClick={() => {
+              onClose();
+              navigate('/notifications');
+            }}
+          >
+            View all notifications
+          </Button>
+        </Box>
       </Popover>
     </Fragment>
   );

@@ -14,6 +14,7 @@ const Dashboard = lazy(() => import('pages/dashboard'));
 const TransactionsPage = lazy(() => import('pages/transactions'));
 const CardsPage = lazy(() => import('pages/cards'));
 const AccountsPage = lazy(() => import('pages/accounts'));
+const NotificationsPage = lazy(() => import('pages/notifications'));
 const PublicHomePage = lazy(() => import('pages/public-home'));
 const PublicInfoPage = lazy(() => import('pages/public-info'));
 const Spinner = lazy(() => import('components/loading/Splash'));
@@ -102,6 +103,7 @@ export const routes = [
               { path: paths.transactions, element: <TransactionsPage /> },
               { path: paths.creditCards, element: <CardsPage /> },
               { path: paths.accounts, element: <AccountsPage /> },
+              { path: paths.notifications, element: <NotificationsPage /> },
             ],
           },
         ],

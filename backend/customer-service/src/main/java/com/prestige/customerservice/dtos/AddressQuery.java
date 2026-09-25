@@ -16,6 +16,10 @@ import lombok.Setter;
         "pinCode"
 })
 
+/**
+ * Represents an address in customer profile responses.
+ * It prevents callers from depending on the internal Address entity structure.
+ */
 public class AddressQuery {
 
     private Long addressId;

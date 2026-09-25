@@ -14,7 +14,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import PublicHeader from 'components/common/PublicHeader';
 import PublicFooter from 'components/common/PublicFooter';
 import { Link as RouterLink } from 'react-router-dom';
-import { A11y, Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { A11y, Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -1076,21 +1076,6 @@ const HomePage = () => {
                     '& .swiper': { overflow: 'visible' },
                     '& .swiper-wrapper': { transitionTimingFunction: 'linear !important' },
                     '& .swiper-slide': { height: 'auto' },
-                    '& .swiper-button-prev, & .swiper-button-next': {
-                      width: 42,
-                      height: 42,
-                      top: '48%',
-                      borderRadius: '50%',
-                      bgcolor: 'rgba(255,255,255,.84)',
-                      color: '#137451',
-                      border: '1px solid #B7DCC8',
-                      boxShadow: '0 10px 24px rgba(20,92,61,.16)',
-                      backdropFilter: 'blur(12px)',
-                      '&::after': { fontSize: 16, fontWeight: 800 },
-                      '&:hover': { bgcolor: '#137451', color: '#fff' },
-                    },
-                    '& .swiper-button-prev': { left: { md: 0 } },
-                    '& .swiper-button-next': { right: { md: 0 } },
                     '& .swiper-pagination': { bottom: -2 },
                     '& .swiper-pagination-bullet': {
                       width: 7,
@@ -1106,8 +1091,7 @@ const HomePage = () => {
                   }}
                 >
                   <Swiper
-                    modules={[Autoplay, Navigation, Pagination, A11y]}
-                    navigation
+                    modules={[Autoplay, Pagination, A11y]}
                     pagination={{ clickable: true }}
                     loop={home.offers.length > 1}
                     speed={6500}

@@ -16,6 +16,10 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+/**
+ * Retrieves the signed-in customer's profile and related address/bank information.
+ * Entity data is mapped into a dedicated response DTO to avoid exposing persistence models.
+ */
 public class CustomerServiceManagerImpl
         implements CustomerServiceManager {
 

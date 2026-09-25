@@ -14,6 +14,10 @@ import lombok.Setter;
         "ifscCode",
         "branchName"
 })
+/**
+ * Represents bank and branch information returned with customer data.
+ * It provides a stable API contract even if persistence fields evolve.
+ */
 public class BankQuery {
 
     private Long bankId;

@@ -18,6 +18,10 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+/**
+ * Implements card access and state changes while enforcing account ownership.
+ * Sensitive card-number reveal requests additionally require transaction-password verification.
+ */
 public class CardServiceManagerImpl implements CardServiceManager {
     private final CardRepository cards;
     private final AccountRepository accounts;

@@ -22,6 +22,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+/**
+ * JPA model for the customer profile that owns accounts, cards, and addresses.
+ * The identifier is used internally for authorization and is not a display field in the frontend.
+ */
 public class Customer {
 
     @Id

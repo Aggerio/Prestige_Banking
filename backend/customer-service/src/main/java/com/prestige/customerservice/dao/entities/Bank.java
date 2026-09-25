@@ -15,6 +15,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+/**
+ * JPA model for bank-level and branch reference information.
+ * Accounts and customers refer to this record when composing profile responses.
+ */
 public class Bank {
 
     @Id

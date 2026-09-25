@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import LoginForm from 'components/sections/authentication/LoginForm';
 
 const LoginPage = () => (
@@ -60,12 +60,12 @@ const LoginPage = () => (
     >
       <LoginForm />
     </Box>
-    <Stack direction="row" gap={1} alignItems="center" mt={3}>
+    {/* <Stack direction="row" gap={1} alignItems="center" mt={3}>
       <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#9BE6C9' }} />
       <Typography variant="caption" sx={{ color: '#91A29A' }}>
         Encrypted session · Account protection active
       </Typography>
-    </Stack>
+    </Stack> */}
   </Box>
 );
 export default LoginPage;

@@ -12,6 +12,10 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+/**
+ * Loads customer-owned accounts and maps persistence entities into API query DTOs.
+ * Missing accounts are converted to domain-specific exceptions before reaching controllers.
+ */
 public class AccountServiceManagerImpl
         implements AccountServiceManager {
 

@@ -12,6 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/accounts")
+/**
+ * Exposes authenticated customers' account resources over HTTP.
+ * It delegates ownership filtering to the account service instead of trusting client-provided IDs.
+ */
 public class AccountController {
 
     private final AccountServiceManager accountServiceManager;

@@ -23,6 +23,10 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/cards")
+/**
+ * Provides protected card listing, status, and sensitive-number workflows.
+ * Card operations are scoped to the customer identity extracted from the access token.
+ */
 public class CardController {
     private final CardServiceManager cardService;
 

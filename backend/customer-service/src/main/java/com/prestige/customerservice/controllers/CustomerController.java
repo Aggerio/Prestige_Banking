@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/customers")
+/**
+ * Serves the signed-in customer's profile information.
+ * The endpoint resolves the customer from authentication context rather than a URL parameter.
+ */
 public class CustomerController {
 
     private final CustomerServiceManager customerServiceManager;

@@ -21,6 +21,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+/**
+ * JPA model for a bank account and its operational balance/limit attributes.
+ * The customer relationship defines the ownership boundary used throughout the service.
+ */
 public class Account {
 
     @Id

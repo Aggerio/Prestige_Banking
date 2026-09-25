@@ -7,6 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+/**
+ * Carries address data for customer-domain write operations.
+ * This command object isolates transport validation from persistence relationships.
+ */
 public class AddressCommand {
 
     private Long customerId;

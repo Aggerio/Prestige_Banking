@@ -18,6 +18,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+/**
+ * JPA model for a customer's postal address.
+ * It is linked to a customer profile and mapped into response DTOs by the service layer.
+ */
 public class Address {
 
     @Id

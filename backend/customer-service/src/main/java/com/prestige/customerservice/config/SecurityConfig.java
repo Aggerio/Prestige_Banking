@@ -19,6 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+/**
+ * Defines API access rules and JWT resource-server validation for this service.
+ * Customer-specific endpoints rely on the authenticated token identity, not request input.
+ */
 public class SecurityConfig {
 
     @Bean

@@ -9,6 +9,10 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
+/**
+ * Represents the account information safe to return from customer-facing APIs.
+ * It keeps API response shape separate from the JPA account entity.
+ */
 public class AccountQuery {
 
     private String accountNumber;

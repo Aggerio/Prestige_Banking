@@ -16,6 +16,10 @@ import lombok.Setter;
         "bank",
         "address"
 })
+/**
+ * Represents the authenticated customer's profile data returned by the API.
+ * It composes customer, bank, and address details without exposing JPA entities directly.
+ */
 public class CustomerQuery {
 
     private Long customerId;

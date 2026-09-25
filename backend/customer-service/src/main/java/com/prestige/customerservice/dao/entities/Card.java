@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 @Table(name = "card")
 @Getter
 @NoArgsConstructor
+/**
+ * JPA model for a payment card linked to an account.
+ * Sensitive PAN handling stays in protected service workflows rather than this entity's API exposure.
+ */
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

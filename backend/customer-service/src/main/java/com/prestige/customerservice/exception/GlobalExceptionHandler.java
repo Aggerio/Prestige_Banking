@@ -10,6 +10,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
+/**
+ * Converts domain and validation failures into consistent HTTP error responses.
+ * Keeping this translation centralized prevents controllers from duplicating error handling.
+ */
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingRequestHeaderException.class)

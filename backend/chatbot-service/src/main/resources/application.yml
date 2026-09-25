@@ -36,4 +36,4 @@ chatbot:
     embedding-model-path: ${EMBEDDING_MODEL_PATH:C:/oracle-vector-models/all_MiniLM_L12_v2.onnx}
     max-results: ${RAG_MAX_RESULTS:4}
     reindex-on-startup: ${RAG_REINDEX_ON_STARTUP:false}
-    max-distance: 0.45
+    max-distance: 0.60

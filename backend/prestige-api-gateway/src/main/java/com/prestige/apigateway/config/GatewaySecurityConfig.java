@@ -2,7 +2,8 @@ package com.prestige.apigateway.config;
 
 import java.util.List;
 
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -15,6 +16,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebFluxSecurity
 public class GatewaySecurityConfig {
+
     @Bean
     SecurityWebFilterChain security(ServerHttpSecurity http) {
         return http.csrf(ServerHttpSecurity.CsrfSpec::disable).cors(Customizer.withDefaults()).authorizeExchange(a -> a.pathMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/chat/public").permitAll().pathMatchers(HttpMethod.GET, "/.well-known/jwks.json", "/api/v1/public/**").permitAll().anyExchange().authenticated()).oauth2ResourceServer(o -> o.jwt(Customizer.withDefaults())).build();

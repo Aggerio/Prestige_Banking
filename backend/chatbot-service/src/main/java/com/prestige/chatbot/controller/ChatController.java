@@ -1,19 +1,29 @@
 package com.prestige.chatbot.controller;
 
-import com.prestige.chatbot.dto.*;
-import com.prestige.chatbot.service.ChatService;
-import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import com.prestige.chatbot.dto.ChatRequest;
+import com.prestige.chatbot.dto.ChatResponse;
+import com.prestige.chatbot.service.ChatService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/chat")
 public class ChatController {
+
     private final ChatService chat;
-    public ChatController(ChatService chat) { this.chat = chat; }
+
+    public ChatController(ChatService chat) {
+        this.chat = chat;
+    }
 
     @PostMapping
     public ChatResponse chat(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody ChatRequest request) {

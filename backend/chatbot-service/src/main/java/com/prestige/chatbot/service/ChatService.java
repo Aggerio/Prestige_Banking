@@ -22,13 +22,18 @@ import com.prestige.chatbot.dto.ChatResponse;
 import com.prestige.chatbot.repository.ChatConversationRepository;
 import com.prestige.chatbot.repository.ChatMessageRepository;
 
+/**
+ * Builds answers exclusively from approved knowledge and records each
+ * conversation exchange.
+ */
 @Service
 public class ChatService {
+
     private static final String INSUFFICIENT_CONTEXT = "INSUFFICIENT_CONTEXT";
 
-    private static final String FALLBACK_ANSWER =
-            "I cannot determine that from the approved information available to me. "
-                    + "Please use the banking application or the approved bank support channel.";
+    private static final String FALLBACK_ANSWER
+            = "I cannot determine that from the approved information available to me. "
+            + "Please use the banking application or the approved bank support channel.";
 
     private static final String SYSTEM_INSTRUCTIONS = """
             You are the Prestige Banking support assistant.
@@ -89,14 +94,16 @@ public class ChatService {
 
         if (!context.isEmpty()) {
             try {
+                // The model receives only retrieved, approved articles as banking context.
                 answer = groq.complete(
                         SYSTEM_INSTRUCTIONS,
                         "Knowledge context:\n"
-                                + contextText(context)
-                                + "\n\nCustomer question:\n"
-                                + question);
+                        + contextText(context)
+                        + "\n\nCustomer question:\n"
+                        + question);
 
                 if (INSUFFICIENT_CONTEXT.equals(answer.trim())) {
+                    // Never expose the sentinel value used to enforce retrieval-only answers.
                     answer = FALLBACK_ANSWER;
                 }
             } catch (RuntimeException error) {
@@ -121,6 +128,7 @@ public class ChatService {
 
         SseEmitter emitter = new SseEmitter(0L);
 
+        // Keep the servlet request thread free while the upstream model streams tokens.
         CompletableFuture.runAsync(
                 () -> streamAnswer(emitter, conversation, question, context, sources),
                 streamingExecutor);
@@ -146,6 +154,7 @@ public class ChatService {
                                     "sources", sources)));
 
             if (context.isEmpty()) {
+                // No approved source means the model must not be called.
                 completeWithFallback(emitter, conversation, question, sources);
                 return;
             }
@@ -155,14 +164,15 @@ public class ChatService {
             groq.stream(
                     SYSTEM_INSTRUCTIONS,
                     "Knowledge context:\n"
-                            + contextText(context)
-                            + "\n\nCustomer question:\n"
-                            + question,
+                    + contextText(context)
+                    + "\n\nCustomer question:\n"
+                    + question,
                     gate::accept);
 
             if (INSUFFICIENT_CONTEXT.equals(answer.toString().trim())) {
                 answer.setLength(0);
                 answer.append(FALLBACK_ANSWER);
+                // The safety gate withheld this sentinel until the full stream was known.
                 sendToken(emitter, FALLBACK_ANSWER);
             } else {
                 gate.flushPending();
@@ -188,7 +198,7 @@ public class ChatService {
                                 .data(Map.of(
                                         "message",
                                         "The banking assistant is temporarily unavailable. "
-                                                + "Please try again shortly.")));
+                                        + "Please try again shortly.")));
             } catch (Exception ignored) {
                 // Browser may already have disconnected.
             }
@@ -259,10 +269,11 @@ public class ChatService {
 
         ChatConversation existing = conversations.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Conversation was not found."));
+                HttpStatus.NOT_FOUND,
+                "Conversation was not found."));
 
         if (!Objects.equals(existing.getCustomerId(), customerId)) {
+            // Conversation identifiers are not transferable between customers.
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "Conversation does not belong to this customer.");
@@ -282,12 +293,14 @@ public class ChatService {
     }
 
     private static final class StreamingClientDisconnectedException extends RuntimeException {
+
         private StreamingClientDisconnectedException(Exception cause) {
             super(cause);
         }
     }
 
     private final class StreamingSafetyGate {
+
         private final SseEmitter emitter;
         private final StringBuilder fullAnswer;
         private final StringBuilder pending = new StringBuilder();
@@ -310,6 +323,7 @@ public class ChatService {
 
             String candidate = pending.toString().stripLeading();
 
+            // Delay output while the response could still be the insufficiency sentinel.
             if (!INSUFFICIENT_CONTEXT.startsWith(candidate)) {
                 forwarding = true;
                 sendToken(emitter, pending.toString());

@@ -36,6 +36,7 @@ export const routes = [
     ),
     children: [
       {
+        // Home is public so visitors can explore the bank before signing in.
         index: true,
         element: (
           <PageEnter>
@@ -44,6 +45,7 @@ export const routes = [
         ),
       },
       {
+        // About Us uses the shared public page with its own content type.
         path: paths.aboutUs,
         element: (
           <PageEnter>
@@ -52,6 +54,7 @@ export const routes = [
         ),
       },
       {
+        // Investor updates use the same layout but render a list of published entries.
         path: paths.investors,
         element: (
           <PageEnter>
@@ -60,6 +63,7 @@ export const routes = [
         ),
       },
       {
+        // Offers use the shared layout and retain their card presentation.
         path: paths.offers,
         element: (
           <PageEnter>
@@ -68,6 +72,7 @@ export const routes = [
         ),
       },
       {
+        // Contact Us uses the shared page to display the current contact entry.
         path: paths.contactUs,
         element: (
           <PageEnter>
@@ -102,6 +107,7 @@ export const routes = [
         ],
       },
       {
+        // Authentication routes are separate from the protected banking workspace.
         path: rootPaths.authRoot,
         element: <AuthLayout />,
         children: [

@@ -3,6 +3,7 @@ import Logo from 'components/common/Logo';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const publicLinks = [
+  // Keep the header navigation aligned with every public route in the router.
   { label: 'Home', to: '/' },
   { label: 'About Us', to: '/about-us' },
   { label: 'Investors', to: '/investors' },
@@ -13,6 +14,7 @@ const publicLinks = [
 const PublicHeader = () => {
   const navigate = useNavigate();
   const navigateWithTransition = (to: string) => {
+    // Use the browser transition when available, while retaining ordinary navigation everywhere else.
     const transitionDocument = document as Document & {
       startViewTransition?: (callback: () => void) => unknown;
     };

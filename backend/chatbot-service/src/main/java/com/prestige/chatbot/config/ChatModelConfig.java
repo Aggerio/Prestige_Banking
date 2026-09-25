@@ -3,6 +3,7 @@ package com.prestige.chatbot.config;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +12,10 @@ import org.springframework.web.client.RestClient;
 
 @Configuration
 public class ChatModelConfig {
+
     @Bean
     RestClient groqRestClient(@Value("${chatbot.groq.base-url}") String baseUrl,
-                              @Value("${chatbot.groq.timeout}") Duration timeout) {
+            @Value("${chatbot.groq.timeout}") Duration timeout) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(timeout);
         requestFactory.setReadTimeout(timeout);

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 export type PublicPageKind = 'about' | 'investors' | 'offers' | 'contact';
 
 const pageCopy: Record<PublicPageKind, { eyebrow: string; title: string; description: string }> = {
+  // Copy is route-specific, while the rendering and loading behaviour stay shared.
   about: {
     eyebrow: 'ABOUT PRESTIGE',
     title: 'About Prestige Banking System',
@@ -39,10 +40,12 @@ const PublicInfoPage = ({ kind }: { kind: PublicPageKind }) => {
   const usesGlass = kind === 'offers';
 
   useEffect(() => {
+    // The API returns either one entry or a list; normalize both shapes for this page.
     let active = true;
     setLoading(true);
     setFailed(false);
 
+    // Select the endpoint that matches the public route currently being viewed.
     const request =
       kind === 'about'
         ? getAboutUs().then((response) => [response.data])

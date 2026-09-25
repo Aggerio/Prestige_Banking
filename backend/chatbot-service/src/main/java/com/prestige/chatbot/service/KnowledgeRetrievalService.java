@@ -14,6 +14,7 @@ import com.prestige.chatbot.domain.KnowledgeArticle;
 
 @Service
 public class KnowledgeRetrievalService {
+
     private final NamedParameterJdbcTemplate jdbc;
     private final LocalOnnxEmbeddingService embeddings;
     private final int maxResults;
@@ -52,12 +53,12 @@ public class KnowledgeRetrievalService {
                 """;
 
         return jdbc.query(
-                        sql,
-                        new MapSqlParameterSource()
-                                .addValue("phases", phases)
-                                .addValue("queryVector", queryVector)
-                                .addValue("limit", maxResults),
-                        (rs, row) -> new ScoredArticle(mapArticle(rs), rs.getDouble("distance")))
+                sql,
+                new MapSqlParameterSource()
+                        .addValue("phases", phases)
+                        .addValue("queryVector", queryVector)
+                        .addValue("limit", maxResults),
+                (rs, row) -> new ScoredArticle(mapArticle(rs), rs.getDouble("distance")))
                 .stream()
                 .filter(match -> match.distance() <= maxDistance)
                 .map(ScoredArticle::article)
@@ -76,5 +77,6 @@ public class KnowledgeRetrievalService {
     }
 
     private record ScoredArticle(KnowledgeArticle article, double distance) {
+
     }
 }

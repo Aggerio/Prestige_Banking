@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material';
 import LoginForm from 'components/sections/authentication/LoginForm';
 
 const LoginPage = () => (
+  // Presentation belongs here; credential handling remains in the reusable LoginForm.
   <Box
     className="glass-card auth-glass-card"
     sx={{
@@ -30,6 +31,7 @@ const LoginPage = () => (
       Sign in with your customer ID and password to access your command desk.
     </Typography>
     <Box
+      // Limit the dark form controls to this screen so shared inputs keep their normal theme.
       sx={{
         '& .MuiInputLabel-root': { color: '#91A29A' },
         '& .MuiOutlinedInput-root': {

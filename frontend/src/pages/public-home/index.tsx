@@ -21,6 +21,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const promotionImages = [
+  // Fallback images give each promotion a suitable visual when the CMS has none.
   'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=900&q=80',
   'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=80',
   'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80',
@@ -28,6 +29,7 @@ const promotionImages = [
 ];
 
 const promotionImageFor = (contentKey: string, fallbackIndex: number) => {
+  // Prefer a predictable image for known campaign types before falling back to carousel order.
   if (contentKey.includes('HOME_FINANCE') || contentKey.includes('HOME_LOAN')) {
     return promotionImages[0];
   }
@@ -45,6 +47,7 @@ const promotionImageFor = (contentKey: string, fallbackIndex: number) => {
 };
 
 const shuffle = <T,>(items: T[]) => {
+  // Work on a copy so source content from the API is never reordered in state.
   const shuffled = [...items];
 
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
@@ -56,6 +59,7 @@ const shuffle = <T,>(items: T[]) => {
 };
 
 const Reveal = ({ children, delay = 0 }: { children: ReactNode; delay?: number }) => {
+  // Sections reveal only after entering the viewport, avoiding an overly busy first render.
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -230,6 +234,7 @@ const RoboticCardAssembly = ({ bankName, className }: { bankName: string; classN
 );
 
 const TestimonialStage = ({ investors }: { investors: PublicContent[] }) => {
+  // Rotate only when there is more than one investor update to show.
   const [active, setActive] = useState(0);
   useEffect(() => {
     if (investors.length < 2) return undefined;
@@ -463,6 +468,7 @@ const HomePage = () => {
     .trim();
 
   useEffect(() => {
+    // Public sections load independently so one failed endpoint does not hide the entire home page.
     let active = true;
     void Promise.allSettled([
       getPublicHome(),
@@ -486,6 +492,7 @@ const HomePage = () => {
   }, []);
 
   const promotions = useMemo(
+    // Mix advertisements and offers for the carousel without mutating either source list.
     () => shuffle([...advertisements, ...(home?.offers ?? [])]),
     [advertisements, home?.offers],
   );

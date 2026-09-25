@@ -1,4 +1,4 @@
--- Run once against the same Oracle schema used by the backend, before starting chatbot-service.
+-- run from chatbot_app connection
 CREATE TABLE chatbot_knowledge_article (
     article_id VARCHAR2(36) PRIMARY KEY,
     phase VARCHAR2(30) NOT NULL,
@@ -23,3 +23,5 @@ CREATE TABLE chatbot_message (
 );
 CREATE INDEX ix_chatbot_message_conversation ON chatbot_message(conversation_id, created_at);
 CREATE INDEX ix_chatbot_article_active ON chatbot_knowledge_article(active, phase);
+
+ALTER TABLE chatbot_knowledge_article ADD (embedding VECTOR(384, FLOAT32));
